@@ -2,7 +2,7 @@
 
 This is my attempt to implement the projects by Morgan Mcguire in https://graphicscodex.com/projects/projects/index.html. It is a good refresher for the basics and gives concrete goals that help with focus distraction.
 
-Since I am actively working on it, new information will surface as I push through them.
+Since I am actively working on it, new information will surface as I push through them. My notes and a simple review of each project is written in [my blog](https://iliaskapouranis.com/2021/04/24/studying-with-the-graphics-codex/).
 
 ## 1. Cubes
 The first project's goal is to create a scene using only cubes. I implemented a way to read an image and create a cube grid for each pixel, where each cube's height is determined by the corresponding pixel's luminance. Simple pixels to cubes.
