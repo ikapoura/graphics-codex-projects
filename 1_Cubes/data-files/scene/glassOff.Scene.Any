@@ -1,0 +1,40 @@
+// -*- c++ -*-
+{
+	name = "Glass";
+	
+	models = {
+		glassModel = ArticulatedModel::Specification {
+			filename = "model/glass.off";
+			preprocess = {
+				setMaterial(all(), Color3(1, 1, 1));
+			};
+		};
+	};
+
+	entities = {
+		skybox = Skybox {
+			texture = "cubemap/whiteroom/whiteroom-*.png";
+		};
+
+		sun = Light {
+			attenuation = (0.0001, 0, 1);
+			biradiance = Biradiance3(0.5, 0.6, 0.5);
+			castsShadows = false;
+			enabled = true; 
+			frame = CFrame::fromXYZYPRDegrees(1, 1, 1, -30, -45, 0);
+			producesDirectIllumination = true;
+			producesIndirectIllumination = true;
+			spotHalfAngleDegrees = 180;
+			type = "DIRECTIONAL";
+		};
+
+		glass0 = VisibleEntity {
+			model = "glassModel";
+			frame = CFrame::fromXYZYPRDegrees(0, 0, 0, 0, 0, 0);
+		};
+
+		camera = Camera {
+			frame = CFrame::fromXYZYPRDegrees(0, 2, 5, 0, -20.0, 0.0);
+		};
+	};
+};

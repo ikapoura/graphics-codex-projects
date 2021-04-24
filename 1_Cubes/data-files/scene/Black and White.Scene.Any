@@ -1,0 +1,4132 @@
+// -*- c++ -*-
+{
+name = "Black and White";
+models = {
+cubeModel = ArticulatedModel::Specification {
+filename = "model/crate/crate.obj";
+preprocess = {
+setMaterial(
+all(),
+UniversalMaterial::Specification {
+lambertian = Color3(0.5, 0.5, 0.5);
+};
+);
+};
+};
+};
+entities = {
+skybox = Skybox {
+texture = "cubemap/whiteroom/whiteroom-*.png";
+};
+sun = Light {
+attenuation = (0.0001, 0, 1);
+biradiance = Biradiance3(0.5, 0.6, 0.5);
+castsShadows = false;
+enabled = true; 
+frame = CFrame::fromXYZYPRDegrees(1, 1, 1, -30, -45, 0);
+producesDirectIllumination = true;
+producesIndirectIllumination = true;
+spotHalfAngleDegrees = 180;
+type = "DIRECTIONAL";
+};
+camera = Camera {
+frame = CFrame::fromXYZYPRDegrees(0, 0, 8);
+};
+cuby0_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -16, 1, 0, 0, 0);
+};
+cuby0_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -15, 1, 0, 0, 0);
+};
+cuby0_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -14, 1, 0, 0, 0);
+};
+cuby0_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -13, 1, 0, 0, 0);
+};
+cuby0_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -12, 1, 0, 0, 0);
+};
+cuby0_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -11, 1, 0, 0, 0);
+};
+cuby0_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -10, 1, 0, 0, 0);
+};
+cuby0_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -9, 1, 0, 0, 0);
+};
+cuby0_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -8, 1, 0, 0, 0);
+};
+cuby0_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -7, 1, 0, 0, 0);
+};
+cuby0_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -6, 1, 0, 0, 0);
+};
+cuby0_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -5, 1, 0, 0, 0);
+};
+cuby0_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -4, 1, 0, 0, 0);
+};
+cuby0_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -3, 1, 0, 0, 0);
+};
+cuby0_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -2, 1, 0, 0, 0);
+};
+cuby0_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, -1, 1, 0, 0, 0);
+};
+cuby0_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 0, 1, 0, 0, 0);
+};
+cuby0_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 1, 1, 0, 0, 0);
+};
+cuby0_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 2, 1, 0, 0, 0);
+};
+cuby0_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 3, 1, 0, 0, 0);
+};
+cuby0_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 4, 1, 0, 0, 0);
+};
+cuby0_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 5, 1, 0, 0, 0);
+};
+cuby0_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 6, 1, 0, 0, 0);
+};
+cuby0_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 7, 1, 0, 0, 0);
+};
+cuby0_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 8, 1, 0, 0, 0);
+};
+cuby0_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 9, 1, 0, 0, 0);
+};
+cuby0_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 10, 1, 0, 0, 0);
+};
+cuby0_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 11, 1, 0, 0, 0);
+};
+cuby0_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 12, 1, 0, 0, 0);
+};
+cuby0_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 13, 1, 0, 0, 0);
+};
+cuby0_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 14, 1, 0, 0, 0);
+};
+cuby0_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-16, 15, 1, 0, 0, 0);
+};
+cuby1_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -16, 1, 0, 0, 0);
+};
+cuby1_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -15, 1, 0, 0, 0);
+};
+cuby1_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -14, 1, 0, 0, 0);
+};
+cuby1_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -13, 1, 0, 0, 0);
+};
+cuby1_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -12, 1, 0, 0, 0);
+};
+cuby1_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -11, 1, 0, 0, 0);
+};
+cuby1_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -10, 1, 0, 0, 0);
+};
+cuby1_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -9, 1, 0, 0, 0);
+};
+cuby1_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -8, 1, 0, 0, 0);
+};
+cuby1_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -7, 1, 0, 0, 0);
+};
+cuby1_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -6, 1, 0, 0, 0);
+};
+cuby1_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -5, 1, 0, 0, 0);
+};
+cuby1_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -4, 1, 0, 0, 0);
+};
+cuby1_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -3, 0.853216, 0, 0, 0);
+};
+cuby1_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -2, 0.673961, 0, 0, 0);
+};
+cuby1_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, -1, 0.418, 0, 0, 0);
+};
+cuby1_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 0, 0.802667, 0, 0, 0);
+};
+cuby1_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 1, 1, 0, 0, 0);
+};
+cuby1_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 2, 1, 0, 0, 0);
+};
+cuby1_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 3, 1, 0, 0, 0);
+};
+cuby1_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 4, 0.980196, 0, 0, 0);
+};
+cuby1_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 5, 1, 0, 0, 0);
+};
+cuby1_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 6, 1, 0, 0, 0);
+};
+cuby1_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 7, 1, 0, 0, 0);
+};
+cuby1_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 8, 1, 0, 0, 0);
+};
+cuby1_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 9, 1, 0, 0, 0);
+};
+cuby1_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 10, 1, 0, 0, 0);
+};
+cuby1_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 11, 1, 0, 0, 0);
+};
+cuby1_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 12, 1, 0, 0, 0);
+};
+cuby1_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 13, 1, 0, 0, 0);
+};
+cuby1_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 14, 1, 0, 0, 0);
+};
+cuby1_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-15, 15, 1, 0, 0, 0);
+};
+cuby2_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -16, 1, 0, 0, 0);
+};
+cuby2_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -15, 1, 0, 0, 0);
+};
+cuby2_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -14, 1, 0, 0, 0);
+};
+cuby2_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -13, 1, 0, 0, 0);
+};
+cuby2_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -12, 1, 0, 0, 0);
+};
+cuby2_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -11, 1, 0, 0, 0);
+};
+cuby2_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -10, 1, 0, 0, 0);
+};
+cuby2_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -9, 1, 0, 0, 0);
+};
+cuby2_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -8, 1, 0, 0, 0);
+};
+cuby2_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -7, 1, 0, 0, 0);
+};
+cuby2_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -6, 1, 0, 0, 0);
+};
+cuby2_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -5, 1, 0, 0, 0);
+};
+cuby2_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -4, 0.986039, 0, 0, 0);
+};
+cuby2_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -3, 0.608784, 0, 0, 0);
+};
+cuby2_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -2, 0.693177, 0, 0, 0);
+};
+cuby2_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, -1, 0.461294, 0, 0, 0);
+};
+cuby2_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 0, 0.0176078, 0, 0, 0);
+};
+cuby2_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 1, 0.757177, 0, 0, 0);
+};
+cuby2_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 2, 1, 0, 0, 0);
+};
+cuby2_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 3, 0.536941, 0, 0, 0);
+};
+cuby2_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 4, 0.475961, 0, 0, 0);
+};
+cuby2_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 5, 0.955098, 0, 0, 0);
+};
+cuby2_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 6, 0.984314, 0, 0, 0);
+};
+cuby2_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 7, 0.776471, 0, 0, 0);
+};
+cuby2_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 8, 0.988235, 0, 0, 0);
+};
+cuby2_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 9, 1, 0, 0, 0);
+};
+cuby2_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 10, 1, 0, 0, 0);
+};
+cuby2_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 11, 1, 0, 0, 0);
+};
+cuby2_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 12, 1, 0, 0, 0);
+};
+cuby2_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 13, 1, 0, 0, 0);
+};
+cuby2_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 14, 1, 0, 0, 0);
+};
+cuby2_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-14, 15, 1, 0, 0, 0);
+};
+cuby3_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -16, 1, 0, 0, 0);
+};
+cuby3_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -15, 1, 0, 0, 0);
+};
+cuby3_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -14, 1, 0, 0, 0);
+};
+cuby3_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -13, 1, 0, 0, 0);
+};
+cuby3_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -12, 1, 0, 0, 0);
+};
+cuby3_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -11, 1, 0, 0, 0);
+};
+cuby3_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -10, 1, 0, 0, 0);
+};
+cuby3_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -9, 1, 0, 0, 0);
+};
+cuby3_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -8, 1, 0, 0, 0);
+};
+cuby3_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -7, 1, 0, 0, 0);
+};
+cuby3_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -6, 1, 0, 0, 0);
+};
+cuby3_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -5, 1, 0, 0, 0);
+};
+cuby3_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -4, 0.950314, 0, 0, 0);
+};
+cuby3_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -3, 0.737098, 0, 0, 0);
+};
+cuby3_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -2, 0.701686, 0, 0, 0);
+};
+cuby3_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, -1, 0.537294, 0, 0, 0);
+};
+cuby3_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 0, 0.116, 0, 0, 0);
+};
+cuby3_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 1, 0.802431, 0, 0, 0);
+};
+cuby3_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 2, 0.667216, 0, 0, 0);
+};
+cuby3_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 3, 0.632431, 0, 0, 0);
+};
+cuby3_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 4, 0.715098, 0, 0, 0);
+};
+cuby3_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 5, 0.529529, 0, 0, 0);
+};
+cuby3_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 6, 0.66, 0, 0, 0);
+};
+cuby3_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 7, 0.258824, 0, 0, 0);
+};
+cuby3_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 8, 0.658824, 0, 0, 0);
+};
+cuby3_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 9, 1, 0, 0, 0);
+};
+cuby3_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 10, 1, 0, 0, 0);
+};
+cuby3_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 11, 1, 0, 0, 0);
+};
+cuby3_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 12, 1, 0, 0, 0);
+};
+cuby3_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 13, 1, 0, 0, 0);
+};
+cuby3_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 14, 1, 0, 0, 0);
+};
+cuby3_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-13, 15, 1, 0, 0, 0);
+};
+cuby4_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -16, 1, 0, 0, 0);
+};
+cuby4_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -15, 1, 0, 0, 0);
+};
+cuby4_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -14, 1, 0, 0, 0);
+};
+cuby4_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -13, 1, 0, 0, 0);
+};
+cuby4_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -12, 1, 0, 0, 0);
+};
+cuby4_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -11, 1, 0, 0, 0);
+};
+cuby4_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -10, 1, 0, 0, 0);
+};
+cuby4_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -9, 1, 0, 0, 0);
+};
+cuby4_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -8, 1, 0, 0, 0);
+};
+cuby4_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -7, 1, 0, 0, 0);
+};
+cuby4_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -6, 1, 0, 0, 0);
+};
+cuby4_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -5, 1, 0, 0, 0);
+};
+cuby4_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -4, 0.773726, 0, 0, 0);
+};
+cuby4_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -3, 0.796588, 0, 0, 0);
+};
+cuby4_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -2, 0.689843, 0, 0, 0);
+};
+cuby4_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, -1, 0.588157, 0, 0, 0);
+};
+cuby4_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 0, 0.0052549, 0, 0, 0);
+};
+cuby4_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 1, 0.407294, 0, 0, 0);
+};
+cuby4_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 2, 0.684863, 0, 0, 0);
+};
+cuby4_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 3, 0.688824, 0, 0, 0);
+};
+cuby4_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 4, 0.712745, 0, 0, 0);
+};
+cuby4_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 5, 0.572745, 0, 0, 0);
+};
+cuby4_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 6, 0.0731765, 0, 0, 0);
+};
+cuby4_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 7, 0.274941, 0, 0, 0);
+};
+cuby4_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 8, 0.294118, 0, 0, 0);
+};
+cuby4_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 9, 0.752941, 0, 0, 0);
+};
+cuby4_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 10, 1, 0, 0, 0);
+};
+cuby4_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 11, 1, 0, 0, 0);
+};
+cuby4_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 12, 1, 0, 0, 0);
+};
+cuby4_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 13, 1, 0, 0, 0);
+};
+cuby4_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 14, 1, 0, 0, 0);
+};
+cuby4_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-12, 15, 1, 0, 0, 0);
+};
+cuby5_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -16, 1, 0, 0, 0);
+};
+cuby5_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -15, 1, 0, 0, 0);
+};
+cuby5_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -14, 1, 0, 0, 0);
+};
+cuby5_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -13, 1, 0, 0, 0);
+};
+cuby5_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -12, 1, 0, 0, 0);
+};
+cuby5_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -11, 1, 0, 0, 0);
+};
+cuby5_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -10, 1, 0, 0, 0);
+};
+cuby5_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -9, 1, 0, 0, 0);
+};
+cuby5_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -8, 0.865608, 0, 0, 0);
+};
+cuby5_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -7, 0.625176, 0, 0, 0);
+};
+cuby5_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -6, 0.920196, 0, 0, 0);
+};
+cuby5_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -5, 0.968118, 0, 0, 0);
+};
+cuby5_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -4, 0.69949, 0, 0, 0);
+};
+cuby5_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -3, 0.833765, 0, 0, 0);
+};
+cuby5_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -2, 0.693177, 0, 0, 0);
+};
+cuby5_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, -1, 0.737176, 0, 0, 0);
+};
+cuby5_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 0, 0.766667, 0, 0, 0);
+};
+cuby5_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 1, 0.67651, 0, 0, 0);
+};
+cuby5_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 2, 0.69, 0, 0, 0);
+};
+cuby5_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 3, 0.665529, 0, 0, 0);
+};
+cuby5_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 4, 0.757333, 0, 0, 0);
+};
+cuby5_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 5, 0.0536078, 0, 0, 0);
+};
+cuby5_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 6, 0.0429412, 0, 0, 0);
+};
+cuby5_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 7, 0.138, 0, 0, 0);
+};
+cuby5_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 8, 0.258824, 0, 0, 0);
+};
+cuby5_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 9, 0.462745, 0, 0, 0);
+};
+cuby5_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 10, 1, 0, 0, 0);
+};
+cuby5_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 11, 1, 0, 0, 0);
+};
+cuby5_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 12, 1, 0, 0, 0);
+};
+cuby5_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 13, 1, 0, 0, 0);
+};
+cuby5_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 14, 1, 0, 0, 0);
+};
+cuby5_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-11, 15, 1, 0, 0, 0);
+};
+cuby6_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -16, 1, 0, 0, 0);
+};
+cuby6_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -15, 1, 0, 0, 0);
+};
+cuby6_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -14, 1, 0, 0, 0);
+};
+cuby6_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -13, 1, 0, 0, 0);
+};
+cuby6_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -12, 1, 0, 0, 0);
+};
+cuby6_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -11, 1, 0, 0, 0);
+};
+cuby6_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -10, 1, 0, 0, 0);
+};
+cuby6_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -9, 0.910667, 0, 0, 0);
+};
+cuby6_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -8, 0.767647, 0, 0, 0);
+};
+cuby6_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -7, 0.912706, 0, 0, 0);
+};
+cuby6_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -6, 0.625098, 0, 0, 0);
+};
+cuby6_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -5, 0.679255, 0, 0, 0);
+};
+cuby6_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -4, 0.871686, 0, 0, 0);
+};
+cuby6_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -3, 0.782275, 0, 0, 0);
+};
+cuby6_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -2, 0.539333, 0, 0, 0);
+};
+cuby6_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, -1, 0.390549, 0, 0, 0);
+};
+cuby6_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 0, 0.214824, 0, 0, 0);
+};
+cuby6_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 1, 0.372275, 0, 0, 0);
+};
+cuby6_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 2, 0.721569, 0, 0, 0);
+};
+cuby6_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 3, 0.719177, 0, 0, 0);
+};
+cuby6_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 4, 0.417686, 0, 0, 0);
+};
+cuby6_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 5, 0.0604314, 0, 0, 0);
+};
+cuby6_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 6, 0.244627, 0, 0, 0);
+};
+cuby6_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 7, 0.282353, 0, 0, 0);
+};
+cuby6_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 8, 0.258824, 0, 0, 0);
+};
+cuby6_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 9, 0.690196, 0, 0, 0);
+};
+cuby6_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 10, 1, 0, 0, 0);
+};
+cuby6_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 11, 1, 0, 0, 0);
+};
+cuby6_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 12, 1, 0, 0, 0);
+};
+cuby6_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 13, 1, 0, 0, 0);
+};
+cuby6_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 14, 1, 0, 0, 0);
+};
+cuby6_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-10, 15, 1, 0, 0, 0);
+};
+cuby7_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -16, 1, 0, 0, 0);
+};
+cuby7_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -15, 1, 0, 0, 0);
+};
+cuby7_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -14, 1, 0, 0, 0);
+};
+cuby7_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -13, 1, 0, 0, 0);
+};
+cuby7_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -12, 1, 0, 0, 0);
+};
+cuby7_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -11, 1, 0, 0, 0);
+};
+cuby7_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -10, 1, 0, 0, 0);
+};
+cuby7_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -9, 0.727569, 0, 0, 0);
+};
+cuby7_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -8, 0.913843, 0, 0, 0);
+};
+cuby7_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -7, 0.838196, 0, 0, 0);
+};
+cuby7_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -6, 0.88902, 0, 0, 0);
+};
+cuby7_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -5, 0.816196, 0, 0, 0);
+};
+cuby7_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -4, 0.483098, 0, 0, 0);
+};
+cuby7_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -3, 0.508, 0, 0, 0);
+};
+cuby7_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -2, 0.339059, 0, 0, 0);
+};
+cuby7_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, -1, 0.444667, 0, 0, 0);
+};
+cuby7_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 0, 0.373765, 0, 0, 0);
+};
+cuby7_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 1, 0, 0, 0, 0);
+};
+cuby7_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 2, 0.445176, 0, 0, 0);
+};
+cuby7_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 3, 0.728471, 0, 0, 0);
+};
+cuby7_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 4, 0.0334902, 0, 0, 0);
+};
+cuby7_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 5, 0.0412157, 0, 0, 0);
+};
+cuby7_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 6, 0.226275, 0, 0, 0);
+};
+cuby7_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 7, 0.282353, 0, 0, 0);
+};
+cuby7_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 8, 0.34902, 0, 0, 0);
+};
+cuby7_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 9, 0.917647, 0, 0, 0);
+};
+cuby7_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 10, 1, 0, 0, 0);
+};
+cuby7_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 11, 1, 0, 0, 0);
+};
+cuby7_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 12, 1, 0, 0, 0);
+};
+cuby7_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 13, 1, 0, 0, 0);
+};
+cuby7_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 14, 1, 0, 0, 0);
+};
+cuby7_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-9, 15, 1, 0, 0, 0);
+};
+cuby8_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -16, 1, 0, 0, 0);
+};
+cuby8_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -15, 1, 0, 0, 0);
+};
+cuby8_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -14, 1, 0, 0, 0);
+};
+cuby8_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -13, 1, 0, 0, 0);
+};
+cuby8_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -12, 1, 0, 0, 0);
+};
+cuby8_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -11, 1, 0, 0, 0);
+};
+cuby8_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -10, 1, 0, 0, 0);
+};
+cuby8_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -9, 0.858196, 0, 0, 0);
+};
+cuby8_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -8, 0.874471, 0, 0, 0);
+};
+cuby8_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -7, 0.853412, 0, 0, 0);
+};
+cuby8_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -6, 0.846549, 0, 0, 0);
+};
+cuby8_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -5, 0.360196, 0, 0, 0);
+};
+cuby8_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -4, 0.747804, 0, 0, 0);
+};
+cuby8_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -3, 0.849373, 0, 0, 0);
+};
+cuby8_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -2, 0.595686, 0, 0, 0);
+};
+cuby8_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, -1, 0.714392, 0, 0, 0);
+};
+cuby8_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 0, 0.716471, 0, 0, 0);
+};
+cuby8_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 1, 0.0253725, 0, 0, 0);
+};
+cuby8_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 2, 0.0788235, 0, 0, 0);
+};
+cuby8_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 3, 0.726353, 0, 0, 0);
+};
+cuby8_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 4, 0.215765, 0, 0, 0);
+};
+cuby8_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 5, 0.216627, 0, 0, 0);
+};
+cuby8_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 6, 0.329412, 0, 0, 0);
+};
+cuby8_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 7, 0.27451, 0, 0, 0);
+};
+cuby8_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 8, 0.576471, 0, 0, 0);
+};
+cuby8_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 9, 1, 0, 0, 0);
+};
+cuby8_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 10, 1, 0, 0, 0);
+};
+cuby8_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 11, 1, 0, 0, 0);
+};
+cuby8_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 12, 1, 0, 0, 0);
+};
+cuby8_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 13, 1, 0, 0, 0);
+};
+cuby8_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 14, 1, 0, 0, 0);
+};
+cuby8_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-8, 15, 1, 0, 0, 0);
+};
+cuby9_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -16, 1, 0, 0, 0);
+};
+cuby9_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -15, 1, 0, 0, 0);
+};
+cuby9_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -14, 1, 0, 0, 0);
+};
+cuby9_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -13, 1, 0, 0, 0);
+};
+cuby9_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -12, 1, 0, 0, 0);
+};
+cuby9_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -11, 1, 0, 0, 0);
+};
+cuby9_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -10, 1, 0, 0, 0);
+};
+cuby9_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -9, 0.969059, 0, 0, 0);
+};
+cuby9_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -8, 0.809373, 0, 0, 0);
+};
+cuby9_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -7, 0.911843, 0, 0, 0);
+};
+cuby9_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -6, 0.488314, 0, 0, 0);
+};
+cuby9_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -5, 0.610784, 0, 0, 0);
+};
+cuby9_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -4, 0.88949, 0, 0, 0);
+};
+cuby9_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -3, 0.543569, 0, 0, 0);
+};
+cuby9_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -2, 0.0102745, 0, 0, 0);
+};
+cuby9_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, -1, 0.689333, 0, 0, 0);
+};
+cuby9_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 0, 0.620196, 0, 0, 0);
+};
+cuby9_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 1, 0.0655294, 0, 0, 0);
+};
+cuby9_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 2, 0, 0, 0, 0);
+};
+cuby9_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 3, 0.670941, 0, 0, 0);
+};
+cuby9_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 4, 0.409922, 0, 0, 0);
+};
+cuby9_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 5, 0.207961, 0, 0, 0);
+};
+cuby9_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 6, 0.300471, 0, 0, 0);
+};
+cuby9_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 7, 0.292627, 0, 0, 0);
+};
+cuby9_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 8, 0.415373, 0, 0, 0);
+};
+cuby9_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 9, 0.631373, 0, 0, 0);
+};
+cuby9_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 10, 0.721569, 0, 0, 0);
+};
+cuby9_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 11, 0.996079, 0, 0, 0);
+};
+cuby9_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 12, 1, 0, 0, 0);
+};
+cuby9_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 13, 1, 0, 0, 0);
+};
+cuby9_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 14, 1, 0, 0, 0);
+};
+cuby9_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-7, 15, 1, 0, 0, 0);
+};
+cuby10_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -16, 1, 0, 0, 0);
+};
+cuby10_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -15, 1, 0, 0, 0);
+};
+cuby10_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -14, 1, 0, 0, 0);
+};
+cuby10_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -13, 1, 0, 0, 0);
+};
+cuby10_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -12, 1, 0, 0, 0);
+};
+cuby10_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -11, 1, 0, 0, 0);
+};
+cuby10_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -10, 1, 0, 0, 0);
+};
+cuby10_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -9, 0.965569, 0, 0, 0);
+};
+cuby10_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -8, 0.838588, 0, 0, 0);
+};
+cuby10_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -7, 0.71, 0, 0, 0);
+};
+cuby10_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -6, 0.356863, 0, 0, 0);
+};
+cuby10_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -5, 0.728118, 0, 0, 0);
+};
+cuby10_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -4, 0.848275, 0, 0, 0);
+};
+cuby10_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -3, 0.366824, 0, 0, 0);
+};
+cuby10_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -2, 0.0550196, 0, 0, 0);
+};
+cuby10_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, -1, 0, 0, 0, 0);
+};
+cuby10_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 0, 0.0908235, 0, 0, 0);
+};
+cuby10_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 1, 0.162157, 0, 0, 0);
+};
+cuby10_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 2, 0.466627, 0, 0, 0);
+};
+cuby10_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 3, 0.723529, 0, 0, 0);
+};
+cuby10_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 4, 0.717686, 0, 0, 0);
+};
+cuby10_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 5, 0.730745, 0, 0, 0);
+};
+cuby10_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 6, 0.722628, 0, 0, 0);
+};
+cuby10_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 7, 0.764039, 0, 0, 0);
+};
+cuby10_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 8, 0.335726, 0, 0, 0);
+};
+cuby10_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 9, 0.2, 0, 0, 0);
+};
+cuby10_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 10, 0.297608, 0, 0, 0);
+};
+cuby10_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 11, 0.815686, 0, 0, 0);
+};
+cuby10_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 12, 1, 0, 0, 0);
+};
+cuby10_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 13, 1, 0, 0, 0);
+};
+cuby10_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 14, 1, 0, 0, 0);
+};
+cuby10_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-6, 15, 1, 0, 0, 0);
+};
+cuby11_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -16, 1, 0, 0, 0);
+};
+cuby11_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -15, 1, 0, 0, 0);
+};
+cuby11_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -14, 1, 0, 0, 0);
+};
+cuby11_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -13, 1, 0, 0, 0);
+};
+cuby11_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -12, 1, 0, 0, 0);
+};
+cuby11_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -11, 1, 0, 0, 0);
+};
+cuby11_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -10, 1, 0, 0, 0);
+};
+cuby11_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -9, 0.824628, 0, 0, 0);
+};
+cuby11_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -8, 0.899608, 0, 0, 0);
+};
+cuby11_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -7, 0.701726, 0, 0, 0);
+};
+cuby11_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -6, 0.524118, 0, 0, 0);
+};
+cuby11_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -5, 0.679804, 0, 0, 0);
+};
+cuby11_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -4, 0.817569, 0, 0, 0);
+};
+cuby11_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -3, 0.689255, 0, 0, 0);
+};
+cuby11_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -2, 0.656628, 0, 0, 0);
+};
+cuby11_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, -1, 0.639098, 0, 0, 0);
+};
+cuby11_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 0, 0.160275, 0, 0, 0);
+};
+cuby11_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 1, 0.0873333, 0, 0, 0);
+};
+cuby11_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 2, 0.0218431, 0, 0, 0);
+};
+cuby11_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 3, 0.383216, 0, 0, 0);
+};
+cuby11_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 4, 0.727412, 0, 0, 0);
+};
+cuby11_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 5, 0.664392, 0, 0, 0);
+};
+cuby11_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 6, 0.668314, 0, 0, 0);
+};
+cuby11_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 7, 0.732941, 0, 0, 0);
+};
+cuby11_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 8, 0.296314, 0, 0, 0);
+};
+cuby11_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 9, 0.0466667, 0, 0, 0);
+};
+cuby11_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 10, 0.281922, 0, 0, 0);
+};
+cuby11_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 11, 0.705882, 0, 0, 0);
+};
+cuby11_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 12, 1, 0, 0, 0);
+};
+cuby11_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 13, 1, 0, 0, 0);
+};
+cuby11_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 14, 1, 0, 0, 0);
+};
+cuby11_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-5, 15, 1, 0, 0, 0);
+};
+cuby12_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -16, 1, 0, 0, 0);
+};
+cuby12_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -15, 1, 0, 0, 0);
+};
+cuby12_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -14, 1, 0, 0, 0);
+};
+cuby12_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -13, 1, 0, 0, 0);
+};
+cuby12_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -12, 1, 0, 0, 0);
+};
+cuby12_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -11, 0.868275, 0, 0, 0);
+};
+cuby12_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -10, 0.799137, 0, 0, 0);
+};
+cuby12_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -9, 0.851961, 0, 0, 0);
+};
+cuby12_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -8, 0.856431, 0, 0, 0);
+};
+cuby12_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -7, 0.608588, 0, 0, 0);
+};
+cuby12_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -6, 0.504314, 0, 0, 0);
+};
+cuby12_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -5, 0.752706, 0, 0, 0);
+};
+cuby12_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -4, 0.846353, 0, 0, 0);
+};
+cuby12_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -3, 0.869255, 0, 0, 0);
+};
+cuby12_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -2, 0.756941, 0, 0, 0);
+};
+cuby12_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, -1, 0.644627, 0, 0, 0);
+};
+cuby12_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 0, 0.732902, 0, 0, 0);
+};
+cuby12_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 1, 0.193765, 0, 0, 0);
+};
+cuby12_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 2, 0.00392157, 0, 0, 0);
+};
+cuby12_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 3, 0.265882, 0, 0, 0);
+};
+cuby12_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 4, 0.745765, 0, 0, 0);
+};
+cuby12_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 5, 0.675294, 0, 0, 0);
+};
+cuby12_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 6, 0.679216, 0, 0, 0);
+};
+cuby12_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 7, 0.724902, 0, 0, 0);
+};
+cuby12_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 8, 0.399333, 0, 0, 0);
+};
+cuby12_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 9, 0.166118, 0, 0, 0);
+};
+cuby12_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 10, 0.282667, 0, 0, 0);
+};
+cuby12_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 11, 0.701961, 0, 0, 0);
+};
+cuby12_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 12, 1, 0, 0, 0);
+};
+cuby12_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 13, 1, 0, 0, 0);
+};
+cuby12_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 14, 1, 0, 0, 0);
+};
+cuby12_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-4, 15, 1, 0, 0, 0);
+};
+cuby13_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -16, 1, 0, 0, 0);
+};
+cuby13_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -15, 1, 0, 0, 0);
+};
+cuby13_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -14, 1, 0, 0, 0);
+};
+cuby13_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -13, 1, 0, 0, 0);
+};
+cuby13_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -12, 0.857569, 0, 0, 0);
+};
+cuby13_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -11, 0.866941, 0, 0, 0);
+};
+cuby13_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -10, 0.909216, 0, 0, 0);
+};
+cuby13_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -9, 0.914706, 0, 0, 0);
+};
+cuby13_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -8, 0.627569, 0, 0, 0);
+};
+cuby13_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -7, 0.451843, 0, 0, 0);
+};
+cuby13_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -6, 0.834392, 0, 0, 0);
+};
+cuby13_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -5, 0.853216, 0, 0, 0);
+};
+cuby13_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -4, 0.66051, 0, 0, 0);
+};
+cuby13_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -3, 0.342667, 0, 0, 0);
+};
+cuby13_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -2, 0.656471, 0, 0, 0);
+};
+cuby13_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, -1, 0.727608, 0, 0, 0);
+};
+cuby13_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 0, 0.798275, 0, 0, 0);
+};
+cuby13_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 1, 0.152431, 0, 0, 0);
+};
+cuby13_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 2, 0.00392157, 0, 0, 0);
+};
+cuby13_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 3, 0.338392, 0, 0, 0);
+};
+cuby13_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 4, 0.746118, 0, 0, 0);
+};
+cuby13_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 5, 0.722824, 0, 0, 0);
+};
+cuby13_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 6, 0.717569, 0, 0, 0);
+};
+cuby13_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 7, 0.755255, 0, 0, 0);
+};
+cuby13_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 8, 0.263765, 0, 0, 0);
+};
+cuby13_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 9, 0.0446667, 0, 0, 0);
+};
+cuby13_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 10, 0.266667, 0, 0, 0);
+};
+cuby13_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 11, 0.690196, 0, 0, 0);
+};
+cuby13_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 12, 1, 0, 0, 0);
+};
+cuby13_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 13, 1, 0, 0, 0);
+};
+cuby13_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 14, 1, 0, 0, 0);
+};
+cuby13_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-3, 15, 1, 0, 0, 0);
+};
+cuby14_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -16, 1, 0, 0, 0);
+};
+cuby14_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -15, 1, 0, 0, 0);
+};
+cuby14_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -14, 1, 0, 0, 0);
+};
+cuby14_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -13, 1, 0, 0, 0);
+};
+cuby14_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -12, 0.883647, 0, 0, 0);
+};
+cuby14_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -11, 0.922824, 0, 0, 0);
+};
+cuby14_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -10, 0.891294, 0, 0, 0);
+};
+cuby14_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -9, 0.889373, 0, 0, 0);
+};
+cuby14_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -8, 0.568314, 0, 0, 0);
+};
+cuby14_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -7, 0.558667, 0, 0, 0);
+};
+cuby14_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -6, 0.883529, 0, 0, 0);
+};
+cuby14_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -5, 0.877765, 0, 0, 0);
+};
+cuby14_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -4, 0.424588, 0, 0, 0);
+};
+cuby14_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -3, 0.169922, 0, 0, 0);
+};
+cuby14_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -2, 0.629647, 0, 0, 0);
+};
+cuby14_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, -1, 0.517765, 0, 0, 0);
+};
+cuby14_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 0, 0.386275, 0, 0, 0);
+};
+cuby14_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 1, 0.00627451, 0, 0, 0);
+};
+cuby14_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 2, 0, 0, 0, 0);
+};
+cuby14_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 3, 0.533726, 0, 0, 0);
+};
+cuby14_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 4, 0.713333, 0, 0, 0);
+};
+cuby14_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 5, 0.446078, 0, 0, 0);
+};
+cuby14_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 6, 0.33851, 0, 0, 0);
+};
+cuby14_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 7, 0.0872157, 0, 0, 0);
+};
+cuby14_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 8, 0.0708235, 0, 0, 0);
+};
+cuby14_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 9, 0.239216, 0, 0, 0);
+};
+cuby14_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 10, 0.301961, 0, 0, 0);
+};
+cuby14_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 11, 0.776471, 0, 0, 0);
+};
+cuby14_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 12, 1, 0, 0, 0);
+};
+cuby14_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 13, 1, 0, 0, 0);
+};
+cuby14_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 14, 1, 0, 0, 0);
+};
+cuby14_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-2, 15, 1, 0, 0, 0);
+};
+cuby15_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -16, 1, 0, 0, 0);
+};
+cuby15_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -15, 1, 0, 0, 0);
+};
+cuby15_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -14, 1, 0, 0, 0);
+};
+cuby15_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -13, 1, 0, 0, 0);
+};
+cuby15_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -12, 0.859647, 0, 0, 0);
+};
+cuby15_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -11, 0.988353, 0, 0, 0);
+};
+cuby15_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -10, 0.927255, 0, 0, 0);
+};
+cuby15_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -9, 0.87298, 0, 0, 0);
+};
+cuby15_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -8, 0.55898, 0, 0, 0);
+};
+cuby15_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -7, 0.51149, 0, 0, 0);
+};
+cuby15_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -6, 0.537059, 0, 0, 0);
+};
+cuby15_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -5, 0.469333, 0, 0, 0);
+};
+cuby15_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -4, 0.628902, 0, 0, 0);
+};
+cuby15_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -3, 0.719177, 0, 0, 0);
+};
+cuby15_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -2, 0.272941, 0, 0, 0);
+};
+cuby15_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, -1, 0.110588, 0, 0, 0);
+};
+cuby15_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 0, 0.210941, 0, 0, 0);
+};
+cuby15_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 1, 0.389059, 0, 0, 0);
+};
+cuby15_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 2, 0.541922, 0, 0, 0);
+};
+cuby15_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 3, 0.766627, 0, 0, 0);
+};
+cuby15_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 4, 0.263451, 0, 0, 0);
+};
+cuby15_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 5, 0.0134118, 0, 0, 0);
+};
+cuby15_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 6, 0.0545882, 0, 0, 0);
+};
+cuby15_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 7, 0.163765, 0, 0, 0);
+};
+cuby15_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 8, 0.194902, 0, 0, 0);
+};
+cuby15_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 9, 0.364275, 0, 0, 0);
+};
+cuby15_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 10, 0.772549, 0, 0, 0);
+};
+cuby15_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 11, 1, 0, 0, 0);
+};
+cuby15_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 12, 1, 0, 0, 0);
+};
+cuby15_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 13, 1, 0, 0, 0);
+};
+cuby15_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 14, 1, 0, 0, 0);
+};
+cuby15_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(-1, 15, 1, 0, 0, 0);
+};
+cuby16_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -16, 1, 0, 0, 0);
+};
+cuby16_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -15, 1, 0, 0, 0);
+};
+cuby16_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -14, 1, 0, 0, 0);
+};
+cuby16_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -13, 1, 0, 0, 0);
+};
+cuby16_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -12, 0.714039, 0, 0, 0);
+};
+cuby16_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -11, 0.603529, 0, 0, 0);
+};
+cuby16_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -10, 0.756392, 0, 0, 0);
+};
+cuby16_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -9, 0.902784, 0, 0, 0);
+};
+cuby16_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -8, 0.836157, 0, 0, 0);
+};
+cuby16_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -7, 0.775843, 0, 0, 0);
+};
+cuby16_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -6, 0.720627, 0, 0, 0);
+};
+cuby16_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -5, 0.668902, 0, 0, 0);
+};
+cuby16_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -4, 0.57898, 0, 0, 0);
+};
+cuby16_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -3, 0.511804, 0, 0, 0);
+};
+cuby16_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -2, 0.334078, 0, 0, 0);
+};
+cuby16_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, -1, 0.142157, 0, 0, 0);
+};
+cuby16_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 0, 0.162588, 0, 0, 0);
+};
+cuby16_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 1, 0.116588, 0, 0, 0);
+};
+cuby16_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 2, 0.0916471, 0, 0, 0);
+};
+cuby16_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 3, 0.688863, 0, 0, 0);
+};
+cuby16_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 4, 0.100118, 0, 0, 0);
+};
+cuby16_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 5, 0.0538431, 0, 0, 0);
+};
+cuby16_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 6, 0.270588, 0, 0, 0);
+};
+cuby16_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 7, 0.286275, 0, 0, 0);
+};
+cuby16_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 8, 0.411765, 0, 0, 0);
+};
+cuby16_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 9, 0.905882, 0, 0, 0);
+};
+cuby16_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 10, 1, 0, 0, 0);
+};
+cuby16_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 11, 1, 0, 0, 0);
+};
+cuby16_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 12, 1, 0, 0, 0);
+};
+cuby16_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 13, 1, 0, 0, 0);
+};
+cuby16_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 14, 1, 0, 0, 0);
+};
+cuby16_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(0, 15, 1, 0, 0, 0);
+};
+cuby17_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -16, 1, 0, 0, 0);
+};
+cuby17_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -15, 1, 0, 0, 0);
+};
+cuby17_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -14, 1, 0, 0, 0);
+};
+cuby17_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -13, 1, 0, 0, 0);
+};
+cuby17_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -12, 1, 0, 0, 0);
+};
+cuby17_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -11, 0.94902, 0, 0, 0);
+};
+cuby17_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -10, 0.548314, 0, 0, 0);
+};
+cuby17_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -9, 0.922392, 0, 0, 0);
+};
+cuby17_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -8, 0.571843, 0, 0, 0);
+};
+cuby17_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -7, 0.493176, 0, 0, 0);
+};
+cuby17_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -6, 0.543608, 0, 0, 0);
+};
+cuby17_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -5, 0.525098, 0, 0, 0);
+};
+cuby17_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -4, 0.52051, 0, 0, 0);
+};
+cuby17_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -3, 0.570275, 0, 0, 0);
+};
+cuby17_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -2, 0.500824, 0, 0, 0);
+};
+cuby17_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, -1, 0.484667, 0, 0, 0);
+};
+cuby17_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 0, 0.263176, 0, 0, 0);
+};
+cuby17_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 1, 0.00392157, 0, 0, 0);
+};
+cuby17_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 2, 0.34298, 0, 0, 0);
+};
+cuby17_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 3, 0.532275, 0, 0, 0);
+};
+cuby17_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 4, 0.00301961, 0, 0, 0);
+};
+cuby17_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 5, 0.114471, 0, 0, 0);
+};
+cuby17_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 6, 0.301961, 0, 0, 0);
+};
+cuby17_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 7, 0.25098, 0, 0, 0);
+};
+cuby17_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 8, 0.623529, 0, 0, 0);
+};
+cuby17_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 9, 1, 0, 0, 0);
+};
+cuby17_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 10, 1, 0, 0, 0);
+};
+cuby17_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 11, 1, 0, 0, 0);
+};
+cuby17_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 12, 1, 0, 0, 0);
+};
+cuby17_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 13, 1, 0, 0, 0);
+};
+cuby17_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 14, 1, 0, 0, 0);
+};
+cuby17_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(1, 15, 1, 0, 0, 0);
+};
+cuby18_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -16, 1, 0, 0, 0);
+};
+cuby18_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -15, 1, 0, 0, 0);
+};
+cuby18_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -14, 1, 0, 0, 0);
+};
+cuby18_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -13, 1, 0, 0, 0);
+};
+cuby18_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -12, 0.992157, 0, 0, 0);
+};
+cuby18_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -11, 1, 0, 0, 0);
+};
+cuby18_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -10, 0.930275, 0, 0, 0);
+};
+cuby18_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -9, 0.881216, 0, 0, 0);
+};
+cuby18_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -8, 0.649412, 0, 0, 0);
+};
+cuby18_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -7, 0.502941, 0, 0, 0);
+};
+cuby18_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -6, 0.887412, 0, 0, 0);
+};
+cuby18_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -5, 0.865333, 0, 0, 0);
+};
+cuby18_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -4, 0.849882, 0, 0, 0);
+};
+cuby18_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -3, 0.840157, 0, 0, 0);
+};
+cuby18_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -2, 0.753059, 0, 0, 0);
+};
+cuby18_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, -1, 0.794824, 0, 0, 0);
+};
+cuby18_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 0, 0.198824, 0, 0, 0);
+};
+cuby18_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 1, 0.00392157, 0, 0, 0);
+};
+cuby18_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 2, 0.634157, 0, 0, 0);
+};
+cuby18_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 3, 0.578196, 0, 0, 0);
+};
+cuby18_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 4, 0.173216, 0, 0, 0);
+};
+cuby18_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 5, 0.263922, 0, 0, 0);
+};
+cuby18_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 6, 0.286275, 0, 0, 0);
+};
+cuby18_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 7, 0.278431, 0, 0, 0);
+};
+cuby18_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 8, 0.745098, 0, 0, 0);
+};
+cuby18_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 9, 1, 0, 0, 0);
+};
+cuby18_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 10, 1, 0, 0, 0);
+};
+cuby18_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 11, 1, 0, 0, 0);
+};
+cuby18_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 12, 1, 0, 0, 0);
+};
+cuby18_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 13, 1, 0, 0, 0);
+};
+cuby18_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 14, 1, 0, 0, 0);
+};
+cuby18_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(2, 15, 1, 0, 0, 0);
+};
+cuby19_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -16, 1, 0, 0, 0);
+};
+cuby19_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -15, 1, 0, 0, 0);
+};
+cuby19_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -14, 1, 0, 0, 0);
+};
+cuby19_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -13, 1, 0, 0, 0);
+};
+cuby19_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -12, 1, 0, 0, 0);
+};
+cuby19_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -11, 1, 0, 0, 0);
+};
+cuby19_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -10, 0.835726, 0, 0, 0);
+};
+cuby19_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -9, 0.894471, 0, 0, 0);
+};
+cuby19_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -8, 0.793294, 0, 0, 0);
+};
+cuby19_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -7, 0.409765, 0, 0, 0);
+};
+cuby19_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -6, 0.797412, 0, 0, 0);
+};
+cuby19_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -5, 0.860667, 0, 0, 0);
+};
+cuby19_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -4, 0.812078, 0, 0, 0);
+};
+cuby19_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -3, 0.81251, 0, 0, 0);
+};
+cuby19_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -2, 0.802706, 0, 0, 0);
+};
+cuby19_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, -1, 0.560745, 0, 0, 0);
+};
+cuby19_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 0, 0.00392157, 0, 0, 0);
+};
+cuby19_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 1, 0.260824, 0, 0, 0);
+};
+cuby19_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 2, 0.75549, 0, 0, 0);
+};
+cuby19_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 3, 0.733529, 0, 0, 0);
+};
+cuby19_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 4, 0.221686, 0, 0, 0);
+};
+cuby19_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 5, 0.196196, 0, 0, 0);
+};
+cuby19_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 6, 0.290196, 0, 0, 0);
+};
+cuby19_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 7, 0.282353, 0, 0, 0);
+};
+cuby19_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 8, 0.764706, 0, 0, 0);
+};
+cuby19_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 9, 1, 0, 0, 0);
+};
+cuby19_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 10, 1, 0, 0, 0);
+};
+cuby19_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 11, 1, 0, 0, 0);
+};
+cuby19_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 12, 1, 0, 0, 0);
+};
+cuby19_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 13, 1, 0, 0, 0);
+};
+cuby19_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 14, 1, 0, 0, 0);
+};
+cuby19_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(3, 15, 1, 0, 0, 0);
+};
+cuby20_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -16, 1, 0, 0, 0);
+};
+cuby20_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -15, 1, 0, 0, 0);
+};
+cuby20_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -14, 1, 0, 0, 0);
+};
+cuby20_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -13, 1, 0, 0, 0);
+};
+cuby20_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -12, 1, 0, 0, 0);
+};
+cuby20_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -11, 0.930275, 0, 0, 0);
+};
+cuby20_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -10, 0.854549, 0, 0, 0);
+};
+cuby20_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -9, 0.889882, 0, 0, 0);
+};
+cuby20_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -8, 0.895765, 0, 0, 0);
+};
+cuby20_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -7, 0.613216, 0, 0, 0);
+};
+cuby20_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -6, 0.420471, 0, 0, 0);
+};
+cuby20_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -5, 0.715255, 0, 0, 0);
+};
+cuby20_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -4, 0.749333, 0, 0, 0);
+};
+cuby20_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -3, 0.752784, 0, 0, 0);
+};
+cuby20_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -2, 0.411569, 0, 0, 0);
+};
+cuby20_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, -1, 0.00392157, 0, 0, 0);
+};
+cuby20_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 0, 0.224157, 0, 0, 0);
+};
+cuby20_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 1, 0.723529, 0, 0, 0);
+};
+cuby20_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 2, 0.678784, 0, 0, 0);
+};
+cuby20_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 3, 0.690392, 0, 0, 0);
+};
+cuby20_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 4, 0.612745, 0, 0, 0);
+};
+cuby20_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 5, 0.150627, 0, 0, 0);
+};
+cuby20_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 6, 0.334392, 0, 0, 0);
+};
+cuby20_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 7, 0.258824, 0, 0, 0);
+};
+cuby20_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 8, 0.572549, 0, 0, 0);
+};
+cuby20_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 9, 1, 0, 0, 0);
+};
+cuby20_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 10, 1, 0, 0, 0);
+};
+cuby20_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 11, 1, 0, 0, 0);
+};
+cuby20_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 12, 1, 0, 0, 0);
+};
+cuby20_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 13, 1, 0, 0, 0);
+};
+cuby20_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 14, 1, 0, 0, 0);
+};
+cuby20_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(4, 15, 1, 0, 0, 0);
+};
+cuby21_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -16, 1, 0, 0, 0);
+};
+cuby21_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -15, 1, 0, 0, 0);
+};
+cuby21_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -14, 1, 0, 0, 0);
+};
+cuby21_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -13, 1, 0, 0, 0);
+};
+cuby21_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -12, 1, 0, 0, 0);
+};
+cuby21_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -11, 0.816314, 0, 0, 0);
+};
+cuby21_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -10, 0.923726, 0, 0, 0);
+};
+cuby21_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -9, 0.868, 0, 0, 0);
+};
+cuby21_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -8, 0.909647, 0, 0, 0);
+};
+cuby21_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -7, 0.896235, 0, 0, 0);
+};
+cuby21_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -6, 0.714745, 0, 0, 0);
+};
+cuby21_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -5, 0.460745, 0, 0, 0);
+};
+cuby21_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -4, 0.41251, 0, 0, 0);
+};
+cuby21_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -3, 0.394588, 0, 0, 0);
+};
+cuby21_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -2, 0.219333, 0, 0, 0);
+};
+cuby21_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, -1, 0.529961, 0, 0, 0);
+};
+cuby21_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 0, 0.792353, 0, 0, 0);
+};
+cuby21_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 1, 0.67298, 0, 0, 0);
+};
+cuby21_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 2, 0.677608, 0, 0, 0);
+};
+cuby21_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 3, 0.670196, 0, 0, 0);
+};
+cuby21_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 4, 0.743725, 0, 0, 0);
+};
+cuby21_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 5, 0.316392, 0, 0, 0);
+};
+cuby21_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 6, 0.140275, 0, 0, 0);
+};
+cuby21_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 7, 0.290196, 0, 0, 0);
+};
+cuby21_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 8, 0.356863, 0, 0, 0);
+};
+cuby21_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 9, 0.917647, 0, 0, 0);
+};
+cuby21_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 10, 1, 0, 0, 0);
+};
+cuby21_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 11, 1, 0, 0, 0);
+};
+cuby21_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 12, 1, 0, 0, 0);
+};
+cuby21_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 13, 1, 0, 0, 0);
+};
+cuby21_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 14, 1, 0, 0, 0);
+};
+cuby21_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(5, 15, 1, 0, 0, 0);
+};
+cuby22_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -16, 1, 0, 0, 0);
+};
+cuby22_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -15, 1, 0, 0, 0);
+};
+cuby22_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -14, 1, 0, 0, 0);
+};
+cuby22_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -13, 1, 0, 0, 0);
+};
+cuby22_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -12, 0.876745, 0, 0, 0);
+};
+cuby22_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -11, 0.90451, 0, 0, 0);
+};
+cuby22_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -10, 0.881882, 0, 0, 0);
+};
+cuby22_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -9, 0.93102, 0, 0, 0);
+};
+cuby22_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -8, 0.69302, 0, 0, 0);
+};
+cuby22_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -7, 0.860627, 0, 0, 0);
+};
+cuby22_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -6, 0.894941, 0, 0, 0);
+};
+cuby22_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -5, 0.851647, 0, 0, 0);
+};
+cuby22_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -4, 0.83349, 0, 0, 0);
+};
+cuby22_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -3, 0.830745, 0, 0, 0);
+};
+cuby22_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -2, 0.80651, 0, 0, 0);
+};
+cuby22_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, -1, 0.572118, 0, 0, 0);
+};
+cuby22_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 0, 0.449686, 0, 0, 0);
+};
+cuby22_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 1, 0.731647, 0, 0, 0);
+};
+cuby22_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 2, 0.675294, 0, 0, 0);
+};
+cuby22_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 3, 0.671373, 0, 0, 0);
+};
+cuby22_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 4, 0.738745, 0, 0, 0);
+};
+cuby22_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 5, 0.49302, 0, 0, 0);
+};
+cuby22_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 6, 0.176588, 0, 0, 0);
+};
+cuby22_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 7, 0.317647, 0, 0, 0);
+};
+cuby22_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 8, 0.254902, 0, 0, 0);
+};
+cuby22_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 9, 0.698039, 0, 0, 0);
+};
+cuby22_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 10, 1, 0, 0, 0);
+};
+cuby22_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 11, 1, 0, 0, 0);
+};
+cuby22_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 12, 1, 0, 0, 0);
+};
+cuby22_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 13, 1, 0, 0, 0);
+};
+cuby22_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 14, 1, 0, 0, 0);
+};
+cuby22_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(6, 15, 1, 0, 0, 0);
+};
+cuby23_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -16, 1, 0, 0, 0);
+};
+cuby23_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -15, 1, 0, 0, 0);
+};
+cuby23_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -14, 1, 0, 0, 0);
+};
+cuby23_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -13, 1, 0, 0, 0);
+};
+cuby23_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -12, 0.941177, 0, 0, 0);
+};
+cuby23_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -11, 0.859529, 0, 0, 0);
+};
+cuby23_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -10, 0.976235, 0, 0, 0);
+};
+cuby23_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -9, 0.758196, 0, 0, 0);
+};
+cuby23_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -8, 0.00392157, 0, 0, 0);
+};
+cuby23_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -7, 0.112471, 0, 0, 0);
+};
+cuby23_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -6, 0.751294, 0, 0, 0);
+};
+cuby23_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -5, 0.846, 0, 0, 0);
+};
+cuby23_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -4, 0.802353, 0, 0, 0);
+};
+cuby23_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -3, 0.851333, 0, 0, 0);
+};
+cuby23_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -2, 0.399373, 0, 0, 0);
+};
+cuby23_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, -1, 0.00690196, 0, 0, 0);
+};
+cuby23_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 0, 0.00866667, 0, 0, 0);
+};
+cuby23_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 1, 0.519843, 0, 0, 0);
+};
+cuby23_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 2, 0.730941, 0, 0, 0);
+};
+cuby23_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 3, 0.692863, 0, 0, 0);
+};
+cuby23_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 4, 0.644667, 0, 0, 0);
+};
+cuby23_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 5, 0.0178431, 0, 0, 0);
+};
+cuby23_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 6, 0.0580784, 0, 0, 0);
+};
+cuby23_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 7, 0.301961, 0, 0, 0);
+};
+cuby23_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 8, 0.254902, 0, 0, 0);
+};
+cuby23_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 9, 0.611765, 0, 0, 0);
+};
+cuby23_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 10, 1, 0, 0, 0);
+};
+cuby23_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 11, 1, 0, 0, 0);
+};
+cuby23_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 12, 1, 0, 0, 0);
+};
+cuby23_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 13, 1, 0, 0, 0);
+};
+cuby23_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 14, 1, 0, 0, 0);
+};
+cuby23_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(7, 15, 1, 0, 0, 0);
+};
+cuby24_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -16, 1, 0, 0, 0);
+};
+cuby24_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -15, 1, 0, 0, 0);
+};
+cuby24_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -14, 1, 0, 0, 0);
+};
+cuby24_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -13, 1, 0, 0, 0);
+};
+cuby24_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -12, 1, 0, 0, 0);
+};
+cuby24_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -11, 0.850353, 0, 0, 0);
+};
+cuby24_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -10, 0.771216, 0, 0, 0);
+};
+cuby24_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -9, 0.0235294, 0, 0, 0);
+};
+cuby24_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -8, 0.132157, 0, 0, 0);
+};
+cuby24_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -7, 0.340275, 0, 0, 0);
+};
+cuby24_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -6, 0.758353, 0, 0, 0);
+};
+cuby24_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -5, 0.850628, 0, 0, 0);
+};
+cuby24_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -4, 0.830078, 0, 0, 0);
+};
+cuby24_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -3, 0.77702, 0, 0, 0);
+};
+cuby24_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -2, 0.0418039, 0, 0, 0);
+};
+cuby24_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, -1, 0.128235, 0, 0, 0);
+};
+cuby24_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 0, 0.254902, 0, 0, 0);
+};
+cuby24_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 1, 0.267529, 0, 0, 0);
+};
+cuby24_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 2, 0.630941, 0, 0, 0);
+};
+cuby24_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 3, 0.76851, 0, 0, 0);
+};
+cuby24_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 4, 0.141137, 0, 0, 0);
+};
+cuby24_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 5, 0.119137, 0, 0, 0);
+};
+cuby24_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 6, 0.25098, 0, 0, 0);
+};
+cuby24_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 7, 0.294118, 0, 0, 0);
+};
+cuby24_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 8, 0.309804, 0, 0, 0);
+};
+cuby24_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 9, 0.847059, 0, 0, 0);
+};
+cuby24_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 10, 1, 0, 0, 0);
+};
+cuby24_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 11, 1, 0, 0, 0);
+};
+cuby24_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 12, 1, 0, 0, 0);
+};
+cuby24_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 13, 1, 0, 0, 0);
+};
+cuby24_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 14, 1, 0, 0, 0);
+};
+cuby24_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(8, 15, 1, 0, 0, 0);
+};
+cuby25_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -16, 1, 0, 0, 0);
+};
+cuby25_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -15, 1, 0, 0, 0);
+};
+cuby25_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -14, 1, 0, 0, 0);
+};
+cuby25_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -13, 1, 0, 0, 0);
+};
+cuby25_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -12, 1, 0, 0, 0);
+};
+cuby25_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -11, 0.985059, 0, 0, 0);
+};
+cuby25_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -10, 0.294431, 0, 0, 0);
+};
+cuby25_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -9, 0.0788627, 0, 0, 0);
+};
+cuby25_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -8, 0.266667, 0, 0, 0);
+};
+cuby25_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -7, 1, 0, 0, 0);
+};
+cuby25_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -6, 0.771922, 0, 0, 0);
+};
+cuby25_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -5, 0.831451, 0, 0, 0);
+};
+cuby25_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -4, 0.859843, 0, 0, 0);
+};
+cuby25_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -3, 0.627412, 0, 0, 0);
+};
+cuby25_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -2, 0, 0, 0, 0);
+};
+cuby25_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, -1, 0.0745098, 0, 0, 0);
+};
+cuby25_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 0, 0.298039, 0, 0, 0);
+};
+cuby25_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 1, 0.290196, 0, 0, 0);
+};
+cuby25_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 2, 0.303451, 0, 0, 0);
+};
+cuby25_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 3, 0.266902, 0, 0, 0);
+};
+cuby25_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 4, 0.0568235, 0, 0, 0);
+};
+cuby25_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 5, 0.176471, 0, 0, 0);
+};
+cuby25_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 6, 0.329412, 0, 0, 0);
+};
+cuby25_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 7, 0.195647, 0, 0, 0);
+};
+cuby25_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 8, 0.498039, 0, 0, 0);
+};
+cuby25_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 9, 1, 0, 0, 0);
+};
+cuby25_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 10, 1, 0, 0, 0);
+};
+cuby25_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 11, 1, 0, 0, 0);
+};
+cuby25_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 12, 1, 0, 0, 0);
+};
+cuby25_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 13, 1, 0, 0, 0);
+};
+cuby25_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 14, 1, 0, 0, 0);
+};
+cuby25_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(9, 15, 1, 0, 0, 0);
+};
+cuby26_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -16, 1, 0, 0, 0);
+};
+cuby26_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -15, 1, 0, 0, 0);
+};
+cuby26_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -14, 1, 0, 0, 0);
+};
+cuby26_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -13, 1, 0, 0, 0);
+};
+cuby26_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -12, 1, 0, 0, 0);
+};
+cuby26_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -11, 1, 0, 0, 0);
+};
+cuby26_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -10, 1, 0, 0, 0);
+};
+cuby26_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -9, 0.898039, 0, 0, 0);
+};
+cuby26_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -8, 1, 0, 0, 0);
+};
+cuby26_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -7, 0.98251, 0, 0, 0);
+};
+cuby26_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -6, 0.760039, 0, 0, 0);
+};
+cuby26_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -5, 0.830314, 0, 0, 0);
+};
+cuby26_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -4, 0.861726, 0, 0, 0);
+};
+cuby26_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -3, 0.55302, 0, 0, 0);
+};
+cuby26_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -2, 0.0649804, 0, 0, 0);
+};
+cuby26_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, -1, 0.267412, 0, 0, 0);
+};
+cuby26_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 0, 0.290196, 0, 0, 0);
+};
+cuby26_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 1, 0.282353, 0, 0, 0);
+};
+cuby26_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 2, 0.294118, 0, 0, 0);
+};
+cuby26_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 3, 0.278431, 0, 0, 0);
+};
+cuby26_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 4, 0.32898, 0, 0, 0);
+};
+cuby26_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 5, 0.980039, 0, 0, 0);
+};
+cuby26_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 6, 0.744863, 0, 0, 0);
+};
+cuby26_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 7, 0.592039, 0, 0, 0);
+};
+cuby26_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 8, 0.85098, 0, 0, 0);
+};
+cuby26_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 9, 1, 0, 0, 0);
+};
+cuby26_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 10, 1, 0, 0, 0);
+};
+cuby26_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 11, 1, 0, 0, 0);
+};
+cuby26_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 12, 1, 0, 0, 0);
+};
+cuby26_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 13, 1, 0, 0, 0);
+};
+cuby26_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 14, 1, 0, 0, 0);
+};
+cuby26_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(10, 15, 1, 0, 0, 0);
+};
+cuby27_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -16, 1, 0, 0, 0);
+};
+cuby27_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -15, 1, 0, 0, 0);
+};
+cuby27_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -14, 1, 0, 0, 0);
+};
+cuby27_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -13, 1, 0, 0, 0);
+};
+cuby27_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -12, 1, 0, 0, 0);
+};
+cuby27_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -11, 1, 0, 0, 0);
+};
+cuby27_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -10, 0.988235, 0, 0, 0);
+};
+cuby27_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -9, 1, 0, 0, 0);
+};
+cuby27_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -8, 1, 0, 0, 0);
+};
+cuby27_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -7, 0.954628, 0, 0, 0);
+};
+cuby27_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -6, 0.808157, 0, 0, 0);
+};
+cuby27_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -5, 0.835412, 0, 0, 0);
+};
+cuby27_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -4, 0.877333, 0, 0, 0);
+};
+cuby27_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -3, 0.424824, 0, 0, 0);
+};
+cuby27_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -2, 0.000862745, 0, 0, 0);
+};
+cuby27_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, -1, 0.313726, 0, 0, 0);
+};
+cuby27_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 0, 0.447059, 0, 0, 0);
+};
+cuby27_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 1, 0.266667, 0, 0, 0);
+};
+cuby27_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 2, 0.27451, 0, 0, 0);
+};
+cuby27_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 3, 0.282667, 0, 0, 0);
+};
+cuby27_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 4, 0.862627, 0, 0, 0);
+};
+cuby27_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 5, 1, 0, 0, 0);
+};
+cuby27_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 6, 1, 0, 0, 0);
+};
+cuby27_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 7, 1, 0, 0, 0);
+};
+cuby27_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 8, 1, 0, 0, 0);
+};
+cuby27_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 9, 1, 0, 0, 0);
+};
+cuby27_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 10, 1, 0, 0, 0);
+};
+cuby27_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 11, 1, 0, 0, 0);
+};
+cuby27_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 12, 1, 0, 0, 0);
+};
+cuby27_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 13, 1, 0, 0, 0);
+};
+cuby27_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 14, 1, 0, 0, 0);
+};
+cuby27_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(11, 15, 1, 0, 0, 0);
+};
+cuby28_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -16, 1, 0, 0, 0);
+};
+cuby28_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -15, 1, 0, 0, 0);
+};
+cuby28_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -14, 1, 0, 0, 0);
+};
+cuby28_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -13, 1, 0, 0, 0);
+};
+cuby28_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -12, 1, 0, 0, 0);
+};
+cuby28_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -11, 1, 0, 0, 0);
+};
+cuby28_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -10, 1, 0, 0, 0);
+};
+cuby28_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -9, 1, 0, 0, 0);
+};
+cuby28_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -8, 1, 0, 0, 0);
+};
+cuby28_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -7, 0.930706, 0, 0, 0);
+};
+cuby28_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -6, 0.774784, 0, 0, 0);
+};
+cuby28_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -5, 0.846392, 0, 0, 0);
+};
+cuby28_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -4, 0.910863, 0, 0, 0);
+};
+cuby28_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -3, 0.173529, 0, 0, 0);
+};
+cuby28_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -2, 0.0374118, 0, 0, 0);
+};
+cuby28_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, -1, 0.721569, 0, 0, 0);
+};
+cuby28_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 0, 0.580392, 0, 0, 0);
+};
+cuby28_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 1, 0.254902, 0, 0, 0);
+};
+cuby28_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 2, 0.27451, 0, 0, 0);
+};
+cuby28_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 3, 0.289765, 0, 0, 0);
+};
+cuby28_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 4, 0.865804, 0, 0, 0);
+};
+cuby28_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 5, 1, 0, 0, 0);
+};
+cuby28_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 6, 1, 0, 0, 0);
+};
+cuby28_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 7, 1, 0, 0, 0);
+};
+cuby28_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 8, 1, 0, 0, 0);
+};
+cuby28_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 9, 1, 0, 0, 0);
+};
+cuby28_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 10, 1, 0, 0, 0);
+};
+cuby28_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 11, 1, 0, 0, 0);
+};
+cuby28_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 12, 1, 0, 0, 0);
+};
+cuby28_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 13, 1, 0, 0, 0);
+};
+cuby28_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 14, 1, 0, 0, 0);
+};
+cuby28_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(12, 15, 1, 0, 0, 0);
+};
+cuby29_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -16, 1, 0, 0, 0);
+};
+cuby29_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -15, 1, 0, 0, 0);
+};
+cuby29_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -14, 1, 0, 0, 0);
+};
+cuby29_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -13, 1, 0, 0, 0);
+};
+cuby29_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -12, 1, 0, 0, 0);
+};
+cuby29_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -11, 1, 0, 0, 0);
+};
+cuby29_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -10, 1, 0, 0, 0);
+};
+cuby29_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -9, 1, 0, 0, 0);
+};
+cuby29_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -8, 1, 0, 0, 0);
+};
+cuby29_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -7, 0.992157, 0, 0, 0);
+};
+cuby29_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -6, 0.87251, 0, 0, 0);
+};
+cuby29_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -5, 0.439451, 0, 0, 0);
+};
+cuby29_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -4, 0.335765, 0, 0, 0);
+};
+cuby29_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -3, 0.146706, 0, 0, 0);
+};
+cuby29_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -2, 0.196078, 0, 0, 0);
+};
+cuby29_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, -1, 0.972549, 0, 0, 0);
+};
+cuby29_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 0, 0.533333, 0, 0, 0);
+};
+cuby29_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 1, 0.262745, 0, 0, 0);
+};
+cuby29_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 2, 0.278431, 0, 0, 0);
+};
+cuby29_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 3, 0.340314, 0, 0, 0);
+};
+cuby29_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 4, 0.92102, 0, 0, 0);
+};
+cuby29_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 5, 1, 0, 0, 0);
+};
+cuby29_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 6, 1, 0, 0, 0);
+};
+cuby29_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 7, 1, 0, 0, 0);
+};
+cuby29_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 8, 1, 0, 0, 0);
+};
+cuby29_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 9, 1, 0, 0, 0);
+};
+cuby29_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 10, 1, 0, 0, 0);
+};
+cuby29_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 11, 1, 0, 0, 0);
+};
+cuby29_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 12, 1, 0, 0, 0);
+};
+cuby29_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 13, 1, 0, 0, 0);
+};
+cuby29_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 14, 1, 0, 0, 0);
+};
+cuby29_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(13, 15, 1, 0, 0, 0);
+};
+cuby30_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -16, 1, 0, 0, 0);
+};
+cuby30_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -15, 1, 0, 0, 0);
+};
+cuby30_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -14, 1, 0, 0, 0);
+};
+cuby30_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -13, 1, 0, 0, 0);
+};
+cuby30_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -12, 1, 0, 0, 0);
+};
+cuby30_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -11, 1, 0, 0, 0);
+};
+cuby30_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -10, 1, 0, 0, 0);
+};
+cuby30_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -9, 1, 0, 0, 0);
+};
+cuby30_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -8, 1, 0, 0, 0);
+};
+cuby30_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -7, 1, 0, 0, 0);
+};
+cuby30_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -6, 1, 0, 0, 0);
+};
+cuby30_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -5, 1, 0, 0, 0);
+};
+cuby30_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -4, 0.913098, 0, 0, 0);
+};
+cuby30_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -3, 0.885098, 0, 0, 0);
+};
+cuby30_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -2, 0.870588, 0, 0, 0);
+};
+cuby30_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, -1, 1, 0, 0, 0);
+};
+cuby30_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 0, 0.513726, 0, 0, 0);
+};
+cuby30_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 1, 0.227451, 0, 0, 0);
+};
+cuby30_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 2, 0.235294, 0, 0, 0);
+};
+cuby30_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 3, 0.360784, 0, 0, 0);
+};
+cuby30_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 4, 0.941177, 0, 0, 0);
+};
+cuby30_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 5, 1, 0, 0, 0);
+};
+cuby30_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 6, 1, 0, 0, 0);
+};
+cuby30_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 7, 1, 0, 0, 0);
+};
+cuby30_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 8, 1, 0, 0, 0);
+};
+cuby30_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 9, 1, 0, 0, 0);
+};
+cuby30_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 10, 1, 0, 0, 0);
+};
+cuby30_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 11, 1, 0, 0, 0);
+};
+cuby30_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 12, 1, 0, 0, 0);
+};
+cuby30_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 13, 1, 0, 0, 0);
+};
+cuby30_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 14, 1, 0, 0, 0);
+};
+cuby30_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(14, 15, 1, 0, 0, 0);
+};
+cuby31_0 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -16, 1, 0, 0, 0);
+};
+cuby31_1 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -15, 1, 0, 0, 0);
+};
+cuby31_2 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -14, 1, 0, 0, 0);
+};
+cuby31_3 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -13, 1, 0, 0, 0);
+};
+cuby31_4 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -12, 1, 0, 0, 0);
+};
+cuby31_5 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -11, 1, 0, 0, 0);
+};
+cuby31_6 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -10, 1, 0, 0, 0);
+};
+cuby31_7 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -9, 1, 0, 0, 0);
+};
+cuby31_8 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -8, 1, 0, 0, 0);
+};
+cuby31_9 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -7, 1, 0, 0, 0);
+};
+cuby31_10 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -6, 1, 0, 0, 0);
+};
+cuby31_11 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -5, 1, 0, 0, 0);
+};
+cuby31_12 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -4, 1, 0, 0, 0);
+};
+cuby31_13 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -3, 1, 0, 0, 0);
+};
+cuby31_14 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -2, 1, 0, 0, 0);
+};
+cuby31_15 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, -1, 1, 0, 0, 0);
+};
+cuby31_16 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 0, 0.858824, 0, 0, 0);
+};
+cuby31_17 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 1, 0.592157, 0, 0, 0);
+};
+cuby31_18 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 2, 0.545098, 0, 0, 0);
+};
+cuby31_19 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 3, 0.741176, 0, 0, 0);
+};
+cuby31_20 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 4, 0.995647, 0, 0, 0);
+};
+cuby31_21 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 5, 1, 0, 0, 0);
+};
+cuby31_22 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 6, 1, 0, 0, 0);
+};
+cuby31_23 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 7, 1, 0, 0, 0);
+};
+cuby31_24 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 8, 1, 0, 0, 0);
+};
+cuby31_25 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 9, 1, 0, 0, 0);
+};
+cuby31_26 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 10, 1, 0, 0, 0);
+};
+cuby31_27 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 11, 1, 0, 0, 0);
+};
+cuby31_28 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 12, 1, 0, 0, 0);
+};
+cuby31_29 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 13, 1, 0, 0, 0);
+};
+cuby31_30 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 14, 1, 0, 0, 0);
+};
+cuby31_31 = VisibleEntity { 
+model = "cubeModel";
+frame = CFrame::fromXYZYPRDegrees(15, 15, 1, 0, 0, 0);
+};
+};
+};

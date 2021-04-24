@@ -1,0 +1,95 @@
+// -*- c++ -*-
+{
+	name = "Wine placement";
+	
+	models = {
+		glassModel = ArticulatedModel::Specification {
+			filename = "model/wine_glass.off";
+			scale = 0.3;
+			preprocess = {
+				setMaterial(all(),
+					UniversalMaterial::Specification {
+						lambertian = Color3(0.02);
+						glossy = Color4(Color3(0.3), 0.8);
+						transmissive = Color3(0.9, 1.0, 1.0);
+						emissive = Color3(0.01);
+						etaReflect = 1.0;
+						etaTransmit = 1.03;
+					}
+				);
+			};
+		};
+
+		plateModel = ArticulatedModel::Specification {
+			filename = "model/plate.off";
+			preprocess = {
+				setMaterial(all(),
+					UniversalMaterial::Specification {
+						lambertian = Color3(0.01);
+						glossy = Color4(Color3(0.01), 0.5);
+					}
+				);
+				transformGeometry(all(), Matrix4::scale(0.07, 0.05, 0.07));
+			};
+		};
+
+		woodModel = ArticulatedModel::Specification {
+			filename = "model/cylinder.off";
+			preprocess = {
+				setMaterial(all(),
+					UniversalMaterial::Specification {
+						lambertian = Color3(0.14, 0.048, 0.016);
+					}
+				);
+				transformGeometry(all(), Matrix4::scale(0.24, 0.03, 0.24));
+			};
+		};
+	};
+
+	entities = {
+		skybox = Skybox {
+			texture = "../research/cubemap/bistro/interior-*.jpg";
+		};
+
+		sun = Light {
+			attenuation = (0.0001, 0, 1);
+			biradiance = Biradiance3(0.5, 0.6, 0.5);
+			castsShadows = false;
+			enabled = true; 
+			frame = CFrame::fromXYZYPRDegrees(1, 1, 1, -30, -45, 0);
+			producesDirectIllumination = true;
+			producesIndirectIllumination = true;
+			spotHalfAngleDegrees = 180;
+			type = "DIRECTIONAL";
+		};
+
+		glass = VisibleEntity {
+			model = "glassModel";
+			frame = CFrame::fromXYZYPRDegrees(0.01, 0.007, 0.025, 0, 0, 0);
+		};
+
+		plate0 = VisibleEntity {
+			model = "plateModel";
+			frame = CFrame::fromXYZYPRDegrees(0, -0.001, 0, 0, 0, 0);
+		};
+
+		plate1 = VisibleEntity {
+			model = "plateModel";
+			frame = CFrame::fromXYZYPRDegrees(0, -0.014, 0, 0, 0, 0);
+		};
+
+		plate2 = VisibleEntity {
+			model = "plateModel";
+			frame = CFrame::fromXYZYPRDegrees(0, -0.027, 0, 0, 0, 0);
+		};
+
+		woodenBase = VisibleEntity {
+			model = "woodModel";
+			frame = CFrame::fromXYZYPRDegrees(0, -0.027, 0, 0, 0, 0);
+		};
+
+		camera = Camera {
+			frame = CFrame::fromXYZYPRDegrees(-0.70885, 0.22267, 0.331, -64.744, -5.6761, 0);
+		};
+	};
+};

@@ -1,0 +1,99 @@
+// -*- c++ -*-
+{
+	name = "Cornel Local";
+	
+	models = {
+		cubeFront = ArticulatedModel::Specification {
+			filename = "model/cube/cube.obj";
+			preprocess = {
+				setMaterial(all(), Color3(1, 1, 1));
+				transformGeometry(all(), Matrix4::scale(0.3, 0.3, 0.3));
+			};
+		};
+
+		cubeBack = ArticulatedModel::Specification {
+			filename = "model/cube/cube.obj";
+			preprocess = {
+				setMaterial(all(), Color3(1, 1, 1));
+				transformGeometry(all(), Matrix4::scale(0.3, 0.6, 0.3));
+			};
+		};
+
+		wallModelWhite = ArticulatedModel::Specification {
+			filename = "model/cube/cube.obj";
+			preprocess = {
+				setMaterial(all(), Color3(1, 1, 1));
+				transformGeometry(all(), Matrix4::scale(1.0, 1.0, 0.02));
+			};
+		};
+
+		wallModelRed = ArticulatedModel::Specification {
+			filename = "model/cube/cube.obj";
+			preprocess = {
+				setMaterial(all(), Color3(1, 0, 0));
+				transformGeometry(all(), Matrix4::scale(1.0, 1.0, 0.02));
+			};
+		};
+
+		wallModelGreen = ArticulatedModel::Specification {
+			filename = "model/cube/cube.obj";
+			preprocess = {
+				setMaterial(all(), Color3(0, 1, 0));
+				transformGeometry(all(), Matrix4::scale(1.0, 1.0, 0.02));
+			};
+		};
+	};
+
+	entities = {
+		skybox = Skybox {
+			texture = "cubemap/whiteroom/whiteroom-*.png";
+		};
+
+		lightTop = Light {
+			attenuation = (0, 0, 1);
+			bulbPower = Power3(5);
+			frame = CFrame::fromXYZYPRDegrees(0, 0.479, 0.5, 0, -90, 0);
+			spotHalfAngleDegrees = 85;
+			type = "AREA";
+		};
+
+		cubeFront = VisibleEntity{
+			model = "cubeFront";
+			frame = CFrame::fromXYZYPRDegrees(0.18, -0.33, 0.75, -20, 0, 0);
+		};
+
+		cubeBack = VisibleEntity{
+			model = "cubeBack";
+			frame = CFrame::fromXYZYPRDegrees(-0.16, -0.18, 0.4, 18, 0, 0);
+		};
+
+		wallBack = VisibleEntity {
+			model = "wallModelWhite";
+			frame = CFrame::fromXYZYPRDegrees(0, 0, 0, 0, 0, 0);
+		};
+
+		wallLeft = VisibleEntity {
+			model = "wallModelRed";
+			frame = CFrame::fromXYZYPRDegrees(-0.49, 0, 0.5, 90, 0, 0);
+		};
+
+		wallRight = VisibleEntity {
+			model = "wallModelGreen";
+			frame = CFrame::fromXYZYPRDegrees(0.49, 0, 0.5, 90, 0, 0);
+		};
+
+		wallTop = VisibleEntity {
+			model = "wallModelWhite";
+			frame = CFrame::fromXYZYPRDegrees(0, 0.49, 0.5, 0, 90, 0);
+		};
+
+		wallBottom = VisibleEntity {
+			model = "wallModelWhite";
+			frame = CFrame::fromXYZYPRDegrees(0, -0.49, 0.5, 0, 90, 0);
+		};
+
+		camera = Camera {
+			frame = CFrame::fromXYZYPRDegrees(0, 0, 2);
+		};
+	};
+};
