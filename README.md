@@ -5,7 +5,7 @@ This is my attempt to implement the projects by Morgan Mcguire in https://graphi
 Since I am actively working on it, new information will surface as I push through them.
 
 ## 1. Cubes
-The first project's goal is to create a scene using only cubes. I implemented a way to read an image and create a cube grid for each pixel, where each cube's height is determined by the corresponding pixel's luminance. Nothing fancy.
+The first project's goal is to create a scene using only cubes. I implemented a way to read an image and create a cube grid for each pixel, where each cube's height is determined by the corresponding pixel's luminance. Simple pixels to cubes.
 
 |<img width="1024" height="300" alt="Horizontal grid" src="https://user-images.githubusercontent.com/40468844/115958746-512f1800-a511-11eb-89cc-8dd064a8235f.jpg"> Horizontal view | <img width="1024" height="300" alt="Vertical grid" src="https://user-images.githubusercontent.com/40468844/115958748-52604500-a511-11eb-8e81-2ed0289c0829.jpg"> Vertical view |
 |:-:|:-:|
