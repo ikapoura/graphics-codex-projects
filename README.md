@@ -22,6 +22,6 @@ After settling to a solution that is good enough, I had to make a scene to prese
 |:-:|:-:|
 |<img width="600" height="300" alt="Plate grayscale image input" src="https://user-images.githubusercontent.com/40468844/115959524-51311700-a515-11eb-9877-72e2134465ad.png"> <p>Plate grayscale image input</p> | <img width="640" height="300" alt="Plate mesh output" src="https://user-images.githubusercontent.com/40468844/115959533-5a21e880-a515-11eb-812a-2caa8fb90a4d.png"> <p>Plate mesh output</p> |
 
-|<img width="1024" height="574" alt="Rendering of the wine glass and plate in G3D" src="https://user-images.githubusercontent.com/40468844/115959564-74f45d00-a515-11eb-8f4c-7ec32a47a794.png"> <p>Rendering of the wine glass and plate in G3D</p> |
+|<img width="1024" height="562" alt="Rendering of the wine glass and plate in G3D" src="https://user-images.githubusercontent.com/40468844/115959564-74f45d00-a515-11eb-8f4c-7ec32a47a794.png"> <p>Rendering of the wine glass and plate in G3D</p> |
 |:-:|
 
