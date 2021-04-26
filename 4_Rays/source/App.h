@@ -7,6 +7,20 @@
 #pragma once
 #include <G3D/G3D.h>
 
+class PinholeCamera {
+public:
+	PinholeCamera(float z_near, float verticalFieldOfView);
+
+	// x, y, width and height in pixels; P in meters
+	void getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const;
+
+protected:
+	// Negative
+	float m_zNear;
+
+	float m_verticalFieldOfView;
+};
+
  /** \brief Application framework. */
 class App : public GApp {
 public:
@@ -34,4 +48,12 @@ public:
 protected:
 	/** Called from onInit */
 	void makeGUI();
+
+private:
+	void render();
+	void render(const PinholeCamera& camera, shared_ptr<Image>& image) const;
+
+	Radiance3 L_i(const Point3& X, const Vector3& wi) const;
+	// const shared_ptr<Surfel> findFirstIntersection(const Point3& X, const Vector3& wi) const;
+	const shared_ptr<UniversalSurfel>& findFirstIntersection(const Point3& X, const Vector3& wi) const;
 };

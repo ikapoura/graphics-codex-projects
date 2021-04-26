@@ -63,9 +63,100 @@ int main(int argc, const char* argv[]) {
 }
 
 
-App::App(const GApp::Settings& settings) : GApp(settings) {
+
+// Get a color from Radiance, saturation and gamma
+Color3 pixelValue(const Radiance3& L, const float k, const float gamma) {
+	Radiance3 outL = L;
+
+	// Adjust for constant sensitivity
+	outL *= 1.0f / k;
+
+	// Maximum radiance at any frequency
+	float m = fmaxf(fmaxf(outL.r, outL.g), fmaxf(outL.b, 1.0f));
+
+	// Normalize the input
+	outL *= 1.0f / m;
+
+	// Restore magnitude, but fade towards white when the maximum value approaches 1.0
+	m = clamp((m - 1.0f) * 0.2f, 0.0f, 1.0f);
+	outL = outL * (1.0f - m) + Radiance3(m, m, m);
+
+	// Gamma encode 
+	return Color3(pow(outL.r, 1.0f / gamma),
+				  pow(outL.g, 1.0f / gamma),
+				  pow(outL.b, 1.0f / gamma));
 }
 
+
+
+// If ray P + tw hits triangle V[0], V[1], V[2], then the function return true, stores the
+// barycentric coordinates in b[] and stores the distance to the intersection in t. Otherwise,
+// returns false and the other output parameters are undefined.
+bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t) {
+	// Precision threshold depends on scene scale. Too small leaves holes at edges, too 
+	// large expands triangles.
+	const float eps = 1e-6;
+	
+	// Edge vector
+	const Vector3& e_1 = V[1] - V[0];
+	const Vector3& e_2 = V[2] - V[0];
+
+	// Face normal 
+	const Vector3& n = e_1.cross(e_2).direction();
+
+	// Nothing that has any physical meaning. Just a very optimized
+	// way to compute 3 cross products.
+	const Vector3& q = w.cross(e_2);
+	const float a = e_1.dot(q);
+
+	// Backfacing / nearly parallel or close to the limit of precision/
+	if ((n.dot(w) >= 0) || (fabsf(a) <= eps)) {
+		return false;
+	}
+
+	const Vector3& s = (P - V[0]) / a;
+	const Vector3& r = s.cross(e_1);
+
+	// Barycentrics
+	b[0] = s.dot(q);
+	b[1] = r.dot(w);
+	b[2] - 1.0f - b[0] - b[1];
+
+	// Intersected outside triangle?
+	if ((b[0] < 0.0f) || (b[1] < 0.0f) || (b[2] < 0.0f)) {
+		return false;
+	}
+
+	t = e_2.dot(r);
+	return (t >= 0.0f);
+}
+
+
+PinholeCamera::PinholeCamera(float z_near, float verticalFieldOfView) :
+	m_zNear(z_near), m_verticalFieldOfView(verticalFieldOfView)
+{
+}
+
+
+void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const {
+	// Compute the side of a square at z = -1 on our vertical top-to-bottom field of view; the result 
+	// is negative because of our convention to have the image plane on the negative axis
+	const float side = -2.0f * tanf(m_verticalFieldOfView / 2.0f);
+	
+	// Invert the y-axis because we're moving from the 2D=down to the 3D y=up coordinate system
+	P = Point3(m_zNear * (x / width - 0.5f) * side * width / height,
+			   m_zNear * -(y / height - 0.5f) * side,
+			   m_zNear);
+
+	// The incoming direction is simply that from the origin to P
+	w = P.direction();
+}
+
+
+
+
+App::App(const GApp::Settings& settings) : GApp(settings) {
+}
 
 // Called before the application loop begins.  Load data here and
 // not in the constructor so that common exceptions will be
@@ -347,4 +438,46 @@ void App::makeGUI() {
 
 	debugWindow->pack();
 	debugWindow->setRect(Rect2D::xywh(0, 0, (float)window()->width(), debugWindow->rect().height()));
+}
+
+void App::render() {
+	PinholeCamera camera(-0.001f, 45.0f);
+
+	shared_ptr<Image> image = Image::create(160, 100, ImageFormat::RGB32F());
+	render(camera, image);
+	show(image);
+}
+
+void App::render(const PinholeCamera& camera, shared_ptr<Image>& image) const {
+	const int width = image->width();
+	const int height = image->height();
+
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			Point3 P;
+			Vector3 w;
+
+			// Find the ray through (x,y) and the center of projection
+			camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, width, height, P, w);
+
+			image->set(x, y, L_i(P, w));
+		}
+	}
+}
+
+Radiance3 App::L_i(const Point3& X, const Vector3& wi) const {
+	// Find the first intersection with the scene
+	const shared_ptr<UniversalSurfel>& s = findFirstIntersection(X, wi);
+
+	if (notNull(s)) {
+		return Radiance3::one();
+	} else {
+		return Radiance3::zero();
+	}
+
+}
+
+const shared_ptr<UniversalSurfel>& App::findFirstIntersection(const Point3& X, const Vector3& wi) const {
+	// THIS IS A BUG
+	return shared_ptr<UniversalSurfel>(new UniversalSurfel());
 }
