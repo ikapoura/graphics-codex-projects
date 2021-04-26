@@ -25,3 +25,8 @@ After settling to a solution that is good enough, I had to make a scene to prese
 |<img width="1024" height="562" alt="Rendering of the wine glass and plate in G3D" src="https://user-images.githubusercontent.com/40468844/115959564-74f45d00-a515-11eb-8f4c-7ec32a47a794.png"> <p>Rendering of the wine glass and plate in G3D</p> |
 |:-:|
 
+## 3. Geometry Design
+I will implement this after the 4. Rays because I want to implement instancing for the ray tracer.
+
+## 4. Rays
+Currently implementing.
