@@ -644,7 +644,7 @@ void App::generateGlassOff(int steps, float qualityPercent)
 {
 	drawMessage("Generating glass...");
 
-	shared_ptr<const Image> imageInput = Image::fromFile("plate.png");
+	shared_ptr<const Image> imageInput = Image::fromFile("glass_contour.png");
 
 	const int imageWidth = imageInput->width();
 	const int imageHeight = imageInput->height();

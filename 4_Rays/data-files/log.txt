@@ -1,13 +1,13 @@
 Application Log
-Start: Sat Apr 24 17:56:25 2021
+Start: Mon Apr 26 19:41:02 2021
 
 WARNING: AudioDevice is not enabled. Set G3DSpecification::audio = true before invoking initGLG3D() to enable audio.
-Initializing System::findDataFile took 0.000796s
+Initializing System::findDataFile took 0.003665s
 
 Entering GApp::GApp()
-cwd = D:\Repositories\graphics-codex-projects\1_Cubes\data-files
-System::setAppDataDir("D:\Repositories\graphics-codex-projects\1_Cubes\data-files")
-System::setAppDataDirs()Initializing System::findDataFile took 0.001058s
+cwd = D:\Repositories\graphics-codex-projects\4_Rays\data-files
+System::setAppDataDir("D:\Repositories\graphics-codex-projects\4_Rays\data-files")
+System::setAppDataDirs()Initializing System::findDataFile took 0.002995s
 Setting video mode
 wglSwapIntervalEXT(0);
 Setting initial rendering state.
@@ -131,8 +131,8 @@ GPU Supports OpenGL 4.1 or later    yes - OpenGL version on this driver is 4.42
 Done initializing RenderDevice.
 Network StartupSystem = { 
     App { 
-        Name = "D:\\Repositories\\graphics-codex-projects\\1_Cubes\\x64\\Release\\cubes.exe"
-        cwd = "D:\\Repositories\\graphics-codex-projects\\1_Cubes\\data-files"
+        Name = "D:\\Repositories\\graphics-codex-projects\\4_Rays\\x64\\Debug\\raysd.exe"
+        cwd = "D:\\Repositories\\graphics-codex-projects\\4_Rays\\data-files"
     } 
     
     OS { 
@@ -146,7 +146,7 @@ Network StartupSystem = {
     
     G3D { 
         Link version = 100100 
-        Compile version = "G3D Innovation Engine 10.01"
+        Compile version = "G3D Innovation Engine 10.01 (Debug)"
         G3DSpecification::deployMode = No 
         G3D10DATA = "D:\\DevLibraries\\g3d\\G3D10\\data-files;D:\\DevLibraries\\g3d\\data10\\common;D:\\DevLibraries\\g3d\\data10\\game;D:\\DevLibraries\\g3d\\data10\\research"
     } 
@@ -611,15 +611,7 @@ Done GApp::loadFont(...)
 Done GApp::GApp()
 
 Found scenes:
-  "Black and White" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/Black and White.Scene.Any)
-  "Cornel Local" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/cornell.Scene.Any)
-  "Cylinder" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/cylinderOff.Scene.Any)
-  "Glass" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/glassOff.Scene.Any)
-  "Heightfield" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/heightfieldOff.Scene.Any)
-  "Staircase" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/staircase.Scene.Any)
-  "White Cube" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/whiteCube.Scene.Any)
-  "Wine placement" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/winePlacement.Scene.Any)
-  "Test Scene" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/test.Scene.Any)
+  "Test Scene" (D:\Repositories\graphics-codex-projects\4_Rays\data-files/test.Scene.Any)
   "G3D Debug Animation (Skeletal)" (D:\DevLibraries\g3d\data10\common/scene/G3D_Debug_Animation_(Skeletal).Scene.Any)
   "G3D Debug Area Light (Glossy)" (D:\DevLibraries\g3d\data10\common/scene/G3D_Debug_Area_Light_(Glossy).Scene.Any)
   "G3D Debug Area Light (Matte)" (D:\DevLibraries\g3d\data10\common/scene/G3D_Debug_Area_Light_(Matte).Scene.Any)
@@ -689,15 +681,7 @@ Found scenes:
   "G3D VR Bedroom" (D:\DevLibraries\g3d\data10\research/scene/G3D_VR_Bedroom.Scene.Any)
   "G3D VR Gallery" (D:\DevLibraries\g3d\data10\research/scene/G3D_VR_Gallery.Scene.Any)
 Found scenes:
-  "Black and White" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/Black and White.Scene.Any)
-  "Cornel Local" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/cornell.Scene.Any)
-  "Cylinder" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/cylinderOff.Scene.Any)
-  "Glass" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/glassOff.Scene.Any)
-  "Heightfield" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/heightfieldOff.Scene.Any)
-  "Staircase" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/staircase.Scene.Any)
-  "White Cube" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/whiteCube.Scene.Any)
-  "Wine placement" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/winePlacement.Scene.Any)
-  "Test Scene" (D:\Repositories\graphics-codex-projects\1_Cubes\data-files/test.Scene.Any)
+  "Test Scene" (D:\Repositories\graphics-codex-projects\4_Rays\data-files/test.Scene.Any)
   "G3D Debug Animation (Skeletal)" (D:\DevLibraries\g3d\data10\common/scene/G3D_Debug_Animation_(Skeletal).Scene.Any)
   "G3D Debug Area Light (Glossy)" (D:\DevLibraries\g3d\data10\common/scene/G3D_Debug_Area_Light_(Glossy).Scene.Any)
   "G3D Debug Area Light (Matte)" (D:\DevLibraries\g3d\data10\common/scene/G3D_Debug_Area_Light_(Matte).Scene.Any)
@@ -770,6 +754,7 @@ Found scenes:
 
 
 
+
 Vertex info
 -----------
 1(39) : warning C7050: "tex0" might be used before being initialized
@@ -790,193 +775,5 @@ Vertex info
 
 
 
-Could not find 'model/glass.off'.
 
-  cwd                    = 'D:\Repositories\graphics-codex-projects\1_Cubes\data-files'
-  G3D10DATA               = 'D:\DevLibraries\g3d\G3D10\data-files;D:\DevLibraries\g3d\data10\common;D:\DevLibraries\g3d\data10\game;D:\DevLibraries\g3d\data10\research'
-  GApp::Settings.dataDir = 'D:\Repositories\graphics-codex-projects\1_Cubes\data-files'
-
-Filenames tested:
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/model/glass.off'
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/model/model/glass.off'
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/model/glass.off'
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/model/glass.off'
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/model/model/glass.off'
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/font/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/gui/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/shader/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/model/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/icon/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/font/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/gui/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/model/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/cubemap/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/icon/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/material/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/image/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/ifs/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/scene/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/voxel/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/gui/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/model/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/cubemap/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/md2/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/md3/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/music/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/sound/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/scene/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/voxel/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/model/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/cubemap/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/material/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/image/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/scene/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/voxel/model/glass.off'
-
-D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/glassOff.Scene.Any:-1(-1): Could not find 'model/glass.off'.
-
-  cwd                    = 'D:\Repositories\graphics-codex-projects\1_Cubes\data-files'
-  G3D10DATA               = 'D:\DevLibraries\g3d\G3D10\data-files;D:\DevLibraries\g3d\data10\common;D:\DevLibraries\g3d\data10\game;D:\DevLibraries\g3d\data10\research'
-  GApp::Settings.dataDir = 'D:\Repositories\graphics-codex-projects\1_Cubes\data-files'
-
-Filenames tested:
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/model/glass.off'
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/model/model/glass.off'
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/model/glass.off'
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/model/glass.off'
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/model/model/glass.off'
-'D:\Repositories\graphics-codex-projects\1_Cubes\data-files/scene/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/font/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/gui/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/shader/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/model/model/glass.off'
-'D:\DevLibraries\g3d\G3D10\data-files/icon/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/font/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/gui/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/model/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/cubemap/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/icon/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/material/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/image/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/ifs/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/scene/model/glass.off'
-'D:\DevLibraries\g3d\data10\common/voxel/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/gui/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/model/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/cubemap/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/md2/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/md3/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/music/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/sound/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/scene/model/glass.off'
-'D:\DevLibraries\g3d\data10\game/voxel/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/model/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/cubemap/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/material/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/image/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/scene/model/glass.off'
-'D:\DevLibraries\g3d\data10\research/voxel/model/glass.off'
-
-_____________________________________________________
-
-    ###    Files Used    ###
-
-cudart64_102.dll
-embree.dll
-optix.6.0.0.dll
-tbb.dll
-tbbmalloc.dll
-avcodec-58.dll
-avdevice-58.dll
-avfilter-7.dll
-avformat-58.dll
-avutil-56.dll
-postproc-55.dll
-swresample-3.dll
-swscale-5.dll
-fmod64.dll
-D:/DevLibraries/g3d/G3D10/data-files/font/arial.fnt
-D:/DevLibraries/g3d/G3D10/data-files/font/console-small.fnt
-D:/DevLibraries/g3d/G3D10/data-files/font/greek.fnt
-D:/DevLibraries/g3d/G3D10/data-files/font/icon.fnt
-D:/DevLibraries/g3d/G3D10/data-files/gui/osx-10.7.gtm
-D:/DevLibraries/g3d/G3D10/data-files/icon/tango.icn
-D:/DevLibraries/g3d/G3D10/data-files/shader/AlphaFilter.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/AmbientOcclusion/AmbientOcclusion_AO.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/AmbientOcclusion/AmbientOcclusion_AO.vrt
-D:/DevLibraries/g3d/G3D10/data-files/shader/AmbientOcclusion/AmbientOcclusion_blur.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/AmbientOcclusion/AmbientOcclusion_blur.vrt
-D:/DevLibraries/g3d/G3D10/data-files/shader/AmbientOcclusion/AmbientOcclusion_constants.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/AmbientOcclusion/AmbientOcclusion_minify.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/AmbientOcclusion/AmbientOcclusion_minify.vrt
-D:/DevLibraries/g3d/G3D10/data-files/shader/AmbientOcclusion/AmbientOcclusion_packBilateralKey.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/AmbientOcclusion/AmbientOcclusion_reconstructCSZ.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/AmbientOcclusion/AmbientOcclusion_reconstructCSZ.vrt
-D:/DevLibraries/g3d/G3D10/data-files/shader/BumpMap/BumpMap.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/Camera/Camera.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/DDGIVolume/DDGIVolume.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/DefaultRenderer/DefaultRenderer_deferredShade.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/Film/Film_FXAA_13_quality.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/Film/Film_bloomExpose.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/Film/Film_composite.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/Film/Film_effectsDisabledBlit.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/Film/Film_toneMap.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/GBuffer/GBuffer.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/GFont/GFont_render.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/GFont/GFont_render.vrt
-D:/DevLibraries/g3d/G3D10/data-files/shader/GaussianBlur/GaussianBlur_apply.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/GuiTheme/GuiTheme_render.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/GuiTheme/GuiTheme_render.vrt
-D:/DevLibraries/g3d/G3D10/data-files/shader/Light/Light.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/LightingEnvironment/LightingEnvironment_LightUniforms.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/LightingEnvironment/LightingEnvironment_environmentMapUniforms.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/SkyboxSurface/SkyboxSurface_gbuffer.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/SkyboxSurface/SkyboxSurface_gbuffer.vrt
-D:/DevLibraries/g3d/G3D10/data-files/shader/TemporalFilter/TemporalFilter_apply.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/Texture/Texture.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/Texture/Texture_copy.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/UniversalMaterial/UniversalMaterial.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/UniversalMaterial/UniversalMaterial_sample.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/UniversalMaterial/UniversalMaterial_writeToGBuffer.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/UniversalSurface/UniversalSurface_depthOnly.vrt
-D:/DevLibraries/g3d/G3D10/data-files/shader/UniversalSurface/UniversalSurface_gbuffer.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/UniversalSurface/UniversalSurface_gbuffer.vrt
-D:/DevLibraries/g3d/G3D10/data-files/shader/UniversalSurface/UniversalSurface_vertex.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/UniversalSurface/UniversalSurface_vertexHelpers.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/compatibility.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/default.vrt
-D:/DevLibraries/g3d/G3D10/data-files/shader/deferredHelpers.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/depthPeel.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/g3dmath.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/lightMap.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/octahedral.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/reconstructFromDepth.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/reverseReprojection.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/textureFilter.glsl
-D:/DevLibraries/g3d/G3D10/data-files/shader/unlit.pix
-D:/DevLibraries/g3d/G3D10/data-files/shader/unlit.vrt
-D:/DevLibraries/g3d/data10/common/cubemap/whiteroom/whiteroom-NX.png
-D:/DevLibraries/g3d/data10/common/cubemap/whiteroom/whiteroom-NY.png
-D:/DevLibraries/g3d/data10/common/cubemap/whiteroom/whiteroom-NZ.png
-D:/DevLibraries/g3d/data10/common/cubemap/whiteroom/whiteroom-PX.png
-D:/DevLibraries/g3d/data10/common/cubemap/whiteroom/whiteroom-PY.png
-D:/DevLibraries/g3d/data10/common/cubemap/whiteroom/whiteroom-PZ.png
-D:/Repositories/graphics-codex-projects/1_Cubes/data-files/glass_contour.png
-D:/Repositories/graphics-codex-projects/1_Cubes/data-files/icon.png
-D:/Repositories/graphics-codex-projects/1_Cubes/data-files/log.txt
-D:/Repositories/graphics-codex-projects/1_Cubes/data-files/model/cylinder.off
-D:/Repositories/graphics-codex-projects/1_Cubes/data-files/model/glass.off
-D:/Repositories/graphics-codex-projects/1_Cubes/data-files/model/heightfield.off
-D:/Repositories/graphics-codex-projects/1_Cubes/data-files/scene/cylinderOff.Scene.Any
-D:/Repositories/graphics-codex-projects/1_Cubes/data-files/scene/glassOff.Scene.Any
-D:/Repositories/graphics-codex-projects/1_Cubes/data-files/scene/heightfieldOff.Scene.Any
 

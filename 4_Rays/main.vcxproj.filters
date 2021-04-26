@@ -17,12 +17,6 @@
     <None Include="data-files\test.Scene.Any">
       <Filter>Scene Files</Filter>
     </None>
-    <None Include="data-files\scene\cornell.Scene.Any">
-      <Filter>Scene Files</Filter>
-    </None>
-    <None Include="data-files\scene\whiteCube.Scene.Any">
-      <Filter>Scene Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -33,13 +27,13 @@
       <UniqueIdentifier>{7808eb57-c0e1-4947-8248-1127238ea26e}</UniqueIdentifier>
       <Extensions>*.h</Extensions>
     </Filter>
+    <Filter Include="Shader Files">
+      <UniqueIdentifier>{562523b7-dfa2-4cfa-acae-1ad7ade219dd}</UniqueIdentifier>
+      <Extensions>*.vrt;*.geo;*.pix</Extensions>
+    </Filter>
     <Filter Include="Scene Files">
       <UniqueIdentifier>{f7819c7b-69f2-4778-bec8-4dbee2bfa711}</UniqueIdentifier>
       <Extensions>*.any</Extensions>
-    </Filter>
-    <Filter Include="Source Files\Shader Files">
-      <UniqueIdentifier>{562523b7-dfa2-4cfa-acae-1ad7ade219dd}</UniqueIdentifier>
-      <Extensions>*.vrt;*.geo;*.pix</Extensions>
     </Filter>
   </ItemGroup>
 </Project>
