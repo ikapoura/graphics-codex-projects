@@ -20,8 +20,7 @@ int main(int argc, const char* argv[]) {
 	if (settings.window.fullScreen) {
 		settings.window.width = 1920;
 		settings.window.height = 1080;
-	}
-	else {
+	} else {
 		settings.window.height = int(OSWindow::primaryDisplayWindowSize().y * 0.95f);
 		// Constrain ultra widescreen aspect ratios
 		settings.window.width = min(settings.window.height * 1920 / 1080, int(OSWindow::primaryDisplayWindowSize().x * 0.95f));
@@ -120,7 +119,7 @@ bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], 
 	// Barycentrics
 	b[0] = s.dot(q);
 	b[1] = r.dot(w);
-	b[2] - 1.0f - b[0] - b[1];
+	b[2] = 1.0f - b[0] - b[1];
 
 	// Intersected outside triangle?
 	if ((b[0] < 0.0f) || (b[1] < 0.0f) || (b[2] < 0.0f)) {
@@ -380,8 +379,6 @@ void App::makeGUI() {
 	}));
 
 	GuiPane* giPane = rendererPane->addPane("Ray Tracing", GuiTheme::SIMPLE_PANE_STYLE);
-
-
 	giPane->addCheckBox("Diffuse",
 		Pointer<bool>([&]() {
 		const shared_ptr<DefaultRenderer>& r = dynamic_pointer_cast<DefaultRenderer>(m_renderer);
@@ -421,12 +418,21 @@ void App::makeGUI() {
 		}
 	}), GuiTheme::TOOL_CHECK_BOX_STYLE);
 	giPane->pack();
+	giPane->moveRightOf(deferredBox, 100);
 
-	giPane->moveRightOf(deferredBox);
-	giPane->moveBy(100, 0);
+	rendererPane->pack();
+	rendererPane->moveRightOf(infoPane, 10);
 
-	rendererPane->moveRightOf(infoPane);
-	rendererPane->moveBy(10, 0);
+	GuiPane* raytracePane = debugPane->addPane("Offline Ray Trace", GuiTheme::ORNATE_PANE_STYLE);
+	GuiDropDownList* raytraceSizeList = raytracePane->addDropDownList("Resolution", Array<String>({ "1x1","320x200","640x400" }));
+	raytracePane->addCheckBox("Add fixed primitives", &m_raytraceSettings.addFixedPrimitives);
+	raytracePane->addCheckBox("Multithreading", &m_raytraceSettings.multithreading);
+	GuiNumberBox<int>* raysSlider = raytracePane->addNumberBox<int>("Indirect rays per pixel", &m_raytraceSettings.indirectRaysPerPixel, "", GuiTheme::LINEAR_SLIDER, 0, 2048);
+	raysSlider->setWidth(290.0F);
+	raysSlider->setCaptionWidth(140.0F);
+	raytracePane->addButton("Render", [this]() { m_endProgram = true; });
+	raytracePane->pack();
+	raytracePane->moveRightOf(rendererPane, 10);
 
 	// More examples of debugging GUI controls:
 	// debugPane->addCheckBox("Use explicit checking", &explicitCheck);

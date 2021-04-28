@@ -7,6 +7,16 @@
 #pragma once
 #include <G3D/G3D.h>
 
+Color3 pixelValue(const Radiance3& L, const float k, const float gamma);
+bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t);
+
+class RayTraceSettings {
+public:
+	bool addFixedPrimitives{ false };
+	bool multithreading{ false };
+	int indirectRaysPerPixel{ 2 };
+};
+
 class PinholeCamera {
 public:
 	PinholeCamera(float z_near, float verticalFieldOfView);
@@ -56,4 +66,7 @@ private:
 	Radiance3 L_i(const Point3& X, const Vector3& wi) const;
 	// const shared_ptr<Surfel> findFirstIntersection(const Point3& X, const Vector3& wi) const;
 	const shared_ptr<UniversalSurfel>& findFirstIntersection(const Point3& X, const Vector3& wi) const;
+
+private:
+	RayTraceSettings m_raytraceSettings;
 };
