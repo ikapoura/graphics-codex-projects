@@ -424,13 +424,14 @@ void App::makeGUI() {
 	rendererPane->moveRightOf(infoPane, 10);
 
 	GuiPane* raytracePane = debugPane->addPane("Offline Ray Trace", GuiTheme::ORNATE_PANE_STYLE);
-	GuiDropDownList* raytraceSizeList = raytracePane->addDropDownList("Resolution", Array<String>({ "1x1","320x200","640x400" }));
+	m_raytraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "320 x 200", "640 x 400", "1920 x 1080" }));
+	m_raytraceSettings.resolutionList->setSelectedIndex(1);
 	raytracePane->addCheckBox("Add fixed primitives", &m_raytraceSettings.addFixedPrimitives);
 	raytracePane->addCheckBox("Multithreading", &m_raytraceSettings.multithreading);
 	GuiNumberBox<int>* raysSlider = raytracePane->addNumberBox<int>("Indirect rays per pixel", &m_raytraceSettings.indirectRaysPerPixel, "", GuiTheme::LINEAR_SLIDER, 0, 2048);
 	raysSlider->setWidth(290.0F);
 	raysSlider->setCaptionWidth(140.0F);
-	raytracePane->addButton("Render", [this]() { m_endProgram = true; });
+	raytracePane->addButton("Render", this, &App::render);
 	raytracePane->pack();
 	raytracePane->moveRightOf(rendererPane, 10);
 
@@ -447,10 +448,15 @@ void App::makeGUI() {
 }
 
 void App::render() {
+	drawMessage("Raytracing current scene. Please wait.");
+
 	PinholeCamera camera(-0.001f, 45.0f);
 
-	shared_ptr<Image> image = Image::create(160, 100, ImageFormat::RGB32F());
+	const Vector2int32 resolution = Vector2int32::parseResolution(m_raytraceSettings.resolutionList->selectedValue());
+
+	shared_ptr<Image> image = Image::create(resolution.x, resolution.y, ImageFormat::RGB32F());
 	render(camera, image);
+
 	show(image);
 }
 

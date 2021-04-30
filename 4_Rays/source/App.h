@@ -12,6 +12,7 @@ bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], 
 
 class RayTraceSettings {
 public:
+	GuiDropDownList* resolutionList{ nullptr };
 	bool addFixedPrimitives{ false };
 	bool multithreading{ false };
 	int indirectRaysPerPixel{ 2 };

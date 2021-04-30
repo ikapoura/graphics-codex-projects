@@ -1,13 +1,13 @@
 Application Log
-Start: Mon Apr 26 19:41:02 2021
+Start: Fri Apr 30 14:11:05 2021
 
 WARNING: AudioDevice is not enabled. Set G3DSpecification::audio = true before invoking initGLG3D() to enable audio.
-Initializing System::findDataFile took 0.003665s
+Initializing System::findDataFile took 0.004471s
 
 Entering GApp::GApp()
 cwd = D:\Repositories\graphics-codex-projects\4_Rays\data-files
 System::setAppDataDir("D:\Repositories\graphics-codex-projects\4_Rays\data-files")
-System::setAppDataDirs()Initializing System::findDataFile took 0.002995s
+System::setAppDataDirs()Initializing System::findDataFile took 0.002913s
 Setting video mode
 wglSwapIntervalEXT(0);
 Setting initial rendering state.
@@ -777,6 +777,7 @@ Vertex info
 
 
 
+
 _____________________________________________________
 
     ###    Files Used    ###
@@ -826,6 +827,8 @@ D:/DevLibraries/g3d/G3D10/data-files/shader/GBuffer/GBuffer.glsl
 D:/DevLibraries/g3d/G3D10/data-files/shader/GFont/GFont_render.pix
 D:/DevLibraries/g3d/G3D10/data-files/shader/GFont/GFont_render.vrt
 D:/DevLibraries/g3d/G3D10/data-files/shader/GaussianBlur/GaussianBlur_apply.pix
+D:/DevLibraries/g3d/G3D10/data-files/shader/GuiTextureBox/GuiTextureBox_2D.pix
+D:/DevLibraries/g3d/G3D10/data-files/shader/GuiTextureBox/GuiTextureBox_Arrows.glsl
 D:/DevLibraries/g3d/G3D10/data-files/shader/GuiTheme/GuiTheme_render.pix
 D:/DevLibraries/g3d/G3D10/data-files/shader/GuiTheme/GuiTheme_render.vrt
 D:/DevLibraries/g3d/G3D10/data-files/shader/Light/Light.glsl
@@ -866,7 +869,6 @@ D:/DevLibraries/g3d/data10/common/model/CornellBox/CornellBox.zip
 D:/DevLibraries/g3d/data10/common/model/CornellBox/CornellBox.zip/CornellBox-Original.mtl
 D:/DevLibraries/g3d/data10/common/model/CornellBox/CornellBox.zip/CornellBox-Original.obj
 D:/DevLibraries/g3d/data10/common/scene/G3D_Simple_Cornell_Box_(Area_Light).Scene.Any
-D:/Repositories/graphics-codex-projects/4_Rays/data-files/g3d-license.txt
 D:/Repositories/graphics-codex-projects/4_Rays/data-files/icon.png
 D:/Repositories/graphics-codex-projects/4_Rays/data-files/log.txt
 
