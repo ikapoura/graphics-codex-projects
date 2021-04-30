@@ -7,15 +7,14 @@
 #pragma once
 #include <G3D/G3D.h>
 
-Color3 pixelValue(const Radiance3& L, const float k, const float gamma);
-bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t);
-
-class RayTraceSettings {
+class PostProcess {
 public:
-	GuiDropDownList* resolutionList{ nullptr };
-	bool addFixedPrimitives{ false };
-	bool multithreading{ false };
-	int indirectRaysPerPixel{ 2 };
+	Color3 pixelValue(const Radiance3& L, const float k, const float gamma);
+};
+
+class Intersector {
+public:
+	bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t);
 };
 
 class PinholeCamera {
@@ -31,6 +30,43 @@ protected:
 
 	float m_verticalFieldOfView;
 };
+
+class BRDF {
+public:
+	BRDF() = default;
+	virtual ~BRDF() = default;
+
+	Radiance3 L_i(const Point3& X, const Vector3& wi, const shared_ptr<UniversalSurfel>& s) const;
+};
+
+class RayTraceSettings {
+public:
+	bool addFixedPrimitives{ false };
+	int  indirectRaysPerPixel{ 1 };
+	bool multithreading{ false };
+	GuiDropDownList* resolutionList{ nullptr };
+};
+
+class RayTracer {
+public:
+	RayTracer();
+	RayTracer(shared_ptr<BRDF> brdf);
+	virtual ~RayTracer() = default;
+
+	void render(const PinholeCamera& camera, shared_ptr<Image>& image) const;
+
+	const shared_ptr<UniversalSurfel>& findFirstIntersection(const Point3& X, const Vector3& wi) const;
+
+	RayTraceSettings& settings();
+	const RayTraceSettings& settings() const;
+
+	Vector2int32 resolution() const;
+
+private:
+	RayTraceSettings m_settings;
+	shared_ptr<BRDF> m_brdf;
+};
+
 
  /** \brief Application framework. */
 class App : public GApp {
@@ -62,12 +98,7 @@ protected:
 
 private:
 	void render();
-	void render(const PinholeCamera& camera, shared_ptr<Image>& image) const;
-
-	Radiance3 L_i(const Point3& X, const Vector3& wi) const;
-	// const shared_ptr<Surfel> findFirstIntersection(const Point3& X, const Vector3& wi) const;
-	const shared_ptr<UniversalSurfel>& findFirstIntersection(const Point3& X, const Vector3& wi) const;
 
 private:
-	RayTraceSettings m_raytraceSettings;
+	unique_ptr<RayTracer> m_rayTracer;
 };

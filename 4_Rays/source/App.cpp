@@ -64,7 +64,7 @@ int main(int argc, const char* argv[]) {
 
 
 // Get a color from Radiance, saturation and gamma
-Color3 pixelValue(const Radiance3& L, const float k, const float gamma) {
+Color3 PostProcess::pixelValue(const Radiance3& L, const float k, const float gamma) {
 	Radiance3 outL = L;
 
 	// Adjust for constant sensitivity
@@ -91,7 +91,7 @@ Color3 pixelValue(const Radiance3& L, const float k, const float gamma) {
 // If ray P + tw hits triangle V[0], V[1], V[2], then the function return true, stores the
 // barycentric coordinates in b[] and stores the distance to the intersection in t. Otherwise,
 // returns false and the other output parameters are undefined.
-bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t) {
+bool Intersector::rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t) {
 	// Precision threshold depends on scene scale. Too small leaves holes at edges, too 
 	// large expands triangles.
 	const float eps = 1e-6;
@@ -131,11 +131,11 @@ bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], 
 }
 
 
+
 PinholeCamera::PinholeCamera(float z_near, float verticalFieldOfView) :
 	m_zNear(z_near), m_verticalFieldOfView(verticalFieldOfView)
 {
 }
-
 
 void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const {
 	// Compute the side of a square at z = -1 on our vertical top-to-bottom field of view; the result 
@@ -153,8 +153,65 @@ void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point
 
 
 
+Radiance3 BRDF::L_i(const Point3& X, const Vector3& wi, const shared_ptr<UniversalSurfel>& s) const {
+	if (notNull(s)) {
+		return Radiance3::one();
+	} else {
+		return Radiance3::zero();
+	}
+}
+
+
+
+RayTracer::RayTracer() {
+}
+
+RayTracer::RayTracer(shared_ptr<BRDF> brdf) {
+	m_brdf = brdf;
+}
+
+void RayTracer::render(const PinholeCamera& camera, shared_ptr<Image>& image) const {
+	debugAssertM(m_brdf, "The ray tracer needs a BRDF to render.");
+
+	const int width = image->width();
+	const int height = image->height();
+
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			Point3 P;
+			Vector3 w;
+
+			// Find the ray through (x,y) and the center of projection
+			camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, width, height, P, w);
+
+			const shared_ptr<UniversalSurfel>& firstIntersection = findFirstIntersection(P, w);
+			image->set(x, y, m_brdf->L_i(P, w, firstIntersection));
+		}
+	}
+}
+
+const shared_ptr<UniversalSurfel>& RayTracer::findFirstIntersection(const Point3& X, const Vector3& wi) const {
+	// THIS IS A BUG
+	return shared_ptr<UniversalSurfel>(new UniversalSurfel());
+}
+
+RayTraceSettings& RayTracer::settings() {
+	return m_settings;
+}
+
+const RayTraceSettings& RayTracer::settings() const {
+	return m_settings;
+}
+
+Vector2int32 RayTracer::resolution() const {
+	return Vector2int32::parseResolution(m_settings.resolutionList->selectedValue());
+}
+
+
 
 App::App(const GApp::Settings& settings) : GApp(settings) {
+	shared_ptr<BRDF> brdf = std::make_shared<BRDF>();
+	m_rayTracer = std::make_unique<RayTracer>(brdf);
 }
 
 // Called before the application loop begins.  Load data here and
@@ -423,12 +480,13 @@ void App::makeGUI() {
 	rendererPane->pack();
 	rendererPane->moveRightOf(infoPane, 10);
 
+	RayTraceSettings& m_raytracerSettings = m_rayTracer->settings();
 	GuiPane* raytracePane = debugPane->addPane("Offline Ray Trace", GuiTheme::ORNATE_PANE_STYLE);
-	m_raytraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "320 x 200", "640 x 400", "1920 x 1080" }));
-	m_raytraceSettings.resolutionList->setSelectedIndex(1);
-	raytracePane->addCheckBox("Add fixed primitives", &m_raytraceSettings.addFixedPrimitives);
-	raytracePane->addCheckBox("Multithreading", &m_raytraceSettings.multithreading);
-	GuiNumberBox<int>* raysSlider = raytracePane->addNumberBox<int>("Indirect rays per pixel", &m_raytraceSettings.indirectRaysPerPixel, "", GuiTheme::LINEAR_SLIDER, 0, 2048);
+	m_raytracerSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "320 x 200", "640 x 400", "1920 x 1080" }));
+	m_raytracerSettings.resolutionList->setSelectedIndex(1);
+	raytracePane->addCheckBox("Add fixed primitives", &m_raytracerSettings.addFixedPrimitives);
+	raytracePane->addCheckBox("Multithreading", &m_raytracerSettings.multithreading);
+	GuiNumberBox<int>* raysSlider = raytracePane->addNumberBox<int>("Indirect rays per pixel", &m_raytracerSettings.indirectRaysPerPixel, "", GuiTheme::LINEAR_SLIDER, 0, 2048);
 	raysSlider->setWidth(290.0F);
 	raysSlider->setCaptionWidth(140.0F);
 	raytracePane->addButton("Render", this, &App::render);
@@ -452,44 +510,11 @@ void App::render() {
 
 	PinholeCamera camera(-0.001f, 45.0f);
 
-	const Vector2int32 resolution = Vector2int32::parseResolution(m_raytraceSettings.resolutionList->selectedValue());
-
+	const Vector2int32 resolution = m_rayTracer->resolution();
 	shared_ptr<Image> image = Image::create(resolution.x, resolution.y, ImageFormat::RGB32F());
-	render(camera, image);
+
+	m_rayTracer->render(camera, image);
 
 	show(image);
 }
 
-void App::render(const PinholeCamera& camera, shared_ptr<Image>& image) const {
-	const int width = image->width();
-	const int height = image->height();
-
-	for (int y = 0; y < height; ++y) {
-		for (int x = 0; x < width; ++x) {
-			Point3 P;
-			Vector3 w;
-
-			// Find the ray through (x,y) and the center of projection
-			camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, width, height, P, w);
-
-			image->set(x, y, L_i(P, w));
-		}
-	}
-}
-
-Radiance3 App::L_i(const Point3& X, const Vector3& wi) const {
-	// Find the first intersection with the scene
-	const shared_ptr<UniversalSurfel>& s = findFirstIntersection(X, wi);
-
-	if (notNull(s)) {
-		return Radiance3::one();
-	} else {
-		return Radiance3::zero();
-	}
-
-}
-
-const shared_ptr<UniversalSurfel>& App::findFirstIntersection(const Point3& X, const Vector3& wi) const {
-	// THIS IS A BUG
-	return shared_ptr<UniversalSurfel>(new UniversalSurfel());
-}
