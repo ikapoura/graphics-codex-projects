@@ -163,13 +163,17 @@ Radiance3 BRDF::L_i(const Point3& X, const Vector3& wi, const shared_ptr<Univers
 
 
 
-RayTracer::RayTracer(shared_ptr<BRDF> brdf) {
-	m_brdf = brdf;
+RayTracer::RayTracer(const RayTraceSettings& settings, const shared_ptr<Scene>& scene, shared_ptr<BRDF> brdf) :
+	m_settings(settings),
+	m_scene(scene),
+	m_brdf(brdf)
+{
 }
 
 void RayTracer::render(const PinholeCamera& camera, shared_ptr<Image>& image) const {
 	debugAssertM(m_brdf, "The ray tracer needs a BRDF to render.");
 
+	// Main loop over the pixels.
 	const int width = image->width();
 	const int height = image->height();
 
@@ -192,23 +196,9 @@ const shared_ptr<UniversalSurfel>& RayTracer::findFirstIntersection(const Point3
 	return shared_ptr<UniversalSurfel>(new UniversalSurfel());
 }
 
-RayTraceSettings& RayTracer::settings() {
-	return m_settings;
-}
-
-const RayTraceSettings& RayTracer::settings() const {
-	return m_settings;
-}
-
-Vector2int32 RayTracer::resolution() const {
-	return Vector2int32::parseResolution(m_settings.resolutionList->selectedValue());
-}
-
 
 
 App::App(const GApp::Settings& settings) : GApp(settings) {
-	shared_ptr<BRDF> brdf = std::make_shared<BRDF>();
-	m_rayTracer = std::make_unique<RayTracer>(brdf);
 }
 
 // Called before the application loop begins.  Load data here and
@@ -477,13 +467,12 @@ void App::makeGUI() {
 	rendererPane->pack();
 	rendererPane->moveRightOf(infoPane, 10);
 
-	RayTraceSettings& m_raytracerSettings = m_rayTracer->settings();
 	GuiPane* raytracePane = debugPane->addPane("Offline Ray Trace", GuiTheme::ORNATE_PANE_STYLE);
-	m_raytracerSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "320 x 200", "640 x 400", "1920 x 1080" }));
-	m_raytracerSettings.resolutionList->setSelectedIndex(1);
-	raytracePane->addCheckBox("Add fixed primitives", &m_raytracerSettings.addFixedPrimitives);
-	raytracePane->addCheckBox("Multithreading", &m_raytracerSettings.multithreading);
-	GuiNumberBox<int>* raysSlider = raytracePane->addNumberBox<int>("Indirect rays per pixel", &m_raytracerSettings.indirectRaysPerPixel, "", GuiTheme::LINEAR_SLIDER, 0, 2048);
+	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "320 x 200", "640 x 400", "1920 x 1080" }));
+	m_rayTraceSettings.resolutionList->setSelectedIndex(1);
+	raytracePane->addCheckBox("Add fixed primitives", &m_rayTraceSettings.addFixedPrimitives);
+	raytracePane->addCheckBox("Multithreading", &m_rayTraceSettings.multithreading);
+	GuiNumberBox<int>* raysSlider = raytracePane->addNumberBox<int>("Indirect rays per pixel", &m_rayTraceSettings.indirectRaysPerPixel, "", GuiTheme::LINEAR_SLIDER, 0, 2048);
 	raysSlider->setWidth(290.0F);
 	raysSlider->setCaptionWidth(140.0F);
 	raytracePane->addButton("Render", this, &App::render);
@@ -502,15 +491,20 @@ void App::makeGUI() {
 	debugWindow->setRect(Rect2D::xywh(0, 0, (float)window()->width(), debugWindow->rect().height()));
 }
 
+Vector2int32 App::resolution() const {
+	return Vector2int32::parseResolution(m_rayTraceSettings.resolutionList->selectedValue());
+}
+
 void App::render() {
 	drawMessage("Raytracing current scene. Please wait.");
 
 	PinholeCamera camera(-0.001f, 45.0f);
 
-	const Vector2int32 resolution = m_rayTracer->resolution();
-	shared_ptr<Image> image = Image::create(resolution.x, resolution.y, ImageFormat::RGB32F());
+	const Vector2int32 res = resolution();
+	shared_ptr<Image> image = Image::create(res.x, res.y, ImageFormat::RGB32F());
 
-	m_rayTracer->render(camera, image);
+	RayTracer rayTracer(m_rayTraceSettings, scene(), std::make_shared<BRDF>());
+	rayTracer.render(camera, image);
 
 	show(image);
 }
