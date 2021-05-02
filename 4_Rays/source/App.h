@@ -49,7 +49,7 @@ public:
 
 class RayTracer {
 public:
-	RayTracer();
+	RayTracer() = delete;
 	RayTracer(shared_ptr<BRDF> brdf);
 	virtual ~RayTracer() = default;
 
