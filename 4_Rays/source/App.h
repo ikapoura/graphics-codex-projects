@@ -53,7 +53,7 @@ public:
 	RayTracer(const RayTraceSettings& settings, const shared_ptr<Scene>& scene, shared_ptr<BRDF> brdf);
 	virtual ~RayTracer() = default;
 
-	void render(const PinholeCamera& camera, shared_ptr<Image>& image) const;
+	void render(const shared_ptr<Camera>& camera, shared_ptr<Image>& image) const;
 
 	const shared_ptr<UniversalSurfel>& findFirstIntersection(const Point3& X, const Vector3& wi) const;
 

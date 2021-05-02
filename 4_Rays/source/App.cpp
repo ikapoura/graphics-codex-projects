@@ -170,8 +170,16 @@ RayTracer::RayTracer(const RayTraceSettings& settings, const shared_ptr<Scene>& 
 {
 }
 
-void RayTracer::render(const PinholeCamera& camera, shared_ptr<Image>& image) const {
+void RayTracer::render(const shared_ptr<Camera>& camera, shared_ptr<Image>& image) const {
 	debugAssertM(m_brdf, "The ray tracer needs a BRDF to render.");
+
+	// Gather the surfaces from the current scene.
+	Array<shared_ptr<Surface>> surfaces;
+	m_scene->onPose(surfaces);
+
+	// Measure the time of the rendering and not the scene setup.
+	Stopwatch stopwatch("Raytrace time");
+	stopwatch.tick();
 
 	// Main loop over the pixels.
 	const int width = image->width();
@@ -183,12 +191,17 @@ void RayTracer::render(const PinholeCamera& camera, shared_ptr<Image>& image) co
 			Vector3 w;
 
 			// Find the ray through (x,y) and the center of projection
-			camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, width, height, P, w);
+			// camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, width, height, P, w);
 
 			const shared_ptr<UniversalSurfel>& firstIntersection = findFirstIntersection(P, w);
 			image->set(x, y, m_brdf->L_i(P, w, firstIntersection));
 		}
 	}
+
+	// Convert to texture to post process.
+	shared_ptr<Texture> tex = Texture::fromImage("Render result", image);
+
+	stopwatch.tock();
 }
 
 const shared_ptr<UniversalSurfel>& RayTracer::findFirstIntersection(const Point3& X, const Vector3& wi) const {
@@ -498,13 +511,11 @@ Vector2int32 App::resolution() const {
 void App::render() {
 	drawMessage("Raytracing current scene. Please wait.");
 
-	PinholeCamera camera(-0.001f, 45.0f);
-
 	const Vector2int32 res = resolution();
 	shared_ptr<Image> image = Image::create(res.x, res.y, ImageFormat::RGB32F());
 
 	RayTracer rayTracer(m_rayTraceSettings, scene(), std::make_shared<BRDF>());
-	rayTracer.render(camera, image);
+	rayTracer.render(activeCamera(), image);
 
 	show(image);
 }
