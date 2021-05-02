@@ -59,7 +59,8 @@ public:
 
 private:
 	const RayTraceSettings m_settings;
-	const shared_ptr<Scene>& m_scene;
+	Array<shared_ptr<Surface>> m_sceneSurfaces;
+	shared_ptr<TriTree> m_sceneTriTree;
 	shared_ptr<BRDF> m_brdf;
 };
 

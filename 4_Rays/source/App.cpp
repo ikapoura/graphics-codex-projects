@@ -165,17 +165,16 @@ Radiance3 BRDF::L_i(const Point3& X, const Vector3& wi, const shared_ptr<Univers
 
 RayTracer::RayTracer(const RayTraceSettings& settings, const shared_ptr<Scene>& scene, shared_ptr<BRDF> brdf) :
 	m_settings(settings),
-	m_scene(scene),
 	m_brdf(brdf)
 {
+	scene->onPose(m_sceneSurfaces);
+
+	m_sceneTriTree = TriTreeBase::create();
+	m_sceneTriTree->setContents(m_sceneSurfaces);
 }
 
 void RayTracer::render(const shared_ptr<Camera>& camera, shared_ptr<Image>& image) const {
 	debugAssertM(m_brdf, "The ray tracer needs a BRDF to render.");
-
-	// Gather the surfaces from the current scene.
-	Array<shared_ptr<Surface>> surfaces;
-	m_scene->onPose(surfaces);
 
 	// Measure the time of the rendering and not the scene setup.
 	Stopwatch stopwatch("Raytrace time");
@@ -185,8 +184,8 @@ void RayTracer::render(const shared_ptr<Camera>& camera, shared_ptr<Image>& imag
 	const int width = image->width();
 	const int height = image->height();
 
-	for (int y = 0; y < height; ++y) {
-		for (int x = 0; x < width; ++x) {
+	for (Point2int32 point; point.y < height; ++point.y) {
+		for (point.x = 0; point.x < width; ++point.x) {
 			Point3 P;
 			Vector3 w;
 
@@ -194,7 +193,7 @@ void RayTracer::render(const shared_ptr<Camera>& camera, shared_ptr<Image>& imag
 			// camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, width, height, P, w);
 
 			const shared_ptr<UniversalSurfel>& firstIntersection = findFirstIntersection(P, w);
-			image->set(x, y, m_brdf->L_i(P, w, firstIntersection));
+			image->set(point.x, point.y, m_brdf->L_i(P, w, firstIntersection));
 		}
 	}
 
