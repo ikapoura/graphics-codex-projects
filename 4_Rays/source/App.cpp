@@ -171,7 +171,10 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, s
 {
 	scene->onPose(m_sceneSurfaces);
 
-	m_sceneTriTree = TriTreeBase::create();
+	Array<Tri> triangles;
+	Surface::getTris(m_sceneSurfaces, m_sceneCpuVertices, triangles);
+
+	m_sceneTriTree = TriTreeBase::create(false);
 	m_sceneTriTree->setContents(m_sceneSurfaces);
 }
 
@@ -212,12 +215,38 @@ void RayTracer::render(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>
 shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, const Vector3& wi) const {
 	// THIS IS A BUG
 	// return shared_ptr<UniversalSurfel>(new UniversalSurfel());
-	Ray ray(X, wi);
-	if (m_sceneTriTree->intersectRay(ray)) {
-		return std::make_shared<UniversalSurfel>();
-	} else {
-		return shared_ptr<UniversalSurfel>(nullptr);
+	// Ray ray(X, wi);
+	// if (m_sceneTriTree->intersectRay(ray)) {
+	// 	return std::make_shared<UniversalSurfel>();
+	// } else {
+	// 	return shared_ptr<UniversalSurfel>(nullptr);
+	// }
+	Intersector intersector;
+
+	shared_ptr<UniversalSurfel> result;
+	float currentT = std::numeric_limits<float>::max();
+
+	for (int i = 0; i < m_sceneTriTree->size(); ++i) {
+		const Tri& triangle = (*m_sceneTriTree)[i];
+
+		Point3 vertices[3];
+		for (int v = 0; v < 3; ++v) {
+			const CPUVertexArray::Vertex vs = triangle.vertex(m_sceneCpuVertices, v);
+			vertices[v] = vs.position;
+		}
+
+		float b[3];
+		float t;
+
+		if (intersector.rayTriangleIntersect(X, wi, vertices, b, t)) {
+			if (t < currentT) {
+				currentT = t;
+				result = shared_ptr<UniversalSurfel>(new UniversalSurfel());
+			}
+		}
 	}
+
+	return result;
 }
 
 
