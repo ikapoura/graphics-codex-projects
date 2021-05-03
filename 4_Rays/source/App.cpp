@@ -173,8 +173,12 @@ RayTracer::RayTracer(const RayTraceSettings& settings, const shared_ptr<Scene>& 
 	m_sceneTriTree->setContents(m_sceneSurfaces);
 }
 
-void RayTracer::render(const shared_ptr<Camera>& camera, shared_ptr<Image>& image) const {
+void RayTracer::render(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>& image) const {
 	debugAssertM(m_brdf, "The ray tracer needs a BRDF to render.");
+
+	const PinholeCamera camera(activeCamera->nearPlaneZ(), activeCamera->fieldOfViewAngleDegrees() * 2.0f);
+
+	const CoordinateFrame activeCameraFrame = activeCamera->frame();
 
 	// Measure the time of the rendering and not the scene setup.
 	Stopwatch stopwatch("Raytrace time");
@@ -189,10 +193,14 @@ void RayTracer::render(const shared_ptr<Camera>& camera, shared_ptr<Image>& imag
 			Point3 P;
 			Vector3 w;
 
-			// Find the ray through (x,y) and the center of projection
-			// camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, width, height, P, w);
+			// Find the ray through (x,y) and the center of projection.
+			camera.getPrimaryRay(float(point.x) + 0.5f, float(point.y) + 0.5f, width, height, P, w);
+			
+			// Transform based on the camera position and rotation.
+			P += activeCameraFrame.translation;
+			w = activeCameraFrame.rotation * w;
 
-			const shared_ptr<UniversalSurfel>& firstIntersection = findFirstIntersection(P, w);
+			const shared_ptr<UniversalSurfel> firstIntersection = findFirstIntersection(P, w);
 			image->set(point.x, point.y, m_brdf->L_i(P, w, firstIntersection));
 		}
 	}
@@ -203,9 +211,15 @@ void RayTracer::render(const shared_ptr<Camera>& camera, shared_ptr<Image>& imag
 	stopwatch.tock();
 }
 
-const shared_ptr<UniversalSurfel>& RayTracer::findFirstIntersection(const Point3& X, const Vector3& wi) const {
+shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, const Vector3& wi) const {
 	// THIS IS A BUG
-	return shared_ptr<UniversalSurfel>(new UniversalSurfel());
+	// return shared_ptr<UniversalSurfel>(new UniversalSurfel());
+	Ray ray(X, wi);
+	if (m_sceneTriTree->intersectRay(ray)) {
+		return std::make_shared<UniversalSurfel>();
+	} else {
+		return shared_ptr<UniversalSurfel>(nullptr);
+	}
 }
 
 
@@ -480,7 +494,7 @@ void App::makeGUI() {
 	rendererPane->moveRightOf(infoPane, 10);
 
 	GuiPane* raytracePane = debugPane->addPane("Offline Ray Trace", GuiTheme::ORNATE_PANE_STYLE);
-	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "320 x 200", "640 x 400", "1920 x 1080" }));
+	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "50 x 50", "320 x 200", "640 x 400", "1920 x 1080" }));
 	m_rayTraceSettings.resolutionList->setSelectedIndex(1);
 	raytracePane->addCheckBox("Add fixed primitives", &m_rayTraceSettings.addFixedPrimitives);
 	raytracePane->addCheckBox("Multithreading", &m_rayTraceSettings.multithreading);

@@ -55,7 +55,7 @@ public:
 
 	void render(const shared_ptr<Camera>& camera, shared_ptr<Image>& image) const;
 
-	const shared_ptr<UniversalSurfel>& findFirstIntersection(const Point3& X, const Vector3& wi) const;
+	shared_ptr<UniversalSurfel> findFirstIntersection(const Point3& X, const Vector3& wi) const;
 
 private:
 	const RayTraceSettings m_settings;
