@@ -39,18 +39,18 @@ public:
 	Radiance3 L_i(const Point3& X, const Vector3& wi, const shared_ptr<UniversalSurfel>& s) const;
 };
 
-class RayTraceSettings {
-public:
-	bool addFixedPrimitives{ false };
-	int  indirectRaysPerPixel{ 1 };
-	bool multithreading{ false };
-	GuiDropDownList* resolutionList{ nullptr };
-};
-
 class RayTracer {
 public:
+	class Settings {
+	public:
+		bool addFixedPrimitives{ false };
+		int  indirectRaysPerPixel{ 1 };
+		bool multithreading{ false };
+		GuiDropDownList* resolutionList{ nullptr };
+	};
+
 	RayTracer() = delete;
-	RayTracer(const RayTraceSettings& settings, const shared_ptr<Scene>& scene, shared_ptr<BRDF> brdf);
+	RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, shared_ptr<BRDF> brdf);
 	virtual ~RayTracer() = default;
 
 	void render(const shared_ptr<Camera>& camera, shared_ptr<Image>& image) const;
@@ -58,7 +58,7 @@ public:
 	shared_ptr<UniversalSurfel> findFirstIntersection(const Point3& X, const Vector3& wi) const;
 
 private:
-	const RayTraceSettings m_settings;
+	const Settings m_settings;
 	Array<shared_ptr<Surface>> m_sceneSurfaces;
 	shared_ptr<TriTree> m_sceneTriTree;
 	shared_ptr<BRDF> m_brdf;
@@ -99,5 +99,5 @@ private:
 	void render();
 
 private:
-	RayTraceSettings m_rayTraceSettings;
+	RayTracer::Settings m_rayTraceSettings;
 };

@@ -163,7 +163,7 @@ Radiance3 BRDF::L_i(const Point3& X, const Vector3& wi, const shared_ptr<Univers
 
 
 
-RayTracer::RayTracer(const RayTraceSettings& settings, const shared_ptr<Scene>& scene, shared_ptr<BRDF> brdf) :
+RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, shared_ptr<BRDF> brdf) :
 	m_settings(settings),
 	m_brdf(brdf)
 {
