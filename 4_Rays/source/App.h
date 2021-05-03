@@ -19,7 +19,7 @@ public:
 
 class PinholeCamera {
 public:
-	PinholeCamera(float z_near, float verticalFieldOfView);
+	PinholeCamera(float z_near, float verticalFieldOfView, const CoordinateFrame& frame);
 
 	// x, y, width and height in pixels; P in meters
 	void getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const;
@@ -29,6 +29,8 @@ protected:
 	float m_zNear;
 
 	float m_verticalFieldOfView;
+
+	CoordinateFrame m_frame;
 };
 
 class BRDF {
@@ -59,6 +61,7 @@ public:
 
 private:
 	const Settings m_settings;
+	CPUVertexArray m_sceneCpuVertices;
 	Array<shared_ptr<Surface>> m_sceneSurfaces;
 	shared_ptr<TriTree> m_sceneTriTree;
 	shared_ptr<BRDF> m_brdf;

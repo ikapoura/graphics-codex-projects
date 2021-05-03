@@ -132,23 +132,25 @@ bool Intersector::rayTriangleIntersect(const Point3& P, const Vector3& w, const 
 
 
 
-PinholeCamera::PinholeCamera(float z_near, float verticalFieldOfView) :
-	m_zNear(z_near), m_verticalFieldOfView(verticalFieldOfView)
+PinholeCamera::PinholeCamera(float z_near, float verticalFieldOfView, const CoordinateFrame& frame) :
+	m_zNear(z_near), m_verticalFieldOfView(verticalFieldOfView), m_frame(frame)
 {
 }
 
 void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const {
-	// Compute the side of a square at z = -1 on our vertical top-to-bottom field of view; the result 
-	// is negative because of our convention to have the image plane on the negative axis
 	const float side = -2.0f * tanf(m_verticalFieldOfView / 2.0f);
 	
-	// Invert the y-axis because we're moving from the 2D=down to the 3D y=up coordinate system
+	// Invert the y-axis because we're moving from the 2D=down to the 3D y=up coordinate system.
 	P = Point3(m_zNear * (x / width - 0.5f) * side * width / height,
 			   m_zNear * -(y / height - 0.5f) * side,
 			   m_zNear);
 
-	// The incoming direction is simply that from the origin to P
+	// The incoming direction is simply that from the origin to P.
 	w = P.direction();
+
+	// Transform based on the orientation.
+	P = (m_frame.toMatrix4() * Vector4(P, 1.0f)).xyz();
+	w = m_frame.rotation * w;
 }
 
 
@@ -176,9 +178,9 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, s
 void RayTracer::render(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>& image) const {
 	debugAssertM(m_brdf, "The ray tracer needs a BRDF to render.");
 
-	const PinholeCamera camera(activeCamera->nearPlaneZ(), activeCamera->fieldOfViewAngleDegrees() * 2.0f);
-
-	const CoordinateFrame activeCameraFrame = activeCamera->frame();
+	const PinholeCamera camera(activeCamera->nearPlaneZ(),
+							   activeCamera->fieldOfViewAngleDegrees(),
+							   activeCamera->frame());
 
 	// Measure the time of the rendering and not the scene setup.
 	Stopwatch stopwatch("Raytrace time");
@@ -195,10 +197,6 @@ void RayTracer::render(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>
 
 			// Find the ray through (x,y) and the center of projection.
 			camera.getPrimaryRay(float(point.x) + 0.5f, float(point.y) + 0.5f, width, height, P, w);
-			
-			// Transform based on the camera position and rotation.
-			P += activeCameraFrame.translation;
-			w = activeCameraFrame.rotation * w;
 
 			const shared_ptr<UniversalSurfel> firstIntersection = findFirstIntersection(P, w);
 			image->set(point.x, point.y, m_brdf->L_i(P, w, firstIntersection));
@@ -494,7 +492,7 @@ void App::makeGUI() {
 	rendererPane->moveRightOf(infoPane, 10);
 
 	GuiPane* raytracePane = debugPane->addPane("Offline Ray Trace", GuiTheme::ORNATE_PANE_STYLE);
-	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "50 x 50", "320 x 200", "640 x 400", "1920 x 1080" }));
+	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "20 x 20", "320 x 200", "640 x 400", "1920 x 1080" }));
 	m_rayTraceSettings.resolutionList->setSelectedIndex(1);
 	raytracePane->addCheckBox("Add fixed primitives", &m_rayTraceSettings.addFixedPrimitives);
 	raytracePane->addCheckBox("Multithreading", &m_rayTraceSettings.multithreading);
