@@ -55,7 +55,7 @@ public:
 	RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, shared_ptr<BRDF> brdf);
 	virtual ~RayTracer() = default;
 
-	void render(const shared_ptr<Camera>& camera, shared_ptr<Image>& image) const;
+	chrono::milliseconds traceImage(const shared_ptr<Camera>& camera, shared_ptr<Image>& image);
 
 	shared_ptr<UniversalSurfel> findFirstIntersection(const Point3& X, const Vector3& wi) const;
 
@@ -97,6 +97,8 @@ protected:
 	void makeGUI();
 
 	Vector2int32 resolution() const;
+
+	String durationToString(chrono::milliseconds duration) const;
 
 private:
 	void render();

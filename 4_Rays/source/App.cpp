@@ -178,38 +178,46 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, s
 	m_sceneTriTree->setContents(m_sceneSurfaces);
 }
 
-void RayTracer::render(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>& image) const {
+chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>& image) {
 	debugAssertM(m_brdf, "The ray tracer needs a BRDF to render.");
 
-	const PinholeCamera camera(activeCamera->nearPlaneZ(),
-							   activeCamera->fieldOfViewAngleDegrees(),
-							   activeCamera->frame());
+	chrono::milliseconds elapsedTime(0.0);
 
-	// Measure the time of the rendering and not the scene setup.
-	Stopwatch stopwatch("Raytrace time");
-	stopwatch.tick();
+	if (m_brdf) {
+		const PinholeCamera camera(activeCamera->nearPlaneZ(),
+			activeCamera->fieldOfViewAngleDegrees(),
+			activeCamera->frame());
 
-	// Main loop over the pixels.
-	const int width = image->width();
-	const int height = image->height();
+		// Measure the time of the rendering and not the scene setup.
+		Stopwatch stopwatch("Image trace");
+		stopwatch.tick();
 
-	for (Point2int32 point; point.y < height; ++point.y) {
-		for (point.x = 0; point.x < width; ++point.x) {
-			Point3 P;
-			Vector3 w;
+		// Main loop over the pixels.
+		const int width = image->width();
+		const int height = image->height();
 
-			// Find the ray through (x,y) and the center of projection.
-			camera.getPrimaryRay(float(point.x) + 0.5f, float(point.y) + 0.5f, width, height, P, w);
+		for (Point2int32 point; point.y < height; ++point.y) {
+			for (point.x = 0; point.x < width; ++point.x) {
+				Point3 P;
+				Vector3 w;
 
-			const shared_ptr<UniversalSurfel> firstIntersection = findFirstIntersection(P, w);
-			image->set(point.x, point.y, m_brdf->L_i(P, w, firstIntersection));
+				// Find the ray through (x,y) and the center of projection.
+				camera.getPrimaryRay(float(point.x) + 0.5f, float(point.y) + 0.5f, width, height, P, w);
+
+				const shared_ptr<UniversalSurfel> firstIntersection = findFirstIntersection(P, w);
+				image->set(point.x, point.y, m_brdf->L_i(P, w, firstIntersection));
+			}
 		}
+
+		// Convert to texture to post process.
+		shared_ptr<Texture> tex = Texture::fromImage("Render result", image);
+
+		stopwatch.tock();
+
+		elapsedTime = stopwatch.elapsedDuration<chrono::milliseconds>();
 	}
 
-	// Convert to texture to post process.
-	shared_ptr<Texture> tex = Texture::fromImage("Render result", image);
-
-	stopwatch.tock();
+	return elapsedTime;
 }
 
 shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, const Vector3& wi) const {
@@ -540,6 +548,25 @@ Vector2int32 App::resolution() const {
 	return Vector2int32::parseResolution(m_rayTraceSettings.resolutionList->selectedValue());
 }
 
+String App::durationToString(chrono::milliseconds duration) const {
+	const int h = int(std::chrono::duration_cast<chrono::hours>(duration).count());
+	duration -= std::chrono::duration_cast<chrono::milliseconds>(chrono::hours(h));
+
+	const int m = int(std::chrono::duration_cast<chrono::minutes>(duration).count());
+	duration -= std::chrono::duration_cast<chrono::milliseconds>(chrono::minutes(m));
+
+	const int s = int(std::chrono::duration_cast<chrono::seconds>(duration).count());
+	duration -= std::chrono::duration_cast<chrono::milliseconds>(chrono::seconds(s));
+
+	const int ms = int(duration.count());
+
+	const size_t BUFFER_SIZE = 128;
+	char buffer[BUFFER_SIZE];
+	snprintf(buffer, BUFFER_SIZE, "%dh %dm %ds %dms", h, m, s, ms);
+
+	return String(buffer);
+}
+
 void App::render() {
 	drawMessage("Raytracing current scene. Please wait.");
 
@@ -547,8 +574,12 @@ void App::render() {
 	shared_ptr<Image> image = Image::create(res.x, res.y, ImageFormat::RGB32F());
 
 	RayTracer rayTracer(m_rayTraceSettings, scene(), std::make_shared<BRDF>());
-	rayTracer.render(activeCamera(), image);
+	const chrono::milliseconds durationMs = rayTracer.traceImage(activeCamera(), image);
 
-	show(image);
+	const String durationPrintOutput = String("Render duration: ") + durationToString(durationMs);
+
+	consolePrint(durationPrintOutput);
+
+	show(image, durationPrintOutput);
 }
 
