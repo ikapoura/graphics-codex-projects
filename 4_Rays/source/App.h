@@ -28,7 +28,7 @@ protected:
 	// Negative
 	float m_zNear;
 
-	float m_verticalFieldOfView;
+	float m_horizontalFieldOfView;
 
 	CoordinateFrame m_frame;
 };

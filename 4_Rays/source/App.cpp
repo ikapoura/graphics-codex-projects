@@ -133,16 +133,16 @@ bool Intersector::rayTriangleIntersect(const Point3& P, const Vector3& w, const 
 
 
 PinholeCamera::PinholeCamera(float z_near, float verticalFieldOfView, const CoordinateFrame& frame) :
-	m_zNear(z_near), m_verticalFieldOfView(verticalFieldOfView), m_frame(frame)
+	m_zNear(z_near), m_horizontalFieldOfView(verticalFieldOfView), m_frame(frame)
 {
 }
 
 void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const {
-	const float side = -2.0f * tanf(m_verticalFieldOfView / 2.0f);
+	const float side = -tanf(m_horizontalFieldOfView / 2.0f);
 	
 	// Invert the y-axis because we're moving from the 2D=down to the 3D y=up coordinate system.
-	P = Point3(m_zNear * (x / width - 0.5f) * side * width / height,
-			   m_zNear * -(y / height - 0.5f) * side,
+	P = Point3(m_zNear * (x / width - 0.5f) * side,
+			   m_zNear * -(y / height - 0.5f) * side * height / width,
 			   m_zNear);
 
 	// The incoming direction is simply that from the origin to P.
@@ -213,14 +213,6 @@ void RayTracer::render(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>
 }
 
 shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, const Vector3& wi) const {
-	// THIS IS A BUG
-	// return shared_ptr<UniversalSurfel>(new UniversalSurfel());
-	// Ray ray(X, wi);
-	// if (m_sceneTriTree->intersectRay(ray)) {
-	// 	return std::make_shared<UniversalSurfel>();
-	// } else {
-	// 	return shared_ptr<UniversalSurfel>(nullptr);
-	// }
 	Intersector intersector;
 
 	shared_ptr<UniversalSurfel> result;
