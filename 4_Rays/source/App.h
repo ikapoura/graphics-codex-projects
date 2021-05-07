@@ -7,17 +7,20 @@
 #pragma once
 #include <G3D/G3D.h>
 
-class PostProcess {
+class PostProcess
+{
 public:
 	Color3 pixelValue(const Radiance3& L, const float k, const float gamma);
 };
 
-class Intersector {
+class Intersector
+{
 public:
 	bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t);
 };
 
-class PinholeCamera {
+class PinholeCamera
+{
 public:
 	PinholeCamera(float z_near, float verticalFieldOfView, const CoordinateFrame& frame);
 
@@ -33,7 +36,8 @@ protected:
 	CoordinateFrame m_frame;
 };
 
-class BRDF {
+class BRDF
+{
 public:
 	BRDF() = default;
 	virtual ~BRDF() = default;
@@ -41,7 +45,8 @@ public:
 	Radiance3 L_i(const Point3& X, const Vector3& wi, const shared_ptr<UniversalSurfel>& s) const;
 };
 
-class RayTracer {
+class RayTracer
+{
 public:
 	class Settings {
 	public:
@@ -69,7 +74,8 @@ private:
 
 
  /** \brief Application framework. */
-class App : public GApp {
+class App : public GApp
+{
 public:
 
 	App(const GApp::Settings& settings = GApp::Settings());
@@ -106,3 +112,4 @@ private:
 private:
 	RayTracer::Settings m_rayTraceSettings;
 };
+

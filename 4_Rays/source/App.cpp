@@ -4,7 +4,8 @@
 // Tells C++ to invoke command-line main() function even on OS X and Win32.
 G3D_START_AT_MAIN();
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char* argv[])
+{
 	initGLG3D(G3DSpecification());
 
 	GApp::Settings settings(argc, argv);
@@ -64,7 +65,8 @@ int main(int argc, const char* argv[]) {
 
 
 // Get a color from Radiance, saturation and gamma
-Color3 PostProcess::pixelValue(const Radiance3& L, const float k, const float gamma) {
+Color3 PostProcess::pixelValue(const Radiance3& L, const float k, const float gamma)
+{
 	Radiance3 outL = L;
 
 	// Adjust for constant sensitivity
@@ -91,7 +93,8 @@ Color3 PostProcess::pixelValue(const Radiance3& L, const float k, const float ga
 // If ray P + tw hits triangle V[0], V[1], V[2], then the function return true, stores the
 // barycentric coordinates in b[] and stores the distance to the intersection in t. Otherwise,
 // returns false and the other output parameters are undefined.
-bool Intersector::rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t) {
+bool Intersector::rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t)
+{
 	// Precision threshold depends on scene scale. Too small leaves holes at edges, too 
 	// large expands triangles.
 	const float eps = 1e-6;
@@ -137,7 +140,8 @@ PinholeCamera::PinholeCamera(float z_near, float verticalFieldOfView, const Coor
 {
 }
 
-void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const {
+void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const
+{
 	const float side = -tanf(m_horizontalFieldOfView / 2.0f);
 	
 	// Invert the y-axis because we're moving from the 2D=down to the 3D y=up coordinate system.
@@ -155,7 +159,8 @@ void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point
 
 
 
-Radiance3 BRDF::L_i(const Point3& X, const Vector3& wi, const shared_ptr<UniversalSurfel>& s) const {
+Radiance3 BRDF::L_i(const Point3& X, const Vector3& wi, const shared_ptr<UniversalSurfel>& s) const
+{
 	if (notNull(s)) {
 		return Radiance3::one();
 	} else {
@@ -178,7 +183,8 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, s
 	m_sceneTriTree->setContents(m_sceneSurfaces);
 }
 
-chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>& image) {
+chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>& image)
+{
 	debugAssertM(m_brdf, "The ray tracer needs a BRDF to render.");
 
 	chrono::milliseconds elapsedTime(0.0);
@@ -221,7 +227,8 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	return elapsedTime;
 }
 
-shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, const Vector3& wi) const {
+shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, const Vector3& wi) const
+{
 	Intersector intersector;
 
 	shared_ptr<UniversalSurfel> result;
@@ -252,13 +259,16 @@ shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, co
 
 
 
-App::App(const GApp::Settings& settings) : GApp(settings) {
+App::App(const GApp::Settings& settings) :
+	GApp(settings)
+{
 }
 
 // Called before the application loop begins.  Load data here and
 // not in the constructor so that common exceptions will be
 // automatically caught.
-void App::onInit() {
+void App::onInit()
+{
 	GApp::onInit();
 
 	setFrameDuration(1.0f / 240.0f);
@@ -288,7 +298,8 @@ void App::onInit() {
 // This default implementation is a direct copy of GApp::onGraphics3D to make it easy
 // for you to modify. If you aren't changing the hardware rendering strategy, you can
 // delete this override entirely.
-void App::onGraphics3D(RenderDevice* rd, Array<shared_ptr<Surface> >& allSurfaces) {
+void App::onGraphics3D(RenderDevice* rd, Array<shared_ptr<Surface> >& allSurfaces)
+{
 	if (!scene()) {
 		if ((submitToDisplayMode() == SubmitToDisplayMode::MAXIMIZE_THROUGHPUT) && (!rd->swapBuffersAutomatically())) {
 			swapBuffers();
@@ -350,19 +361,22 @@ void App::onGraphics3D(RenderDevice* rd, Array<shared_ptr<Surface> >& allSurface
 }
 
 
-void App::onAI() {
+void App::onAI()
+{
 	GApp::onAI();
 	// Add non-simulation game logic and AI code here
 }
 
 
-void App::onNetwork() {
+void App::onNetwork()
+{
 	GApp::onNetwork();
 	// Poll net messages here
 }
 
 
-void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
+void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt)
+{
 	GApp::onSimulation(rdt, sdt, idt);
 
 	// Example GUI dynamic layout code.  Resize the debugWindow to fill
@@ -371,7 +385,8 @@ void App::onSimulation(RealTime rdt, SimTime sdt, SimTime idt) {
 }
 
 
-bool App::onEvent(const GEvent& event) {
+bool App::onEvent(const GEvent& event)
+{
 	// Handle super-class events
 	if (GApp::onEvent(event)) { return true; }
 
@@ -394,7 +409,8 @@ bool App::onEvent(const GEvent& event) {
 }
 
 
-void App::onUserInput(UserInput* ui) {
+void App::onUserInput(UserInput* ui)
+{
 	GApp::onUserInput(ui);
 	(void)ui;
 	// Add key handling here based on the keys currently held or
@@ -402,25 +418,29 @@ void App::onUserInput(UserInput* ui) {
 }
 
 
-void App::onPose(Array<shared_ptr<Surface> >& surface, Array<shared_ptr<Surface2D> >& surface2D) {
+void App::onPose(Array<shared_ptr<Surface> >& surface, Array<shared_ptr<Surface2D> >& surface2D)
+{
 	GApp::onPose(surface, surface2D);
 
 	// Append any models to the arrays that you want to later be rendered by onGraphics()
 }
 
 
-void App::onGraphics2D(RenderDevice* rd, Array<shared_ptr<Surface2D> >& posed2D) {
+void App::onGraphics2D(RenderDevice* rd, Array<shared_ptr<Surface2D> >& posed2D)
+{
 	// Render 2D objects like Widgets.  These do not receive tone mapping or gamma correction.
 	Surface2D::sortAndRender(rd, posed2D);
 }
 
 
-void App::onCleanup() {
+void App::onCleanup()
+{
 	// Called after the application loop ends.  Place a majority of cleanup code
 	// here instead of in the constructor so that exceptions can be caught.
 }
 
-void App::drawDebugShapes() {
+void App::drawDebugShapes()
+{
 	GApp::drawDebugShapes();
 
 	const shared_ptr<DefaultRenderer>& defaultRenderer = dynamic_pointer_cast<DefaultRenderer>(m_renderer);
@@ -442,7 +462,8 @@ void App::drawDebugShapes() {
 	}
 }
 
-void App::makeGUI() {
+void App::makeGUI()
+{
 	debugWindow->setVisible(true);
 	developerWindow->videoRecordDialog->setEnabled(true);
 	GuiPane* infoPane = debugPane->addPane("Info", GuiTheme::ORNATE_PANE_STYLE);
@@ -545,11 +566,13 @@ void App::makeGUI() {
 	debugWindow->setRect(Rect2D::xywh(0, 0, (float)window()->width(), debugWindow->rect().height()));
 }
 
-Vector2int32 App::resolution() const {
+Vector2int32 App::resolution() const
+{
 	return Vector2int32::parseResolution(m_rayTraceSettings.resolutionList->selectedValue());
 }
 
-String App::durationToString(chrono::milliseconds duration) const {
+String App::durationToString(chrono::milliseconds duration) const
+{
 	const int h = int(std::chrono::duration_cast<chrono::hours>(duration).count());
 	duration -= std::chrono::duration_cast<chrono::milliseconds>(chrono::hours(h));
 
@@ -568,7 +591,8 @@ String App::durationToString(chrono::milliseconds duration) const {
 	return String(buffer);
 }
 
-void App::render() {
+void App::render()
+{
 	drawMessage("Raytracing current scene. Please wait.");
 
 	const Vector2int32 res = resolution();
