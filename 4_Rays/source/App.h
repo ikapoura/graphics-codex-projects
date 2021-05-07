@@ -66,7 +66,6 @@ private:
 	shared_ptr<UniversalSurfel> findFirstIntersection(const Point3& X, const Vector3& wi) const;
 
 	const Settings m_settings;
-	CPUVertexArray m_sceneCpuVertices;
 	Array<shared_ptr<Surface>> m_sceneSurfaces;
 	shared_ptr<TriTree> m_sceneTriTree;
 	shared_ptr<BRDF> m_brdf;

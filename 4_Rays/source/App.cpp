@@ -176,9 +176,6 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, s
 {
 	scene->onPose(m_sceneSurfaces);
 
-	Array<Tri> triangles;
-	Surface::getTris(m_sceneSurfaces, m_sceneCpuVertices, triangles);
-
 	m_sceneTriTree = TriTreeBase::create(false);
 	m_sceneTriTree->setContents(m_sceneSurfaces);
 }
@@ -239,7 +236,7 @@ shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, co
 
 		Point3 vertices[3];
 		for (int v = 0; v < 3; ++v) {
-			const CPUVertexArray::Vertex vs = triangle.vertex(m_sceneCpuVertices, v);
+			const CPUVertexArray::Vertex vs = triangle.vertex(m_sceneTriTree->vertexArray(), v);
 			vertices[v] = vs.position;
 		}
 
