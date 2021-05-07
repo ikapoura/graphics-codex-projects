@@ -177,7 +177,7 @@ void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point
 Radiance3 BRDF::L_i(const Point3& X, const Vector3& wi, const shared_ptr<UniversalSurfel>& s) const
 {
 	if (notNull(s)) {
-		return Radiance3::one();
+		return s->lambertianReflectivity;
 	} else {
 		return Radiance3::zero();
 	}
@@ -241,28 +241,62 @@ shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, co
 {
 	Intersector intersector;
 
-	shared_ptr<UniversalSurfel> result;
 	float currentT = std::numeric_limits<float>::max();
+
+	shared_ptr<UniversalSurfel> result;
+
+	// Saving here so that they are not constructed and destructed for every triangle.
+	CPUVertexArray::Vertex vertices[3];
+	Point3 positions[3];
+	float b[3];
+	float t;
 
 	for (int i = 0; i < m_sceneTriTree->size(); ++i) {
 		const Tri& triangle = (*m_sceneTriTree)[i];
 
-		Point3 vertices[3];
 		for (int v = 0; v < 3; ++v) {
-			const CPUVertexArray::Vertex vs = triangle.vertex(m_sceneTriTree->vertexArray(), v);
-			vertices[v] = vs.position;
+			vertices[v] = triangle.vertex(m_sceneTriTree->vertexArray(), v);
 		}
 
-		float b[3];
-		float t;
+		for (int v = 0; v < 3; ++v) {
+			positions[v] = vertices[v].position;
+		}
 
-		if (intersector.rayTriangleIntersect(X, wi, vertices, b, t)) {
+		if (intersector.rayTriangleIntersect(X, wi, positions, b, t)) {
 			if (t < currentT) {
-				currentT = t;
-				result = shared_ptr<UniversalSurfel>(new UniversalSurfel());
+				// Construct a Hit object for sampling.
+				G3D::TriTree::Hit hit;
+				hit.triIndex = i;
+				hit.distance = t;
+
+				// Check if the triangle is hit from behind.
+				const Vector3 triNormal = triangle.normal(m_sceneTriTree->vertexArray());
+				const float dotWiTriNormal = wi.dot(triNormal);
+
+				hit.backface = dotWiTriNormal > 0.0f;
+
+				// Construct the U and V coordinates from the barycentrics.
+				hit.u = 0.0f;
+				hit.v = 0.0f;
+				for (int v = 0; v < 3; ++v) {
+					hit.u += vertices[v].texCoord0.x * b[v];
+					hit.v += vertices[v].texCoord0.y * b[v];
+				}
+
+				// Sample the triangle.
+				shared_ptr<UniversalSurfel> universalSurfel = std::make_shared<UniversalSurfel>();
+				shared_ptr<Surfel> surfel = universalSurfel;
+				m_sceneTriTree->sample(hit, surfel);
+
+				// Alpha testing.
+				if (universalSurfel->coverage == 1.0f) {
+					result = universalSurfel;
+
+					currentT = t;
+				}
 			}
 		}
-	}
+	}	
 
 	return result;
 }
@@ -291,7 +325,7 @@ void App::onInit()
 	loadScene(
 
 #       ifndef G3D_DEBUG
-		"G3D Sponza"
+		"G3D Debug Teapot"
 #       else
 		"G3D Simple Cornell Box (Area Light)" // Load something simple
 #       endif
