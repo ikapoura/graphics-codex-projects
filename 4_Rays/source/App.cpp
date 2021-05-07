@@ -143,16 +143,14 @@ PinholeCamera::PinholeCamera(const CoordinateFrame& frame, const Projection& pro
 void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const
 {
 	// Init the properties.
-	// The following could be condensed to Projection::getFieldOfView(float&, FOVDirection&) but
-	// it is currently bugged.
 	const FOVDirection fovDir = m_projection.fieldOfViewDirection();
+	const float fovAngle = m_projection.fieldOfViewAngle();
 	debugAssertM(fovDir != FOVDirection::DIAGONAL, "Diagonal FOVDirection is not supported yet");
 
-	const float verticalFieldOfView = m_projection.fieldOfViewAngle();
 	const float zNear = m_projection.nearPlaneZ();
 
 	// Compute the origin of the ray.
-	const float side = -2.0f * tanf(verticalFieldOfView / 2.0f);
+	const float side = -2.0f * tanf(fovAngle / 2.0f);
 
 	P = Point3(zNear * (x / width - 0.5f) * side,
 			   zNear * -(y / height - 0.5f) * side,
