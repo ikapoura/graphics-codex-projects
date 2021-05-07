@@ -196,18 +196,19 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 		const int width = image->width();
 		const int height = image->height();
 
-		for (Point2int32 point; point.y < height; ++point.y) {
-			for (point.x = 0; point.x < width; ++point.x) {
+		runConcurrently(Point2int32(0, 0), Point2int32(width, height),
+			[this, camera, image, width, height](Point2int32 point) -> void {
 				Point3 P;
 				Vector3 w;
 
 				// Find the ray through (x,y) and the center of projection.
 				camera.getPrimaryRay(float(point.x) + 0.5f, float(point.y) + 0.5f, width, height, P, w);
 
+				// Find the first intersection and store the radiance.
 				const shared_ptr<UniversalSurfel> firstIntersection = findFirstIntersection(P, w);
 				image->set(point.x, point.y, m_brdf->L_i(P, w, firstIntersection));
-			}
-		}
+			},
+			!m_settings.multithreading);
 
 		// Convert to texture to post process.
 		shared_ptr<Texture> tex = Texture::fromImage("Render result", image);
@@ -522,7 +523,7 @@ void App::makeGUI() {
 
 	GuiPane* raytracePane = debugPane->addPane("Offline Ray Trace", GuiTheme::ORNATE_PANE_STYLE);
 	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "20 x 20", "320 x 200", "640 x 400", "1920 x 1080" }));
-	m_rayTraceSettings.resolutionList->setSelectedIndex(1);
+	m_rayTraceSettings.resolutionList->setSelectedIndex(2);
 	raytracePane->addCheckBox("Add fixed primitives", &m_rayTraceSettings.addFixedPrimitives);
 	raytracePane->addCheckBox("Multithreading", &m_rayTraceSettings.multithreading);
 	GuiNumberBox<int>* raysSlider = raytracePane->addNumberBox<int>("Indirect rays per pixel", &m_rayTraceSettings.indirectRaysPerPixel, "", GuiTheme::LINEAR_SLIDER, 0, 2048);

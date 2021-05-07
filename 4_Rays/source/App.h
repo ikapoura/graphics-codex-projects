@@ -47,7 +47,7 @@ public:
 	public:
 		bool addFixedPrimitives{ false };
 		int  indirectRaysPerPixel{ 1 };
-		bool multithreading{ false };
+		bool multithreading{ true };
 		GuiDropDownList* resolutionList{ nullptr };
 	};
 
@@ -57,9 +57,9 @@ public:
 
 	chrono::milliseconds traceImage(const shared_ptr<Camera>& camera, shared_ptr<Image>& image);
 
+private:
 	shared_ptr<UniversalSurfel> findFirstIntersection(const Point3& X, const Vector3& wi) const;
 
-private:
 	const Settings m_settings;
 	CPUVertexArray m_sceneCpuVertices;
 	Array<shared_ptr<Surface>> m_sceneSurfaces;
