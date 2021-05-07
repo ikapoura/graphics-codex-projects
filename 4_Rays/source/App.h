@@ -22,18 +22,14 @@ public:
 class PinholeCamera
 {
 public:
-	PinholeCamera(float z_near, float verticalFieldOfView, const CoordinateFrame& frame);
+	PinholeCamera(const CoordinateFrame& frame, const Projection& projection);
 
 	// x, y, width and height in pixels; P in meters
 	void getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const;
 
 protected:
-	// Negative
-	float m_zNear;
-
-	float m_horizontalFieldOfView;
-
 	CoordinateFrame m_frame;
+	Projection m_projection;
 };
 
 class BRDF

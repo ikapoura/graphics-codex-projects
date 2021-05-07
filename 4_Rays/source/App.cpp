@@ -135,19 +135,34 @@ bool Intersector::rayTriangleIntersect(const Point3& P, const Vector3& w, const 
 
 
 
-PinholeCamera::PinholeCamera(float z_near, float verticalFieldOfView, const CoordinateFrame& frame) :
-	m_zNear(z_near), m_horizontalFieldOfView(verticalFieldOfView), m_frame(frame)
+PinholeCamera::PinholeCamera(const CoordinateFrame& frame, const Projection& projection) :
+	m_frame(frame), m_projection(projection)
 {
 }
 
 void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const
 {
-	const float side = -tanf(m_horizontalFieldOfView / 2.0f);
-	
-	// Invert the y-axis because we're moving from the 2D=down to the 3D y=up coordinate system.
-	P = Point3(m_zNear * (x / width - 0.5f) * side,
-			   m_zNear * -(y / height - 0.5f) * side * height / width,
-			   m_zNear);
+	// Init the properties.
+	// The following could be condensed to Projection::getFieldOfView(float&, FOVDirection&) but
+	// it is currently bugged.
+	const FOVDirection fovDir = m_projection.fieldOfViewDirection();
+	debugAssertM(fovDir != FOVDirection::DIAGONAL, "Diagonal FOVDirection is not supported yet");
+
+	const float verticalFieldOfView = m_projection.fieldOfViewAngle();
+	const float zNear = m_projection.nearPlaneZ();
+
+	// Compute the origin of the ray.
+	const float side = -2.0f * tanf(verticalFieldOfView / 2.0f);
+
+	P = Point3(zNear * (x / width - 0.5f) * side,
+			   zNear * -(y / height - 0.5f) * side,
+			   zNear);
+
+	if (fovDir == FOVDirection::HORIZONTAL) {
+		P.y *= (height / (float)width);
+	} else if (fovDir == FOVDirection::VERTICAL) {
+		P.x *= (width / (float)height);
+	}
 
 	// The incoming direction is simply that from the origin to P.
 	w = P.direction();
@@ -187,9 +202,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	chrono::milliseconds elapsedTime(0.0);
 
 	if (m_brdf) {
-		const PinholeCamera camera(activeCamera->nearPlaneZ(),
-			activeCamera->fieldOfViewAngleDegrees(),
-			activeCamera->frame());
+		const PinholeCamera camera(activeCamera->frame(), activeCamera->projection());
 
 		// Measure the time of the rendering and not the scene setup.
 		Stopwatch stopwatch("Image trace");
