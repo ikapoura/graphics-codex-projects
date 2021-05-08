@@ -177,7 +177,11 @@ Radiance3 BRDF::L_i(const Point3& X, const Vector3& wi, const shared_ptr<Univers
 	if (notNull(s)) {
 		return s->lambertianReflectivity;
 	} else {
-		return Radiance3::zero();
+		// For rays that hit the sky, generate a random hue from the direction of the ray.
+		const Vector3 wiNormal = wi / 2.0f + Vector3(0.5f, 0.5f, 0.5f); // Move all components to [0, 1]
+
+		const float someRandomHue = (wiNormal.x * 0.3f + wiNormal.y * 0.2f + wiNormal.z * 0.5f) + 0.2f;
+		return Radiance3::rainbowColorMap(someRandomHue);
 	}
 }
 
