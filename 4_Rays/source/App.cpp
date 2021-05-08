@@ -89,6 +89,34 @@ Color3 PostProcess::pixelValue(const Radiance3& L, const float k, const float ga
 }
 
 
+bool Intersector::raySphereIntersect(const Point3& P, const Vector3& w, const Sphere& s, float& t)
+{
+	const Vector3 v = P - s.center;
+	const float pointFromCenterSquared = v.squaredLength();
+	const float radiusSquared = s.radius * s.radius;
+
+	if (pointFromCenterSquared > radiusSquared) {
+		const float a = 1.0f; // because w is a unit vector ( == w.dot(w) )
+		const float b = 2 * w.dot(v);
+		const float c = v.dot(v) - radiusSquared;
+
+		const float discriminant = b * b - 4 * a * c;
+
+		if (discriminant > 0.0f) {
+			const float t1 = (-b + sqrtf(discriminant)) / (2.0f * a);
+			const float t2 = (-b - sqrtf(discriminant)) / (2.0f * a);
+
+			const float newT = (t1 < t2) ? t1 : t2;
+
+			if (newT < t) {
+				t = newT;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
 
 // If ray P + tw hits triangle V[0], V[1], V[2], then the function return true, stores the
 // barycentric coordinates in b[] and stores the distance to the intersection in t. Otherwise,
@@ -197,6 +225,11 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, s
 	m_sceneTriTree->setContents(m_sceneSurfaces);
 }
 
+void RayTracer::addFixedSphere(const Point3& center, float radius, const Color3& color)
+{
+	m_fixedSpheres.append({ Sphere(center, radius), color });
+}
+
 chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>& image)
 {
 	debugAssertM(m_brdf, "The ray tracer needs a BRDF to render.");
@@ -241,17 +274,39 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, const Vector3& wi) const
 {
-	Intersector intersector;
-
-	float currentT = std::numeric_limits<float>::max();
-
 	shared_ptr<UniversalSurfel> result;
+	float t = std::numeric_limits<float>::max();
 
+	if (m_settings.addFixedPrimitives) {
+		intersectFixedPrimitives(X, wi, result, t);
+	}
+
+	intersectTriangulatedSurfaces(X, wi, result, t);
+
+	return result;
+}
+
+void RayTracer::intersectFixedPrimitives(const Point3& X, const Vector3& wi, shared_ptr<UniversalSurfel>& result, float& t) const
+{
+	for (const SpherePrimitive& s : m_fixedSpheres) {
+		if (Intersector::raySphereIntersect(X, wi, s.sphere, t)) {
+			result = std::make_shared<UniversalSurfel>();
+			result->lambertianReflectivity = s.color;
+
+			const Point3 intersectionPoint = X + wi * t;
+			const Vector3 intersectionNormal = (intersectionPoint - s.sphere.center).direction();
+			result->geometricNormal = intersectionNormal;
+			result->shadingNormal = intersectionNormal;
+		}
+	}
+}
+
+void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, shared_ptr<UniversalSurfel>& result, float& t) const
+{
 	// Saving here so that they are not constructed and destructed for every triangle.
 	CPUVertexArray::Vertex vertices[3];
 	Point3 positions[3];
 	float b[3];
-	float t;
 
 	for (int i = 0; i < m_sceneTriTree->size(); ++i) {
 		const Tri& triangle = (*m_sceneTriTree)[i];
@@ -264,8 +319,9 @@ shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, co
 			positions[v] = vertices[v].position;
 		}
 
-		if (intersector.rayTriangleIntersect(X, wi, positions, b, t)) {
-			if (t < currentT) {
+		float newT = 0.0f;
+		if (Intersector::rayTriangleIntersect(X, wi, positions, b, newT)) {
+			if (newT < t) {
 				// Construct a Hit object for sampling.
 				G3D::TriTree::Hit hit;
 				hit.triIndex = i;
@@ -293,16 +349,12 @@ shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, co
 				// Alpha testing.
 				if (universalSurfel->coverage == 1.0f) {
 					result = universalSurfel;
-
-					currentT = t;
+					t = newT;
 				}
 			}
 		}
 	}	
-
-	return result;
-}
-
+}	
 
 
 App::App(const GApp::Settings& settings) :
@@ -645,6 +697,11 @@ void App::render()
 	shared_ptr<Image> image = Image::create(res.x, res.y, ImageFormat::RGB32F());
 
 	RayTracer rayTracer(m_rayTraceSettings, scene(), std::make_shared<BRDF>());
+
+	rayTracer.addFixedSphere(Point3( 0.0f, 1.0f, 0.0f), 1.0f, Color3(1.0f, 0.0f, 0.0f));
+	rayTracer.addFixedSphere(Point3( 1.0f, 2.0f, 0.0f), 0.5f, Color3(0.0f, 0.0f, 0.0f));
+	rayTracer.addFixedSphere(Point3(-1.0f, 2.0f, 0.0f), 0.5f, Color3(0.0f, 0.0f, 0.0f));
+
 	const chrono::milliseconds durationMs = rayTracer.traceImage(activeCamera(), image);
 
 	const String durationPrintOutput = String("Render duration: ") + durationToString(durationMs);

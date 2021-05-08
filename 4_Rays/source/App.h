@@ -16,7 +16,8 @@ public:
 class Intersector
 {
 public:
-	bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t);
+	static bool raySphereIntersect(const Point3& P, const Vector3& w, const Sphere& s, float& t);
+	static bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t);
 };
 
 class PinholeCamera
@@ -41,6 +42,13 @@ public:
 	Radiance3 L_i(const Point3& X, const Vector3& wi, const shared_ptr<UniversalSurfel>& s) const;
 };
 
+class SpherePrimitive
+{
+public:
+	Sphere sphere;
+	Color3 color;
+};
+
 class RayTracer
 {
 public:
@@ -56,15 +64,24 @@ public:
 	RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, shared_ptr<BRDF> brdf);
 	virtual ~RayTracer() = default;
 
+	void addFixedSphere(const Point3& center, float radius, const Color3& color);
+
 	chrono::milliseconds traceImage(const shared_ptr<Camera>& camera, shared_ptr<Image>& image);
 
 private:
 	shared_ptr<UniversalSurfel> findFirstIntersection(const Point3& X, const Vector3& wi) const;
+	void intersectFixedPrimitives(const Point3& X, const Vector3& wi, shared_ptr<UniversalSurfel>& result, float& t) const;
+	void intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, shared_ptr<UniversalSurfel>& result, float& t) const;
 
+private:
 	const Settings m_settings;
+
 	Array<shared_ptr<Surface>> m_sceneSurfaces;
 	shared_ptr<TriTree> m_sceneTriTree;
+
 	shared_ptr<BRDF> m_brdf;
+
+	Array<SpherePrimitive> m_fixedSpheres;
 };
 
 
