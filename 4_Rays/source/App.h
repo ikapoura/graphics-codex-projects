@@ -60,9 +60,15 @@ public:
 	chrono::milliseconds traceImage(const shared_ptr<Camera>& camera, shared_ptr<Image>& image);
 
 private:
-	shared_ptr<UniversalSurfel> findFirstIntersection(const Point3& X, const Vector3& wi) const;
-	void intersectFixedPrimitives(const Point3& X, const Vector3& wi, shared_ptr<UniversalSurfel>& result, float& t) const;
-	void intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, shared_ptr<UniversalSurfel>& result, float& t) const;
+	enum class IntersectionMode {
+		Nearest,
+		First
+	};
+	shared_ptr<UniversalSurfel> findIntersection(const Point3& X, const Vector3& wi, IntersectionMode mode) const;
+	void intersectFixedPrimitives(const Point3& X, const Vector3& wi, IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
+	void intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
+
+	bool visible(const Point3& from, const Point3& to) const;
 
 	Radiance3 L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi) const;
 	Radiance3 L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const;

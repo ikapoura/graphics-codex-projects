@@ -240,9 +240,9 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 			// Get the lights from the scene.
 			const Array<shared_ptr<Light>>& lights = m_scene->lightingEnvironment().lightArray;
 
-			// Find the first intersection and store the radiance.
-			const shared_ptr<UniversalSurfel> firstIntersection = findFirstIntersection(P, w);
-			Radiance3 finalRadiance = Radiance3(0.05f) + L_i(firstIntersection, w);
+			// Find the nearest intersection and store the radiance.
+			const shared_ptr<UniversalSurfel> intersection = findIntersection(P, w, IntersectionMode::Nearest);
+			Radiance3 finalRadiance = Radiance3(0.05f) + L_i(intersection, w);
 
 			image->set(point.x, point.y, finalRadiance);
 		},
@@ -259,21 +259,21 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	return elapsedTime;
 }
 
-shared_ptr<UniversalSurfel> RayTracer::findFirstIntersection(const Point3& X, const Vector3& wi) const
+shared_ptr<UniversalSurfel> RayTracer::findIntersection(const Point3& X, const Vector3& wi, IntersectionMode mode) const
 {
 	shared_ptr<UniversalSurfel> result;
 	float t = std::numeric_limits<float>::max();
 
 	if (m_settings.addFixedPrimitives) {
-		intersectFixedPrimitives(X, wi, result, t);
+		intersectFixedPrimitives(X, wi, mode, result, t);
 	}
 
-	intersectTriangulatedSurfaces(X, wi, result, t);
+	intersectTriangulatedSurfaces(X, wi, mode, result, t);
 
 	return result;
 }
 
-void RayTracer::intersectFixedPrimitives(const Point3& X, const Vector3& wi, shared_ptr<UniversalSurfel>& result, float& t) const
+void RayTracer::intersectFixedPrimitives(const Point3& X, const Vector3& wi, IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const
 {
 	for (const SpherePrimitive& s : m_fixedSpheres) {
 		if (Intersector::raySphereIntersect(X, wi, s.sphere, t)) {
@@ -282,13 +282,19 @@ void RayTracer::intersectFixedPrimitives(const Point3& X, const Vector3& wi, sha
 
 			const Point3 intersectionPoint = X + wi * t;
 			const Vector3 intersectionNormal = (intersectionPoint - s.sphere.center).direction();
+			result->position = intersectionPoint;
 			result->geometricNormal = intersectionNormal;
 			result->shadingNormal = intersectionNormal;
+
+			// Return immediately if we find an intersection.
+			if (mode == IntersectionMode::First) {
+				return;
+			}
 		}
 	}
 }
 
-void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, shared_ptr<UniversalSurfel>& result, float& t) const
+void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const
 {
 	// Saving here so that they are not constructed and destructed for every triangle.
 	CPUVertexArray::Vertex vertices[3];
@@ -333,10 +339,23 @@ void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi
 				if (universalSurfel->coverage == 1.0f) {
 					result = universalSurfel;
 					t = newT;
+
+					// Return immediately if we find an intersection.
+					if (mode == IntersectionMode::First) {
+						return;
+					}
 				}
 			}
 		}
 	}	
+}
+
+bool RayTracer::visible(const Point3& from, const Point3& to) const
+{
+	const float eps = 1e-6;
+	const Vector3& dir = (to - from).direction();
+
+	return isNull(findIntersection(from + eps * dir, dir, IntersectionMode::First));
 }
 
 Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi) const
@@ -360,11 +379,12 @@ Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo
 		if (light->producesDirectIllumination()) {
 			const Point3& lightPos = light->position().xyz();
 
-			if (true) { // Implement shadow comparison
-				const Vector3& surfelToLightDir = (lightPos - surfelPos).direction();
+			const bool isSurfelVisible = (light->castsShadows()) ? visible(surfelPos, lightPos) : true;
 
+			if (isSurfelVisible) {
 				const Biradiance3& biradiance = light->biradiance(surfelPos);
 
+				const Vector3& surfelToLightDir = (lightPos - surfelPos).direction();
 				const Color3& f = s->finiteScatteringDensity(surfelToLightDir, wo);
 
 				const float cosFactor = fabs(surfelToLightDir.dot(surfelNormal));
