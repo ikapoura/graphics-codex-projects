@@ -323,9 +323,9 @@ void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi
 		if (Intersector::rayTriangleIntersect(X, wi, positions, b, newT)) {
 			if (newT < t) {
 				// Construct a Hit object for sampling.
-				G3D::TriTree::Hit hit;
+				TriTree::Hit hit;
 				hit.triIndex = i;
-				hit.distance = t;
+				hit.distance = newT;
 
 				// Check if the triangle is hit from behind.
 				const Vector3 triNormal = triangle.normal(m_sceneTriTree->vertexArray());
@@ -333,13 +333,9 @@ void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi
 
 				hit.backface = dotWiTriNormal > 0.0f;
 
-				// Construct the U and V coordinates from the barycentrics.
-				hit.u = 0.0f;
-				hit.v = 0.0f;
-				for (int v = 0; v < 3; ++v) {
-					hit.u += vertices[v].texCoord0.x * b[v];
-					hit.v += vertices[v].texCoord0.y * b[v];
-				}
+				// Assign the first two values of the barycentrics.
+				hit.u = b[0];
+				hit.v = b[1];
 
 				// Sample the triangle.
 				shared_ptr<UniversalSurfel> universalSurfel = std::make_shared<UniversalSurfel>();
