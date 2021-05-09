@@ -33,15 +33,6 @@ protected:
 	Projection m_projection;
 };
 
-class BRDF
-{
-public:
-	BRDF() = default;
-	virtual ~BRDF() = default;
-
-	Radiance3 L_i(const Point3& X, const Vector3& wi, const shared_ptr<UniversalSurfel>& s) const;
-};
-
 class SpherePrimitive
 {
 public:
@@ -61,7 +52,7 @@ public:
 	};
 
 	RayTracer() = delete;
-	RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, shared_ptr<BRDF> brdf);
+	RayTracer(const Settings& settings, const shared_ptr<Scene>& scene);
 	virtual ~RayTracer() = default;
 
 	void addFixedSphere(const Point3& center, float radius, const Color3& color);
@@ -73,13 +64,16 @@ private:
 	void intersectFixedPrimitives(const Point3& X, const Vector3& wi, shared_ptr<UniversalSurfel>& result, float& t) const;
 	void intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, shared_ptr<UniversalSurfel>& result, float& t) const;
 
+	Radiance3 L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi) const;
+	Radiance3 L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const;
+	Radiance3 randomColorFromDirection(const Vector3& w) const;
+
 private:
 	const Settings m_settings;
 
+	const shared_ptr<Scene>& m_scene;
 	Array<shared_ptr<Surface>> m_sceneSurfaces;
 	shared_ptr<TriTree> m_sceneTriTree;
-
-	shared_ptr<BRDF> m_brdf;
 
 	Array<SpherePrimitive> m_fixedSpheres;
 };

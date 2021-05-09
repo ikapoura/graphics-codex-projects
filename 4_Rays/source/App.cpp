@@ -200,26 +200,14 @@ void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point
 
 
 
-Radiance3 BRDF::L_i(const Point3& X, const Vector3& wi, const shared_ptr<UniversalSurfel>& s) const
-{
-	if (notNull(s)) {
-		return s->lambertianReflectivity;
-	} else {
-		// For rays that hit the sky, generate a random hue from the direction of the ray.
-		const Vector3 wiNormal = wi / 2.0f + Vector3(0.5f, 0.5f, 0.5f); // Move all components to [0, 1]
-
-		const float someRandomHue = (wiNormal.x * 0.3f + wiNormal.y * 0.2f + wiNormal.z * 0.5f) + 0.2f;
-		return Radiance3::rainbowColorMap(someRandomHue);
-	}
-}
 
 
 
-RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene, shared_ptr<BRDF> brdf) :
+RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
 	m_settings(settings),
-	m_brdf(brdf)
+	m_scene(scene)
 {
-	scene->onPose(m_sceneSurfaces);
+	m_scene->onPose(m_sceneSurfaces);
 
 	m_sceneTriTree = TriTreeBase::create(false);
 	m_sceneTriTree->setContents(m_sceneSurfaces);
@@ -232,42 +220,41 @@ void RayTracer::addFixedSphere(const Point3& center, float radius, const Color3&
 
 chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>& image)
 {
-	debugAssertM(m_brdf, "The ray tracer needs a BRDF to render.");
-
 	chrono::milliseconds elapsedTime(0.0);
 
-	if (m_brdf) {
-		const PinholeCamera camera(activeCamera->frame(), activeCamera->projection());
+	const PinholeCamera camera(activeCamera->frame(), activeCamera->projection());
 
-		// Measure the time of the rendering and not the scene setup.
-		Stopwatch stopwatch("Image trace");
-		stopwatch.tick();
+	// Measure the time of the rendering and not the scene setup.
+	Stopwatch stopwatch("Image trace");
+	stopwatch.tick();
 
-		// Main loop over the pixels.
-		const int width = image->width();
-		const int height = image->height();
+	// Main loop over the pixels.
+	runConcurrently(Point2int32(0, 0), Point2int32(image->width(), image->height()),
+		[this, camera, image](Point2int32 point) -> void {
+			Point3 P;
+			Vector3 w;
 
-		runConcurrently(Point2int32(0, 0), Point2int32(width, height),
-			[this, camera, image, width, height](Point2int32 point) -> void {
-				Point3 P;
-				Vector3 w;
+			// Find the ray through (x,y) and the center of projection.
+			camera.getPrimaryRay(float(point.x) + 0.5f, float(point.y) + 0.5f, image->width(), image->height(), P, w);
 
-				// Find the ray through (x,y) and the center of projection.
-				camera.getPrimaryRay(float(point.x) + 0.5f, float(point.y) + 0.5f, width, height, P, w);
+			// Get the lights from the scene.
+			const Array<shared_ptr<Light>>& lights = m_scene->lightingEnvironment().lightArray;
 
-				// Find the first intersection and store the radiance.
-				const shared_ptr<UniversalSurfel> firstIntersection = findFirstIntersection(P, w);
-				image->set(point.x, point.y, m_brdf->L_i(P, w, firstIntersection));
-			},
-			!m_settings.multithreading);
+			// Find the first intersection and store the radiance.
+			const shared_ptr<UniversalSurfel> firstIntersection = findFirstIntersection(P, w);
+			Radiance3 finalRadiance = Radiance3(0.05f) + L_i(firstIntersection, w);
 
-		// Convert to texture to post process.
-		shared_ptr<Texture> tex = Texture::fromImage("Render result", image);
+			image->set(point.x, point.y, finalRadiance);
+		},
+		!m_settings.multithreading);
 
-		stopwatch.tock();
+	// Convert to texture to post process.
+	shared_ptr<Texture> tex = Texture::fromImage("Render result", image);
 
-		elapsedTime = stopwatch.elapsedDuration<chrono::milliseconds>();
-	}
+	stopwatch.tock();
+
+	elapsedTime = stopwatch.elapsedDuration<chrono::milliseconds>();
+
 
 	return elapsedTime;
 }
@@ -350,7 +337,54 @@ void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi
 			}
 		}
 	}	
-}	
+}
+
+Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi) const
+{
+	if (notNull(s)) {
+		return L_o(s, -wi);
+	} else {
+		return randomColorFromDirection(wi);
+	}
+}
+
+Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const
+{
+	const Point3& surfelPos = s->position;
+	const Vector3& surfelNormal = s->shadingNormal;
+
+	const Radiance3 emitted = s->emittedRadiance(wo);
+
+	Radiance3 direct(0.0f, 0.0f, 0.0f);
+	for (const shared_ptr<Light>& light : m_scene->lightingEnvironment().lightArray) {
+		if (light->producesDirectIllumination()) {
+			const Point3& lightPos = light->position().xyz();
+
+			if (true) { // Implement shadow comparison
+				const Vector3& surfelToLightDir = (lightPos - surfelPos).direction();
+
+				const Biradiance3& biradiance = light->biradiance(surfelPos);
+
+				const Color3& f = s->finiteScatteringDensity(surfelToLightDir, wo);
+
+				const float cosFactor = fabs(surfelToLightDir.dot(surfelNormal));
+
+				direct += biradiance * f * cosFactor;
+			}
+		}
+	}
+
+	return emitted + direct;
+}
+
+Biradiance3 RayTracer::randomColorFromDirection(const Vector3& w) const
+{
+	// For rays that hit the sky, generate a random hue from the direction of the ray.
+	const Vector3 wiNormal = w / 2.0f + Vector3(0.5f, 0.5f, 0.5f); // Move all components to [0, 1]
+
+	const float someRandomHue = (wiNormal.x * 0.3f + wiNormal.y * 0.2f + wiNormal.z * 0.5f) + 0.2f;
+	return Radiance3::rainbowColorMap(someRandomHue);
+}
 
 
 App::App(const GApp::Settings& settings) :
@@ -375,7 +409,8 @@ void App::onInit()
 	loadScene(
 
 #       ifndef G3D_DEBUG
-		"G3D Debug Teapot"
+		// "G3D Debug Teapot"
+		"G3D Simple Cornell Box (Area Light)" // Load something simple
 #       else
 		"G3D Simple Cornell Box (Area Light)" // Load something simple
 #       endif
@@ -692,7 +727,7 @@ void App::render()
 	const Vector2int32 res = resolution();
 	shared_ptr<Image> image = Image::create(res.x, res.y, ImageFormat::RGB32F());
 
-	RayTracer rayTracer(m_rayTraceSettings, scene(), std::make_shared<BRDF>());
+	RayTracer rayTracer(m_rayTraceSettings, scene());
 
 	rayTracer.addFixedSphere(Point3( 0.0f, 1.0f, 0.0f), 1.0f, Color3(1.0f, 0.0f, 0.0f));
 	rayTracer.addFixedSphere(Point3( 1.0f, 2.0f, 0.0f), 0.5f, Color3(0.0f, 0.0f, 0.0f));
