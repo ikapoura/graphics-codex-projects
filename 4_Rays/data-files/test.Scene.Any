@@ -9,7 +9,7 @@
         };
 
         camera = Camera {             
-            frame = CFrame::fromXYZYPRDegrees(  1.7f,   0.6f,   1.9f,  41.0f,  -5.0f,   0.0f); 
+            frame = CFrame::fromXYZYPRDegrees(-0.90722, 0.57687, 1.4933, -36.349, -22.762, 0); 
         }; 
         
         skybox = Skybox { 
@@ -22,13 +22,13 @@
         
         sun = Light { 
             attenuation = (0, 0, 1); 
-            bulbPower = Power3(1e+6); 
+            bulbPower = Power3(1e+4); 
             shadowsEnabled = true; 
 			shadowMapBias = 0.01;
-            track = lookAt(Point3(-15, 200, 40), Point3(0, 0, 0));
+            track = lookAt(Point3(-5, 20, 4), Point3(0, 0, 0));
             shadowMapSize = Vector2int16(2048, 2048); 
             spotHalfAngleDegrees = 4; 
-            rectangular = true; 
+            rectangular = false; 
             type = "SPOT"; 
         }; 
         
