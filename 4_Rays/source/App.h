@@ -72,7 +72,7 @@ private:
 	void intersectFixedPrimitives(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
 	void intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
 
-	bool visibleFromLight(const shared_ptr<UniversalSurfel>& s, const Point3& lightPosition) const;
+	bool visible(const shared_ptr<UniversalSurfel>& s, const Point3& from) const;
 
 	Radiance3 L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi) const;
 	Radiance3 L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const;
