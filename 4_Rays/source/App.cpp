@@ -249,8 +249,8 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 			const Array<shared_ptr<Light>>& lights = m_scene->lightingEnvironment().lightArray;
 
 			// Find the nearest intersection and store the radiance.
-			const shared_ptr<UniversalSurfel> intersection = findIntersection(P, w, finf(), IntersectionMode::Nearest);
-			image->set(point.x, point.y, L_i(intersection, w) + L_indirect(intersection, w));
+			const shared_ptr<UniversalSurfel> mainSurfel = findIntersection(P, w, finf(), IntersectionMode::Nearest);
+			image->set(point.x, point.y, L_i(mainSurfel, w) + L_indirect(mainSurfel, w));
 		},
 		!m_settings.multithreading);
 
