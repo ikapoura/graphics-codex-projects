@@ -250,9 +250,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 			// Find the nearest intersection and store the radiance.
 			const shared_ptr<UniversalSurfel> intersection = findIntersection(P, w, finf(), IntersectionMode::Nearest);
-			Radiance3 finalRadiance = Radiance3(0.05f) + L_i(intersection, w);
-
-			image->set(point.x, point.y, finalRadiance);
+			image->set(point.x, point.y, L_i(intersection, w));
 		},
 		!m_settings.multithreading);
 
@@ -411,7 +409,9 @@ Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo
 		}
 	}
 
-	return emitted + direct;
+	const Radiance3 ambient = s->reflectivity(Random::threadCommon()) * 0.05f;
+
+	return ambient + emitted + direct;
 }
 
 Biradiance3 RayTracer::randomColorFromDirection(const Vector3& w) const

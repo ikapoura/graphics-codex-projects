@@ -47,7 +47,11 @@ public:
 	public:
 		bool addFixedPrimitives{ false };
 		int  indirectRaysPerPixel{ 1 };
+#ifndef G3D_DEBUG
 		bool multithreading{ true };
+#else
+		bool multithreading{ false };
+#endif
 		GuiDropDownList* resolutionList{ nullptr };
 	};
 
