@@ -64,9 +64,9 @@ private:
 		Nearest,
 		First
 	};
-	shared_ptr<UniversalSurfel> findIntersection(const Point3& X, const Vector3& wi, IntersectionMode mode) const;
-	void intersectFixedPrimitives(const Point3& X, const Vector3& wi, IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
-	void intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
+	shared_ptr<UniversalSurfel> findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const;
+	void intersectFixedPrimitives(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
+	void intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
 
 	bool visible(const Point3& from, const Point3& to) const;
 
