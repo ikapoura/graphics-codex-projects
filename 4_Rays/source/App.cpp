@@ -350,12 +350,15 @@ void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi
 	}	
 }
 
-bool RayTracer::visible(const Point3& from, const Point3& to) const
+bool RayTracer::visibleFromLight(const shared_ptr<UniversalSurfel>& s, const Point3& lightPosition) const
 {
-	const float eps = 1e-6f;
-	const Vector3& dir = (to - from).direction();
+	const float eps = 1e-4f;
 
-	return isNull(findIntersection(from + eps * dir, dir, finf(), IntersectionMode::First));
+	Vector3 dir = (s->position + s->geometricNormal * eps) - lightPosition;
+	const float distance = dir.length();
+	dir /= distance;
+
+	return isNull(findIntersection(lightPosition + eps * dir, dir, distance - eps, IntersectionMode::First));
 }
 
 Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi) const
@@ -379,7 +382,7 @@ Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo
 		if (light->producesDirectIllumination()) {
 			const Point3& lightPos = light->position().xyz();
 
-			const bool isSurfelVisible = (light->castsShadows()) ? visible(surfelPos, lightPos) : true;
+			const bool isSurfelVisible = (light->castsShadows()) ? visibleFromLight(s, lightPos) : true;
 
 			if (isSurfelVisible) {
 				const Biradiance3& biradiance = light->biradiance(surfelPos);
