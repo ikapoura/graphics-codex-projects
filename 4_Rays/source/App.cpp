@@ -750,8 +750,8 @@ void App::render()
 	RayTracer rayTracer(m_rayTraceSettings, scene());
 
 	rayTracer.addFixedSphere(Point3( 0.0f, 1.0f, 0.0f), 1.0f, Color3(1.0f, 0.0f, 0.0f));
-	rayTracer.addFixedSphere(Point3( 1.0f, 2.0f, 0.0f), 0.5f, Color3(0.0f, 0.0f, 0.0f));
-	rayTracer.addFixedSphere(Point3(-1.0f, 2.0f, 0.0f), 0.5f, Color3(0.0f, 0.0f, 0.0f));
+	rayTracer.addFixedSphere(Point3( 1.0f, 2.0f, 0.0f), 0.5f, Color3(0.0f, 1.0f, 0.0f));
+	rayTracer.addFixedSphere(Point3(-1.0f, 2.0f, 0.0f), 0.5f, Color3(0.0f, 0.0f, 1.0f));
 
 	const chrono::milliseconds durationMs = rayTracer.traceImage(activeCamera(), image);
 
