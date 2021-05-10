@@ -106,11 +106,19 @@ bool Intersector::raySphereIntersect(const Point3& P, const Vector3& w, const Sp
 			const float t1 = (-b + sqrtf(discriminant)) / (2.0f * a);
 			const float t2 = (-b - sqrtf(discriminant)) / (2.0f * a);
 
-			const float newT = (t1 < t2) ? t1 : t2;
+			if (t1 >= 0.0f) {
+				if (t2 >= 0.0f) {
+					t = (t1 < t2) ? t1 : t2;
+				} else {
+					t = t1;
+				}
 
-			if (newT < t) {
-				t = newT;
 				return true;
+			} else {
+				if (t2 >= 0.0f) {
+					t = t2;
+					return true;
+				}
 			}
 		}
 	}
@@ -276,19 +284,25 @@ shared_ptr<UniversalSurfel> RayTracer::findIntersection(const Point3& X, const V
 void RayTracer::intersectFixedPrimitives(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const
 {
 	for (const SpherePrimitive& s : m_fixedSpheres) {
-		if (Intersector::raySphereIntersect(X, wi, s.sphere, t)) {
-			result = std::make_shared<UniversalSurfel>();
-			result->lambertianReflectivity = s.color;
+		float newT = 0.0f;
 
-			const Point3 intersectionPoint = X + wi * t;
-			const Vector3 intersectionNormal = (intersectionPoint - s.sphere.center).direction();
-			result->position = intersectionPoint;
-			result->geometricNormal = intersectionNormal;
-			result->shadingNormal = intersectionNormal;
+		if (Intersector::raySphereIntersect(X, wi, s.sphere, newT)) {
+			if (newT < t) {
+				result = std::make_shared<UniversalSurfel>();
+				result->lambertianReflectivity = s.color;
 
-			// Return immediately if we find an intersection.
-			if (mode == IntersectionMode::First) {
-				return;
+				const Point3 intersectionPoint = X + wi * newT;
+				const Vector3 intersectionNormal = (intersectionPoint - s.sphere.center).direction();
+				result->position = intersectionPoint;
+				result->geometricNormal = intersectionNormal;
+				result->shadingNormal = intersectionNormal;
+
+				t = newT;
+
+				// Return immediately if we find an intersection.
+				if (mode == IntersectionMode::First) {
+					return;
+				}
 			}
 		}
 	}
