@@ -26,7 +26,19 @@ After settling to a solution that is good enough, I had to make a scene to prese
 |:-:|
 
 ## 3. Geometry Design
-I will implement this after the 4. Rays because I want to implement instancing for the ray tracer.
+Now that 4 is complete, time to add some instancing in the ray tracer.
 
 ## 4. Rays
-Currently implementing.
+Now this project is the first real challenge of the series. The project requires to build a CPU ray tracer from scratch which supports:
+- intersection with spheres and triangles,
+- support multithreading,
+- direct illumination from point, spot and directional sources,
+- shadows, only for lights that can cast them in G3D (such as point lights and spot lights; area lights are not supported),
+- 0-2048 indirect rays for each pixel.
+
+Since the tracing can get quite time-consuming, I will be presenting the Cornell Box rendered with and without indirect illumination and a scene with a car under a spotlight.
+
+|<img width="1280" height="300" alt="No indirect" src="https://user-images.githubusercontent.com/40468844/117865696-e74b9800-b29e-11eb-8cbe-a806328508b5.png"> No indirect rays | <img width="1280" height="300" alt="With indirect" src="https://user-images.githubusercontent.com/40468844/117865700-e87cc500-b29e-11eb-8017-e76017a8e84f.png"> With 2048 indirect rays |
+|:-:|:-:|
+
+The indirect rays provide a more accurate representation because we can observe: a) the left side of the left rectangle has a red tint, b) the right side of the right cube has a green tint and c) there is a slight shadow at the bases of the rectangle and the cube. The shadows should have been more prominent but we don't perform correct shadow calculations for area lights in this project.
