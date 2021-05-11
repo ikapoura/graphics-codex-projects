@@ -36,9 +36,9 @@ Now this project is the first real challenge of the series. The project requires
 - shadows, only for lights that can cast them in G3D (such as point lights and spot lights; area lights are not supported),
 - 0-2048 indirect rays for each pixel.
 
-Since the tracing can get quite time-consuming, I will be presenting the Cornell Box rendered with and without indirect illumination and a scene with a car under a spotlight.
+Since the tracing can get quite time-consuming, I present the Cornell Box rendered with and without indirect illumination and a scene with a car under a spotlight.
 
 |<img width="1280" height="300" alt="No indirect" src="https://user-images.githubusercontent.com/40468844/117865696-e74b9800-b29e-11eb-8cbe-a806328508b5.png"> No indirect rays | <img width="1280" height="300" alt="With indirect" src="https://user-images.githubusercontent.com/40468844/117865700-e87cc500-b29e-11eb-8017-e76017a8e84f.png"> With 2048 indirect rays |
 |:-:|:-:|
 
-The indirect rays provide a more accurate representation because we can observe: a) the left side of the left rectangle has a red tint, b) the right side of the right cube has a green tint and c) there is a slight shadow at the bases of the rectangle and the cube. The shadows should have been more prominent but we don't perform correct shadow calculations for area lights in this project.
+The indirect rays provide a more accurate representation because we can observe: a) the left side of the left rectangle has a red tint, b) the right side of the right cube has a green tint and c) there is a slight shadow at the bases of the rectangle and the cube. The shadows should be more prominent but we don't perform correct shadow calculations for area lights in this project.
