@@ -1,13 +1,13 @@
 Application Log
-Start: Sun May  2 11:03:04 2021
+Start: Tue May 11 21:04:44 2021
 
 WARNING: AudioDevice is not enabled. Set G3DSpecification::audio = true before invoking initGLG3D() to enable audio.
-Initializing System::findDataFile took 0.002885s
+Initializing System::findDataFile took 0.000710s
 
 Entering GApp::GApp()
 cwd = D:\Repositories\graphics-codex-projects\4_Rays\data-files
 System::setAppDataDir("D:\Repositories\graphics-codex-projects\4_Rays\data-files")
-System::setAppDataDirs()Initializing System::findDataFile took 0.002743s
+System::setAppDataDirs()Initializing System::findDataFile took 0.000218s
 Setting video mode
 wglSwapIntervalEXT(0);
 Setting initial rendering state.
@@ -131,7 +131,7 @@ GPU Supports OpenGL 4.1 or later    yes - OpenGL version on this driver is 4.42
 Done initializing RenderDevice.
 Network StartupSystem = { 
     App { 
-        Name = "D:\\Repositories\\graphics-codex-projects\\4_Rays\\x64\\Debug\\raysd.exe"
+        Name = "D:\\Repositories\\graphics-codex-projects\\4_Rays\\x64\\Release\\rays.exe"
         cwd = "D:\\Repositories\\graphics-codex-projects\\4_Rays\\data-files"
     } 
     
@@ -146,7 +146,7 @@ Network StartupSystem = {
     
     G3D { 
         Link version = 100100 
-        Compile version = "G3D Innovation Engine 10.01 (Debug)"
+        Compile version = "G3D Innovation Engine 10.01"
         G3DSpecification::deployMode = No 
         G3D10DATA = "D:\\DevLibraries\\g3d\\G3D10\\data-files;D:\\DevLibraries\\g3d\\data10\\common;D:\\DevLibraries\\g3d\\data10\\game;D:\\DevLibraries\\g3d\\data10\\research"
     } 
@@ -777,3 +777,5 @@ Vertex info
 
 
 
+Render duration: 0h 4m 41s 247ms
+Render duration: 0h 0m 0s 288ms
