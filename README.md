@@ -38,7 +38,12 @@ Now this project is the first real challenge of the series. The project requires
 
 Since the tracing can get quite time-consuming, I present the Cornell Box rendered with and without indirect illumination and a scene with a car under a spotlight.
 
-|<img width="1280" height="300" alt="No indirect" src="https://user-images.githubusercontent.com/40468844/117865696-e74b9800-b29e-11eb-8cbe-a806328508b5.png"> No indirect rays | <img width="1280" height="300" alt="With indirect" src="https://user-images.githubusercontent.com/40468844/117865700-e87cc500-b29e-11eb-8017-e76017a8e84f.png"> With 2048 indirect rays |
+|<img width="1280" height="300" alt="Cornell No indirect" src="https://user-images.githubusercontent.com/40468844/117865696-e74b9800-b29e-11eb-8cbe-a806328508b5.png"> No indirect rays | <img width="1280" height="300" alt="Cornell With indirect" src="https://user-images.githubusercontent.com/40468844/117865700-e87cc500-b29e-11eb-8017-e76017a8e84f.png"> With 2048 indirect rays |
 |:-:|:-:|
 
 The indirect rays provide a more accurate representation because we can observe: a) the left side of the left rectangle has a red tint, b) the right side of the right cube has a green tint and c) there is a slight shadow at the bases of the rectangle and the cube. The shadows should be more prominent but we don't perform correct shadow calculations for area lights in this project.
+
+|<img width="1280" height="300" alt="Car No indirect" src="https://user-images.githubusercontent.com/40468844/118023632-6bb51e00-b366-11eb-9366-e2d865e840ed.png"> No indirect rays | <img width="1280" height="300" alt="Car With indirect" src="https://user-images.githubusercontent.com/40468844/118023703-81c2de80-b366-11eb-8e68-d301be7d2589.png"> With 2048 indirect rays |
+|:-:|:-:|
+
+The indirect rays are not improving the image too much except for the cavities which are brightened and more details can be observed. The image with the indirect rays has noise because the car's material is metallic and the finiteScatteringDensity of it's surfaces is very high.
