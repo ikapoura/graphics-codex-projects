@@ -422,7 +422,7 @@ Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vect
 	if (notNull(s)) {
 		for (int i = 0; i < m_settings.indirectRaysPerPixel; ++i) {
 			const Vector3 bounceDir = Vector3::hemiRandom(s->shadingNormal, Random::threadCommon());
-			const Point3 P = s->position + eps * s->geometricNormal * sign(s->geometricNormal.dot(wi));
+			const Point3 P = s->position + eps * s->geometricNormal * sign(s->geometricNormal.dot(bounceDir));
 
 			shared_ptr<UniversalSurfel> bounceSurfel = findIntersection(P, bounceDir, finf(), IntersectionMode::Nearest);
 
