@@ -254,13 +254,9 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 		},
 		!m_settings.multithreading);
 
-	// Convert to texture to post process.
-	shared_ptr<Texture> tex = Texture::fromImage("Render result", image);
-
 	stopwatch.tock();
 
 	elapsedTime = stopwatch.elapsedDuration<chrono::milliseconds>();
-
 
 	return elapsedTime;
 }
@@ -799,10 +795,20 @@ void App::render()
 
 	const chrono::milliseconds durationMs = rayTracer.traceImage(activeCamera(), image);
 
+	// Convert to texture to post process.
+	shared_ptr<Texture> src = Texture::fromImage("Render result", image);
+    if (m_result) {
+        m_result->resize(res.x, res.y);
+    }
+
+    m_film->exposeAndRender(renderDevice, activeCamera()->filmSettings(), src,
+        settings().hdrFramebuffer.trimBandThickness().x,
+        settings().hdrFramebuffer.depthGuardBandThickness.x, m_result);
+
 	const String durationPrintOutput = String("Render duration: ") + durationToString(durationMs);
 
 	consolePrint(durationPrintOutput);
 
-	show(image, durationPrintOutput);
+	show(m_result, durationPrintOutput);
 }
 

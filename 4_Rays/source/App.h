@@ -127,6 +127,9 @@ private:
 	void render();
 
 private:
+    /** Allocated by expose and render */
+    shared_ptr<Texture> m_result;
+
 	RayTracer::Settings m_rayTraceSettings;
 };
 
