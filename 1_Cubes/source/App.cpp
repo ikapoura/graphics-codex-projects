@@ -708,7 +708,7 @@ void App::generateGlassOff(int steps, float qualityPercent)
 
 		// Compute the cylinder from the points
 		std::vector<Point2> glassRings;
-		float accumulatedDiffSq = std::numeric_limits<float>::max();
+		float accumulatedDiff = std::numeric_limits<float>::max();
 
 		glassRings.push_back({ contour[0].x / (float)maxWidth * widthHeightRatio, (bottomFirstBlackLine - contour[0].y) / (float)height }); // Insert the first.
 
@@ -718,8 +718,8 @@ void App::generateGlassOff(int steps, float qualityPercent)
 
 			const int currentRings = glassRings.size();
 			if (currentRings > 3) {
-				accumulatedDiffSq += (ring - glassRings[currentRings - 1]).length();
-				const bool distanceCriterion = accumulatedDiffSq > (distanceLimit * (1.0F - qualityPercent));
+				accumulatedDiff += (ring - glassRings[currentRings - 1]).length();
+				const bool distanceCriterion = accumulatedDiff > (distanceLimit * (1.0F - qualityPercent));
 
 				const Vector2 dirPrevious = (glassRings[currentRings - 1] - glassRings[currentRings - 3]).direction();
 				const Vector2 dirNext = (ring - glassRings[currentRings - 2]).direction();
@@ -729,7 +729,7 @@ void App::generateGlassOff(int steps, float qualityPercent)
 				if (distanceCriterion || angleCriterion) {
 					glassRings.push_back(ring);
 
-					accumulatedDiffSq = 0.0F;
+					accumulatedDiff = 0.0F;
 				}
 			} else {
 				glassRings.push_back(ring);
