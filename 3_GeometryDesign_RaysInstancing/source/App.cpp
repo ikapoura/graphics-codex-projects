@@ -215,10 +215,34 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
 	m_settings(settings),
 	m_scene(scene)
 {
-	m_scene->onPose(m_sceneSurfaces);
+	// By getting VisibleEntity objects, we avoid the check for Cameras.
+	Array<shared_ptr<VisibleEntity>> sceneVisibleEntities;
+	m_scene->getTypedEntityArray<VisibleEntity>(sceneVisibleEntities);
 
-	m_sceneTriTree = TriTreeBase::create(false);
-	m_sceneTriTree->setContents(m_sceneSurfaces);
+	for (shared_ptr<VisibleEntity>& entity : sceneVisibleEntities) {
+		if (isNull(dynamic_pointer_cast<Light>(entity)) && isNull(dynamic_pointer_cast<ParticleSystem>(entity))) {
+			shared_ptr<ArticulatedModel> model = dynamic_pointer_cast<ArticulatedModel>(entity->model());
+
+			const bool isStaticModel = notNull(model) && !model->usesAnimation() && !model->usesSkeletalAnimation();
+
+			if (isStaticModel) {
+				// Strictly call this before getCreate because it will create the instance.
+				const bool isNewModel = !m_instances.containsKey(model->name());
+
+				Instance& instance = m_instances.getCreate(model->name());
+
+				AABox entityBbox;
+				entity->getLastBounds(entityBbox);
+				instance.entityBounds.push_back(std::make_pair(entityBbox, entity->frame()));
+
+				if (isNewModel) {
+					instance.model = model;
+
+					instance.triTree = TriTreeBase::create(false);
+				}
+			}
+		}
+	}
 }
 
 void RayTracer::addFixedSphere(const Point3& center, float radius, const Color3& color)

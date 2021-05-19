@@ -40,6 +40,15 @@ public:
 	Color3 color;
 };
 
+class Instance
+{
+public:
+	shared_ptr<ArticulatedModel> model;
+	shared_ptr<TriTree> triTree;
+
+	Array<std::pair<AABox, CoordinateFrame>> entityBounds;
+};
+
 class RayTracer
 {
 public:
@@ -85,6 +94,9 @@ private:
 	const shared_ptr<Scene>& m_scene;
 	Array<shared_ptr<Surface>> m_sceneSurfaces;
 	shared_ptr<TriTree> m_sceneTriTree;
+
+	// Key: the name of the model
+	Table<String, Instance> m_instances;
 
 	Array<SpherePrimitive> m_fixedSpheres;
 };
