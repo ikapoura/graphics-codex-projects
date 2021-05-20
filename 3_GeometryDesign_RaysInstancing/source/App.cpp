@@ -242,9 +242,6 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
 	m_settings(settings),
 	m_scene(scene)
 {
-	// TODO: delete
-	m_sceneTriTree = TriTreeBase::create(false);
-
 	const shared_ptr<ArticulatedModel::Pose> defaultPose = std::make_shared<ArticulatedModel::Pose>();
 
 	// By getting VisibleEntity objects, we avoid to manually check for Cameras.
@@ -387,58 +384,57 @@ void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi
 			const Vector3 localWi = (bounds.second * Vector4(wi, 0.0f)).xyz(); // w = 0 because it is a direction
 
 			if (Intersector::rayAabbIntersect(localX, localWi, bounds.first)) {
-				printf("We are inside a box!");
-			}
-		}
-	}
+				for (int i = 0; i < currInstance.triTree->size(); ++i) {
+					const Tri& triangle = (*currInstance.triTree)[i];
 
-	for (int i = 0; i < m_sceneTriTree->size(); ++i) {
-		const Tri& triangle = (*m_sceneTriTree)[i];
+					for (int v = 0; v < 3; ++v) {
+						vertices[v] = triangle.vertex(currInstance.triTree->vertexArray(), v);
+					}
 
-		for (int v = 0; v < 3; ++v) {
-			vertices[v] = triangle.vertex(m_sceneTriTree->vertexArray(), v);
-		}
+					for (int v = 0; v < 3; ++v) {
+						positions[v] = vertices[v].position;
+					}
 
-		for (int v = 0; v < 3; ++v) {
-			positions[v] = vertices[v].position;
-		}
+					float newT = 0.0f;
+					if (Intersector::rayTriangleIntersect(localX, localWi, positions, b, newT)) {
+						if (newT < t) {
+							// Construct a Hit object for sampling.
+							TriTree::Hit hit;
+							hit.triIndex = i;
+							hit.distance = newT;
 
-		float newT = 0.0f;
-		if (Intersector::rayTriangleIntersect(X, wi, positions, b, newT)) {
-			if (newT < t) {
-				// Construct a Hit object for sampling.
-				TriTree::Hit hit;
-				hit.triIndex = i;
-				hit.distance = newT;
+							// Check if the triangle is hit from behind.
+							const Vector3 triNormal = triangle.normal(currInstance.triTree->vertexArray());
+							const float dotWiTriNormal = localWi.dot(triNormal);
 
-				// Check if the triangle is hit from behind.
-				const Vector3 triNormal = triangle.normal(m_sceneTriTree->vertexArray());
-				const float dotWiTriNormal = wi.dot(triNormal);
+							hit.backface = dotWiTriNormal > 0.0f;
 
-				hit.backface = dotWiTriNormal > 0.0f;
+							// Assign the first two values of the barycentrics.
+							hit.u = b[0];
+							hit.v = b[1];
 
-				// Assign the first two values of the barycentrics.
-				hit.u = b[0];
-				hit.v = b[1];
+							// Sample the triangle.
+							shared_ptr<UniversalSurfel> universalSurfel = std::make_shared<UniversalSurfel>();
+							shared_ptr<Surfel> surfel = universalSurfel;
+							currInstance.triTree->sample(hit, surfel);
 
-				// Sample the triangle.
-				shared_ptr<UniversalSurfel> universalSurfel = std::make_shared<UniversalSurfel>();
-				shared_ptr<Surfel> surfel = universalSurfel;
-				m_sceneTriTree->sample(hit, surfel);
+							// Alpha testing.
+							if (universalSurfel->coverage == 1.0f) {
+								result = universalSurfel;
+								t = newT;
 
-				// Alpha testing.
-				if (universalSurfel->coverage == 1.0f) {
-					result = universalSurfel;
-					t = newT;
-
-					// Return immediately if we find an intersection.
-					if (mode == IntersectionMode::First) {
-						return;
+								// Return immediately if we find an intersection.
+								if (mode == IntersectionMode::First) {
+									return;
+								}
+							}
+						}
 					}
 				}
 			}
 		}
-	}	
+	}
+
 }
 
 bool RayTracer::visible(const shared_ptr<UniversalSurfel>& s, const Point3& from) const
