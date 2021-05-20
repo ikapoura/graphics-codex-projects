@@ -169,6 +169,33 @@ bool Intersector::rayTriangleIntersect(const Point3& P, const Vector3& w, const 
 	return (t >= 0.0f);
 }
 
+// Taken from Peter Shirley's blog
+// psgraphics.blogspot.com
+bool Intersector::rayAabbIntersect(const Point3& P, const Vector3& w, const AABox& box)
+{
+	float tmin = 1e-05f;
+	float tmax = std::numeric_limits<float>::max();
+
+	for (int a = 0; a < 3; a++) {
+		float invD = 1.0f / w[a];
+		float t0 = (box.low()[a] - P[a]) * invD;
+		float t1 = (box.high()[a] - P[a]) * invD;
+
+		if (invD <= 0.0f) {
+			std::swap(t0, t1);
+		}
+
+		tmin = t0 > tmin ? t0 : tmin;
+		tmax = t1 < tmax ? t1 : tmax;
+
+		if (tmax < tmin) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 
 
 PinholeCamera::PinholeCamera(const CoordinateFrame& frame, const Projection& projection) :
@@ -350,6 +377,20 @@ void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi
 	CPUVertexArray::Vertex vertices[3];
 	Point3 positions[3];
 	float b[3];
+
+	for (Table<String, Instance>::Iterator it = m_instances.begin(); it != m_instances.end(); ++it) {
+		const Instance& currInstance = it->value;
+
+		for (const std::pair<AABox, Matrix4>& bounds : currInstance.entityBounds) {
+			// The matrix that is saved in bounds is already inverted so that we don't perform it for every ray.
+			const Point3 localX = (bounds.second * Vector4(X, 1.0f)).xyz(); // w = 1 because it is a point
+			const Vector3 localWi = (bounds.second * Vector4(wi, 0.0f)).xyz(); // w = 0 because it is a direction
+
+			if (Intersector::rayAabbIntersect(localX, localWi, bounds.first)) {
+				printf("We are inside a box!");
+			}
+		}
+	}
 
 	for (int i = 0; i < m_sceneTriTree->size(); ++i) {
 		const Tri& triangle = (*m_sceneTriTree)[i];

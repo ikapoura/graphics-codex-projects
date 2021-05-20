@@ -18,6 +18,7 @@ class Intersector
 public:
 	static bool raySphereIntersect(const Point3& P, const Vector3& w, const Sphere& s, float& t);
 	static bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t);
+	static bool rayAabbIntersect(const Point3& P, const Vector3& w, const AABox& box);
 };
 
 class PinholeCamera
@@ -46,7 +47,7 @@ public:
 	shared_ptr<ArticulatedModel> model;
 	shared_ptr<TriTree> triTree;
 
-	Array<std::pair<AABox, CoordinateFrame>> entityBounds;
+	Array<std::pair<AABox, Matrix4>> entityBounds;
 };
 
 class RayTracer
