@@ -215,12 +215,19 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
 	m_settings(settings),
 	m_scene(scene)
 {
-	// By getting VisibleEntity objects, we avoid the check for Cameras.
+	// TODO: delete
+	m_sceneTriTree = TriTreeBase::create(false);
+
+	const shared_ptr<ArticulatedModel::Pose> defaultPose = std::make_shared<ArticulatedModel::Pose>();
+
+	// By getting VisibleEntity objects, we avoid to manually check for Cameras.
 	Array<shared_ptr<VisibleEntity>> sceneVisibleEntities;
 	m_scene->getTypedEntityArray<VisibleEntity>(sceneVisibleEntities);
 
 	for (shared_ptr<VisibleEntity>& entity : sceneVisibleEntities) {
-		if (isNull(dynamic_pointer_cast<Light>(entity)) && isNull(dynamic_pointer_cast<ParticleSystem>(entity))) {
+		const bool notLightOrParticles = isNull(dynamic_pointer_cast<Light>(entity)) && isNull(dynamic_pointer_cast<ParticleSystem>(entity));
+
+		if (!entity->canChange() && notLightOrParticles) {
 			shared_ptr<ArticulatedModel> model = dynamic_pointer_cast<ArticulatedModel>(entity->model());
 
 			const bool isStaticModel = notNull(model) && !model->usesAnimation() && !model->usesSkeletalAnimation();
@@ -233,12 +240,23 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
 
 				AABox entityBbox;
 				entity->getLastBounds(entityBbox);
-				instance.entityBounds.push_back(std::make_pair(entityBbox, entity->frame()));
+				instance.entityBounds.push_back(std::make_pair(entityBbox, entity->frame().inverse().toMatrix4()));
 
 				if (isNewModel) {
 					instance.model = model;
 
+					Array<shared_ptr<Surface>> entitySurfaces;
+
+					// Unfortunately, G3D doesn't provide an intuitive way to get the surfaces from a model,
+					// so this is a workaround. We set the default pose to the model and call onPose so that
+					// it creates the surfaces at the model's origin.
+					shared_ptr<Model::Pose> previousPose = entity->pose()->clone();
+					entity->setPose(defaultPose);
+					entity->onPose(entitySurfaces);
+					entity->setPose(previousPose);
+
 					instance.triTree = TriTreeBase::create(false);
+					instance.triTree->setContents(entitySurfaces);
 				}
 			}
 		}
