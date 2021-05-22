@@ -93,7 +93,7 @@ private:
 
 	Radiance3 L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi) const;
 	Radiance3 L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const;
-	Radiance3 L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wi) const;
+	Radiance3 L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const;
 	Radiance3 randomColorFromDirection(const Vector3& w) const;
 
 private:

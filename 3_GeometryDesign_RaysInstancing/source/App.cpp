@@ -313,7 +313,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 			// Find the nearest intersection and store the radiance.
 			const shared_ptr<UniversalSurfel> mainSurfel = findIntersection(P, w, finf(), IntersectionMode::Nearest);
-			image->set(point.x, point.y, L_i(mainSurfel, w) + L_indirect(mainSurfel, w));
+			image->set(point.x, point.y, L_i(mainSurfel, w) + L_indirect(mainSurfel, -w));
 		},
 		!m_settings.multithreading);
 
@@ -491,11 +491,12 @@ Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo
 	return ambient + emitted + direct;
 }
 
-Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wi) const
+Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const
 {
 	const float eps = 1e-5f;
-	Radiance3 indirect(0.0f, 0.0f, 0.0f);
+	const Vector3& surfelNormal = s->shadingNormal;
 
+	Radiance3 indirect(0.0f, 0.0f, 0.0f);
 	if (notNull(s)) {
 		for (int i = 0; i < m_settings.indirectRaysPerPixel; ++i) {
 			const Vector3 bounceDir = Vector3::hemiRandom(s->shadingNormal, Random::threadCommon());
@@ -504,11 +505,11 @@ Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vect
 			shared_ptr<UniversalSurfel> bounceSurfel = findIntersection(P, bounceDir, finf(), IntersectionMode::Nearest);
 
 			if (notNull(bounceSurfel)) {
-				const Radiance3 bounceRadiance = L_i(bounceSurfel, wi);
+				const Radiance3 bounceRadiance = L_i(bounceSurfel, bounceDir);
 
-				const Color3& f = s->finiteScatteringDensity(bounceDir, -wi);
+				const Color3& f = s->finiteScatteringDensity(bounceDir, wo);
 
-				const float cosFactor = fabs(bounceDir.dot(s->shadingNormal));
+				const float cosFactor = fabs(bounceDir.dot(surfelNormal));
 
 				indirect += bounceRadiance * f * (cosFactor / float(m_settings.indirectRaysPerPixel));
 			}
