@@ -251,7 +251,7 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
 	for (shared_ptr<VisibleEntity>& entity : sceneVisibleEntities) {
 		const bool notLightOrParticles = isNull(dynamic_pointer_cast<Light>(entity)) && isNull(dynamic_pointer_cast<ParticleSystem>(entity));
 
-		if (!entity->canChange() && notLightOrParticles) {
+		if (notLightOrParticles) {
 			shared_ptr<ArticulatedModel> model = dynamic_pointer_cast<ArticulatedModel>(entity->model());
 
 			const bool isStaticModel = notNull(model) && !model->usesAnimation() && !model->usesSkeletalAnimation();
@@ -264,7 +264,11 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
 
 				AABox entityBbox;
 				entity->getLastBounds(entityBbox);
-				instance.entityBounds.push_back(std::make_pair(entityBbox, entity->frame().inverse().toMatrix4()));
+				instance.entityBounds.push_back({
+					entityBbox,
+					entity->frame().toMatrix4(),
+					entity->frame().inverse().toMatrix4()
+				});
 
 				if (isNewModel) {
 					instance.model = model;
@@ -371,12 +375,12 @@ void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi
 	for (Table<String, Instance>::Iterator it = m_instances.begin(); it != m_instances.end(); ++it) {
 		const Instance& currInstance = it->value;
 
-		for (const std::pair<AABox, Matrix4>& bounds : currInstance.entityBounds) {
+		for (const FrameBounds& bounds : currInstance.entityBounds) {
 			// The matrix that is saved in bounds is already inverted so that we don't perform it for every ray.
-			const Point3 localX = (bounds.second * Vector4(X, 1.0f)).xyz(); // w = 1 because it is a point
-			const Vector3 localWi = (bounds.second * Vector4(wi, 0.0f)).xyz(); // w = 0 because it is a direction
+			const Point3 modelX = (bounds.modelFromWorld * Vector4(X, 1.0f)).xyz(); // w = 1 because it is a point
+			const Vector3 modelWi = (bounds.modelFromWorld * Vector4(wi, 0.0f)).xyz(); // w = 0 because it is a direction
 
-			if (Intersector::rayAabbIntersect(localX, localWi, bounds.first)) {
+			if (Intersector::rayAabbIntersect(modelX, modelWi, bounds.aabb)) {
 				for (int i = 0; i < currInstance.triTree->size(); ++i) {
 					const Tri& triangle = (*currInstance.triTree)[i];
 
@@ -389,7 +393,7 @@ void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi
 					}
 
 					float newT = 0.0f;
-					if (Intersector::rayTriangleIntersect(localX, localWi, positions, b, newT)) {
+					if (Intersector::rayTriangleIntersect(modelX, modelWi, positions, b, newT)) {
 						if (newT < t) {
 							// Construct a Hit object for sampling.
 							TriTree::Hit hit;
@@ -398,7 +402,7 @@ void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi
 
 							// Check if the triangle is hit from behind.
 							const Vector3 triNormal = triangle.normal(currInstance.triTree->vertexArray());
-							const float dotWiTriNormal = localWi.dot(triNormal);
+							const float dotWiTriNormal = modelWi.dot(triNormal);
 
 							hit.backface = dotWiTriNormal > 0.0f;
 
@@ -410,6 +414,11 @@ void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi
 							shared_ptr<UniversalSurfel> universalSurfel = std::make_shared<UniversalSurfel>();
 							shared_ptr<Surfel> surfel = universalSurfel;
 							currInstance.triTree->sample(hit, surfel);
+
+							surfel->position = (bounds.worldFromModel * Vector4(surfel->position, 1.0f)).xyz();
+							// We don't multiply with the transpose of the inverse because there is no scaling in here.
+							surfel->geometricNormal = (bounds.worldFromModel * Vector4(surfel->geometricNormal, 0.0f)).xyz();
+							surfel->shadingNormal = (bounds.worldFromModel * Vector4(surfel->shadingNormal, 0.0f)).xyz();
 
 							// Alpha testing.
 							if (universalSurfel->coverage == 1.0f) {

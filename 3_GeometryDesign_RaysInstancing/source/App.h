@@ -41,13 +41,20 @@ public:
 	Color3 color;
 };
 
+class FrameBounds {
+public:
+	AABox aabb;
+	Matrix4 worldFromModel;
+	Matrix4 modelFromWorld;
+};
+
 class Instance
 {
 public:
 	shared_ptr<ArticulatedModel> model;
 	shared_ptr<TriTree> triTree;
 
-	Array<std::pair<AABox, Matrix4>> entityBounds;
+	Array<FrameBounds> entityBounds;
 };
 
 class RayTracer
