@@ -270,14 +270,7 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
 					instance.model = model;
 
 					Array<shared_ptr<Surface>> entitySurfaces;
-
-					// Unfortunately, G3D doesn't provide an intuitive way to get the surfaces from a model,
-					// so this is a workaround. We set the default pose to the model and call onPose so that
-					// it creates the surfaces at the model's origin.
-					shared_ptr<Model::Pose> previousPose = entity->pose()->clone();
-					entity->setPose(defaultPose);
-					entity->onPose(entitySurfaces);
-					entity->setPose(previousPose);
+					model->pose(entitySurfaces, CFrame(), CFrame(), nullptr, nullptr, nullptr, Surface::ExpressiveLightScatteringProperties());
 
 					instance.triTree = TriTreeBase::create(false);
 					instance.triTree->setContents(entitySurfaces);
