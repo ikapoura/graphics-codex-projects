@@ -26,7 +26,7 @@ After settling to a solution that is good enough, I had to make a scene to prese
 |:-:|
 
 ## 3. Geometry Design
-Now that 4 is complete, time to add some instancing in the ray tracer.
+This project did not introduce new features regarding the resulting image but it made the Rays project insanely faster. Please refer to the above linked blog post of what was done.
 
 ## 4. Rays
 Now this project is the first real challenge of the series. The project requires to build a CPU ray tracer from scratch which supports:
@@ -47,3 +47,5 @@ The indirect rays provide a more accurate representation because we can observe:
 |:-:|:-:|
 
 The indirect rays are not improving the image too much except for the cavities which are brightened and more details can be observed. The image with the indirect rays has noise because the car's material is metallic and the finiteScatteringDensity of it's surfaces is very high. Blender has a [setting](https://docs.blender.org/manual/en/latest/render/cycles/optimizations/reducing_noise.html#caustics-and-filter-glossy) to reduce that source of noise.
+
+## 5. Paths
