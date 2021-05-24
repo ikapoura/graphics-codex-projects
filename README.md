@@ -26,7 +26,7 @@ After settling to a solution that is good enough, I had to make a scene to prese
 |:-:|
 
 ## 3. Geometry Design
-This project did not introduce new features regarding the resulting image but it made the Rays project insanely faster. Please refer to the above linked blog post of what was done.
+This project did not introduce new features regarding the resulting image but it made the Rays project insanely faster by introducing AABBs and instances. Please refer to the above linked blog post of what was done.
 
 ## 4. Rays
 Now this project is the first real challenge of the series. The project requires to build a CPU ray tracer from scratch which supports:
