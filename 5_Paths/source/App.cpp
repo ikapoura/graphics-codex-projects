@@ -221,11 +221,6 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
 	m_sceneTriTree->setContents(m_sceneSurfaces);
 }
 
-void RayTracer::addFixedSphere(const Point3& center, float radius, const Color3& color)
-{
-	m_fixedSpheres.append({ Sphere(center, radius), color });
-}
-
 chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>& image)
 {
 	chrono::milliseconds elapsedTime(0.0);
@@ -266,40 +261,9 @@ shared_ptr<UniversalSurfel> RayTracer::findIntersection(const Point3& X, const V
 	shared_ptr<UniversalSurfel> result;
 	float t = maxDistance;
 
-	if (m_settings.addFixedPrimitives) {
-		intersectFixedPrimitives(X, wi, mode, result, t);
-	}
-
 	intersectTriangulatedSurfaces(X, wi, mode, result, t);
 
 	return result;
-}
-
-void RayTracer::intersectFixedPrimitives(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const
-{
-	for (const SpherePrimitive& s : m_fixedSpheres) {
-		float newT = 0.0f;
-
-		if (Intersector::raySphereIntersect(X, wi, s.sphere, newT)) {
-			if (newT < t) {
-				result = std::make_shared<UniversalSurfel>();
-				result->lambertianReflectivity = s.color;
-
-				const Point3 intersectionPoint = X + wi * newT;
-				const Vector3 intersectionNormal = (intersectionPoint - s.sphere.center).direction();
-				result->position = intersectionPoint;
-				result->geometricNormal = intersectionNormal;
-				result->shadingNormal = intersectionNormal;
-
-				t = newT;
-
-				// Return immediately if we find an intersection.
-				if (mode == IntersectionMode::First) {
-					return;
-				}
-			}
-		}
-	}
 }
 
 void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const
@@ -735,7 +699,6 @@ void App::makeGUI()
 	GuiPane* raytracePane = debugPane->addPane("Offline Ray Trace", GuiTheme::ORNATE_PANE_STYLE);
 	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "20 x 20", "320 x 200", "640 x 400", "1920 x 1080" }));
 	m_rayTraceSettings.resolutionList->setSelectedIndex(2);
-	raytracePane->addCheckBox("Add fixed primitives", &m_rayTraceSettings.addFixedPrimitives);
 	raytracePane->addCheckBox("Multithreading", &m_rayTraceSettings.multithreading);
 	GuiNumberBox<int>* raysSlider = raytracePane->addNumberBox<int>("Indirect rays per pixel", &m_rayTraceSettings.indirectRaysPerPixel, "", GuiTheme::LINEAR_SLIDER, 0, 2048);
 	raysSlider->setWidth(290.0F);
@@ -789,10 +752,6 @@ void App::render()
 	shared_ptr<Image> image = Image::create(res.x, res.y, ImageFormat::RGB32F());
 
 	RayTracer rayTracer(m_rayTraceSettings, scene());
-
-	rayTracer.addFixedSphere(Point3( 0.0f, 1.5f, 0.0f), 1.0f, Color3(1.0f, 0.0f, 0.0f));
-	rayTracer.addFixedSphere(Point3( 1.0f, 2.5f, 0.0f), 0.5f, Color3(0.0f, 1.0f, 0.0f));
-	rayTracer.addFixedSphere(Point3(-1.0f, 2.5f, 0.0f), 0.5f, Color3(0.0f, 0.0f, 1.0f));
 
 	const chrono::milliseconds durationMs = rayTracer.traceImage(activeCamera(), image);
 

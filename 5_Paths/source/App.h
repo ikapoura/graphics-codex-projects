@@ -45,7 +45,6 @@ class RayTracer
 public:
 	class Settings {
 	public:
-		bool addFixedPrimitives{ false };
 		int  indirectRaysPerPixel{ 1 };
 #ifndef G3D_DEBUG
 		bool multithreading{ true };
@@ -59,8 +58,6 @@ public:
 	RayTracer(const Settings& settings, const shared_ptr<Scene>& scene);
 	virtual ~RayTracer() = default;
 
-	void addFixedSphere(const Point3& center, float radius, const Color3& color);
-
 	chrono::milliseconds traceImage(const shared_ptr<Camera>& camera, shared_ptr<Image>& image);
 
 private:
@@ -69,7 +66,6 @@ private:
 		First
 	};
 	shared_ptr<UniversalSurfel> findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const;
-	void intersectFixedPrimitives(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
 	void intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
 
 	bool visible(const shared_ptr<UniversalSurfel>& s, const Point3& from) const;
@@ -85,8 +81,6 @@ private:
 	const shared_ptr<Scene>& m_scene;
 	Array<shared_ptr<Surface>> m_sceneSurfaces;
 	shared_ptr<TriTree> m_sceneTriTree;
-
-	Array<SpherePrimitive> m_fixedSpheres;
 };
 
 
