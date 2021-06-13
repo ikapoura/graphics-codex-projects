@@ -88,89 +88,6 @@ Color3 PostProcess::pixelValue(const Radiance3& L, const float k, const float ga
 				  pow(outL.b, 1.0f / gamma));
 }
 
-
-bool Intersector::raySphereIntersect(const Point3& P, const Vector3& w, const Sphere& s, float& t)
-{
-	const Vector3 v = P - s.center;
-	const float pointFromCenterSquared = v.squaredLength();
-	const float radiusSquared = s.radius * s.radius;
-
-	if (pointFromCenterSquared > radiusSquared) {
-		const float a = 1.0f; // because w is a unit vector ( == w.dot(w) )
-		const float b = 2 * w.dot(v);
-		const float c = v.dot(v) - radiusSquared;
-
-		const float discriminant = b * b - 4 * a * c;
-
-		if (discriminant > 0.0f) {
-			const float t1 = (-b + sqrtf(discriminant)) / (2.0f * a);
-			const float t2 = (-b - sqrtf(discriminant)) / (2.0f * a);
-
-			if (t1 >= 0.0f) {
-				if (t2 >= 0.0f) {
-					t = (t1 < t2) ? t1 : t2;
-				} else {
-					t = t1;
-				}
-
-				return true;
-			} else {
-				if (t2 >= 0.0f) {
-					t = t2;
-					return true;
-				}
-			}
-		}
-	}
-
-	return false;
-}
-
-// If ray P + tw hits triangle V[0], V[1], V[2], then the function return true, stores the
-// barycentric coordinates in b[] and stores the distance to the intersection in t. Otherwise,
-// returns false and the other output parameters are undefined.
-bool Intersector::rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t)
-{
-	// Precision threshold depends on scene scale. Too small leaves holes at edges, too 
-	// large expands triangles.
-	const float eps = 1e-6;
-	
-	// Edge vector
-	const Vector3& e_1 = V[1] - V[0];
-	const Vector3& e_2 = V[2] - V[0];
-
-	// Face normal 
-	const Vector3& n = e_1.cross(e_2).direction();
-
-	// Nothing that has any physical meaning. Just a very optimized
-	// way to compute 3 cross products.
-	const Vector3& q = w.cross(e_2);
-	const float a = e_1.dot(q);
-
-	// Backfacing / nearly parallel or close to the limit of precision/
-	if ((n.dot(w) >= 0) || (fabsf(a) <= eps)) {
-		return false;
-	}
-
-	const Vector3& s = (P - V[0]) / a;
-	const Vector3& r = s.cross(e_1);
-
-	// Barycentrics
-	b[0] = s.dot(q);
-	b[1] = r.dot(w);
-	b[2] = 1.0f - b[0] - b[1];
-
-	// Intersected outside triangle?
-	if ((b[0] < 0.0f) || (b[1] < 0.0f) || (b[2] < 0.0f)) {
-		return false;
-	}
-
-	t = e_2.dot(r);
-	return (t >= 0.0f);
-}
-
-
-
 PinholeCamera::PinholeCamera(const CoordinateFrame& frame, const Projection& projection) :
 	m_frame(frame), m_projection(projection)
 {
@@ -268,58 +185,24 @@ shared_ptr<UniversalSurfel> RayTracer::findIntersection(const Point3& X, const V
 
 void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const
 {
-	// Saving here so that they are not constructed and destructed for every triangle.
-	CPUVertexArray::Vertex vertices[3];
-	Point3 positions[3];
-	float b[3];
+	TriTree::Hit hit;
+	if (m_sceneTriTree->intersectRay(Ray::fromOriginAndDirection(X, wi, 0.0f, t), hit)) {
+		// Sample the triangle.
+		shared_ptr<UniversalSurfel> universalSurfel = std::make_shared<UniversalSurfel>();
+		shared_ptr<Surfel> surfel = universalSurfel;
+		m_sceneTriTree->sample(hit, surfel);
 
-	for (int i = 0; i < m_sceneTriTree->size(); ++i) {
-		const Tri& triangle = (*m_sceneTriTree)[i];
+		// Alpha testing.
+		if (universalSurfel->coverage == 1.0f) {
+			result = universalSurfel;
+			t = hit.distance;
 
-		for (int v = 0; v < 3; ++v) {
-			vertices[v] = triangle.vertex(m_sceneTriTree->vertexArray(), v);
-		}
-
-		for (int v = 0; v < 3; ++v) {
-			positions[v] = vertices[v].position;
-		}
-
-		float newT = 0.0f;
-		if (Intersector::rayTriangleIntersect(X, wi, positions, b, newT)) {
-			if (newT < t) {
-				// Construct a Hit object for sampling.
-				TriTree::Hit hit;
-				hit.triIndex = i;
-				hit.distance = newT;
-
-				// Check if the triangle is hit from behind.
-				const Vector3 triNormal = triangle.normal(m_sceneTriTree->vertexArray());
-				const float dotWiTriNormal = wi.dot(triNormal);
-
-				hit.backface = dotWiTriNormal > 0.0f;
-
-				// Assign the first two values of the barycentrics.
-				hit.u = b[0];
-				hit.v = b[1];
-
-				// Sample the triangle.
-				shared_ptr<UniversalSurfel> universalSurfel = std::make_shared<UniversalSurfel>();
-				shared_ptr<Surfel> surfel = universalSurfel;
-				m_sceneTriTree->sample(hit, surfel);
-
-				// Alpha testing.
-				if (universalSurfel->coverage == 1.0f) {
-					result = universalSurfel;
-					t = newT;
-
-					// Return immediately if we find an intersection.
-					if (mode == IntersectionMode::First) {
-						return;
-					}
-				}
+			// Return immediately if we find an intersection.
+			if (mode == IntersectionMode::First) {
+				return;
 			}
 		}
-	}	
+	}
 }
 
 bool RayTracer::visible(const shared_ptr<UniversalSurfel>& s, const Point3& from) const

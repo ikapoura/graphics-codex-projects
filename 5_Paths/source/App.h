@@ -13,13 +13,6 @@ public:
 	Color3 pixelValue(const Radiance3& L, const float k, const float gamma);
 };
 
-class Intersector
-{
-public:
-	static bool raySphereIntersect(const Point3& P, const Vector3& w, const Sphere& s, float& t);
-	static bool rayTriangleIntersect(const Point3& P, const Vector3& w, const Point3 V[3], float b[3], float& t);
-};
-
 class PinholeCamera
 {
 public:
