@@ -38,6 +38,7 @@ class RayTracer
 public:
 	class Settings {
 	public:
+		int  numLightTrasportPaths{ 1 };
 		int  maxScatterEvents{ 10 };
 #ifndef G3D_DEBUG
 		bool multithreading{ true };
@@ -58,6 +59,7 @@ private:
 		Nearest,
 		First
 	};
+	Radiance3 getLightTransportPathRadiance(float imageX, float imageY, const PinholeCamera& camera, const shared_ptr<Image>& image) const;
 	shared_ptr<UniversalSurfel> findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const;
 	void intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
 

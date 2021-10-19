@@ -151,15 +151,26 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	// Main loop over the pixels.
 	runConcurrently(Point2int32(0, 0), Point2int32(image->width(), image->height()),
 		[this, camera, image](Point2int32 point) -> void {
-			Point3 P;
-			Vector3 w;
+			Random& treadRandom = Random::threadCommon();
 
-			// Find the ray through (x,y) and the center of projection.
-			camera.getPrimaryRay(float(point.x) + 0.5f, float(point.y) + 0.5f, image->width(), image->height(), P, w);
+			// Always cast a ray through the center of the pixel.
+			Radiance3 meanRadiance = getLightTransportPathRadiance(float(point.x) + 0.5f, float(point.y) + 0.5f, camera, image);
 
-			// Find the nearest intersection and store the radiance.
-			const shared_ptr<UniversalSurfel> mainSurfel = findIntersection(P, w, finf(), IntersectionMode::Nearest);
-			image->set(point.x, point.y, L_i(mainSurfel, w, m_settings.maxScatterEvents));
+			// The pixel numbering starts from (index, index) and spans 1 in each direction. We constrain the max to avoid
+			// sampling the same image point from different pixels, because 2 + 1 == 3 and 3 + 0 == 3.
+			const float offsetMin = 0.0f;
+			const float offsetMax = 1.0f - std::numeric_limits<float>::min();
+			// Process the rest of the transport paths.
+			for (int i = 1; i < m_settings.numLightTrasportPaths; ++i) {
+				float offsetX = treadRandom.uniform(offsetMin, offsetMax);
+				float offsetY = treadRandom.uniform(offsetMin, offsetMax);
+
+				meanRadiance += getLightTransportPathRadiance(float(point.x) + offsetX, float(point.y) + offsetY, camera, image);
+			}
+
+			meanRadiance /= float(m_settings.numLightTrasportPaths);
+
+			image->set(point.x, point.y, meanRadiance);
 		},
 		!m_settings.multithreading);
 
@@ -168,6 +179,18 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	elapsedTime = stopwatch.elapsedDuration<chrono::milliseconds>();
 
 	return elapsedTime;
+}
+
+Radiance3 RayTracer::getLightTransportPathRadiance(float imageX, float imageY, const PinholeCamera& camera, const shared_ptr<Image>& image) const
+{
+	Point3 P;
+	Vector3 w;
+
+	camera.getPrimaryRay(imageX, imageY, image->width(), image->height(), P, w);
+
+	const shared_ptr<UniversalSurfel> mainSurfel = findIntersection(P, w, finf(), IntersectionMode::Nearest);
+
+	return L_i(mainSurfel, w, m_settings.maxScatterEvents);
 }
 
 shared_ptr<UniversalSurfel> RayTracer::findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const
@@ -215,11 +238,19 @@ bool RayTracer::visible(const shared_ptr<UniversalSurfel>& s, const Point3& from
 
 Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi, const int depth) const
 {
-	if (depth > 0 && notNull(s)) {
-		return L_o(s, -wi, depth);
+	Radiance3 toReturn;
+
+	if (depth >= 0) {
+		if (notNull(s)) {
+			toReturn = L_o(s, -wi, depth);
+		} else {
+			toReturn = randomColorFromDirection(wi);
+		}
 	} else {
-		return randomColorFromDirection(wi);
+		toReturn = Radiance3::black();
 	}
+
+	return toReturn;
 }
 
 Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, const int depth) const
@@ -581,9 +612,12 @@ void App::makeGUI()
 	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "20 x 20", "320 x 200", "640 x 400", "1920 x 1080" }));
 	m_rayTraceSettings.resolutionList->setSelectedIndex(2);
 	raytracePane->addCheckBox("Multithreading", &m_rayTraceSettings.multithreading);
-	GuiNumberBox<int>* scatterEventsSlider = raytracePane->addNumberBox<int>("Maximum scattering events", &m_rayTraceSettings.maxScatterEvents, "", GuiTheme::LINEAR_SLIDER, 0, 256);
-	scatterEventsSlider->setWidth(320.0F);
-	scatterEventsSlider->setCaptionWidth(170.0F);
+	GuiNumberBox<int>* lightTransportPathsSlider = raytracePane->addNumberBox<int>("Light transport paths per pixel", &m_rayTraceSettings.numLightTrasportPaths, "", GuiTheme::LINEAR_SLIDER, 1, 256);
+	lightTransportPathsSlider->setWidth(320.0F);
+	lightTransportPathsSlider->setCaptionWidth(180.0F);
+	GuiNumberBox<int>* scatterEventsSlider = raytracePane->addNumberBox<int>("Maximum scatter events per path", &m_rayTraceSettings.maxScatterEvents, "", GuiTheme::LINEAR_SLIDER, 0, 512);
+	scatterEventsSlider->setWidth(340.0F);
+	scatterEventsSlider->setCaptionWidth(200.0F);
 	raytracePane->addButton("Render", this, &App::render);
 	raytracePane->pack();
 	raytracePane->moveRightOf(rendererPane, 10);
