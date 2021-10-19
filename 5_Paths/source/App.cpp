@@ -159,7 +159,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 			// Find the nearest intersection and store the radiance.
 			const shared_ptr<UniversalSurfel> mainSurfel = findIntersection(P, w, finf(), IntersectionMode::Nearest);
-			image->set(point.x, point.y, L_i(mainSurfel, w));
+			image->set(point.x, point.y, L_i(mainSurfel, w, m_settings.maxScatterEvents));
 		},
 		!m_settings.multithreading);
 
@@ -213,18 +213,18 @@ bool RayTracer::visible(const shared_ptr<UniversalSurfel>& s, const Point3& from
 	return isNull(findIntersection(from + eps * dir, dir, distance - eps, IntersectionMode::First));
 }
 
-Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi) const
+Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi, const int depth) const
 {
-	if (notNull(s)) {
-		return L_o(s, -wi);
+	if (depth > 0 && notNull(s)) {
+		return L_o(s, -wi, depth);
 	} else {
 		return randomColorFromDirection(wi);
 	}
 }
 
-Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const
+Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, const int depth) const
 {
-	return s->emittedRadiance(wo) + L_direct(s, wo) + L_indirect(s, wo);
+	return s->emittedRadiance(wo) + L_direct(s, wo) + L_indirect(s, wo, depth);
 }
 
 Radiance3 RayTracer::L_direct(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const
@@ -256,7 +256,7 @@ Radiance3 RayTracer::L_direct(const shared_ptr<UniversalSurfel>& s, const Vector
 	return direct;
 }
 
-Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const
+Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, const int depth) const
 {
 	const float eps = 1e-5f;
 	const Vector3& surfelNormal = s->shadingNormal;
@@ -273,7 +273,7 @@ Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vect
 			shared_ptr<UniversalSurfel> scatterSurfel = findIntersection(P, scatterDir, finf(), IntersectionMode::Nearest);
 
 			if (notNull(scatterSurfel)) {
-				const Radiance3 scatterRadiance = L_i(scatterSurfel, scatterDir);
+				const Radiance3 scatterRadiance = L_i(scatterSurfel, scatterDir, depth - 1);
 
 				indirect += scatterRadiance * scatterWeight;
 			}
@@ -581,9 +581,9 @@ void App::makeGUI()
 	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "20 x 20", "320 x 200", "640 x 400", "1920 x 1080" }));
 	m_rayTraceSettings.resolutionList->setSelectedIndex(2);
 	raytracePane->addCheckBox("Multithreading", &m_rayTraceSettings.multithreading);
-	GuiNumberBox<int>* raysSlider = raytracePane->addNumberBox<int>("Indirect rays per pixel", &m_rayTraceSettings.indirectRaysPerPixel, "", GuiTheme::LINEAR_SLIDER, 0, 2048);
-	raysSlider->setWidth(290.0F);
-	raysSlider->setCaptionWidth(140.0F);
+	GuiNumberBox<int>* scatterEventsSlider = raytracePane->addNumberBox<int>("Maximum scattering events", &m_rayTraceSettings.maxScatterEvents, "", GuiTheme::LINEAR_SLIDER, 0, 256);
+	scatterEventsSlider->setWidth(320.0F);
+	scatterEventsSlider->setCaptionWidth(170.0F);
 	raytracePane->addButton("Render", this, &App::render);
 	raytracePane->pack();
 	raytracePane->moveRightOf(rendererPane, 10);
