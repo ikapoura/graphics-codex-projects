@@ -38,7 +38,7 @@ class RayTracer
 public:
 	class Settings {
 	public:
-		int  indirectRaysPerPixel{ 1 };
+		int  maxScatterEvents{ 10 };
 #ifndef G3D_DEBUG
 		bool multithreading{ true };
 #else
@@ -65,6 +65,7 @@ private:
 
 	Radiance3 L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi) const;
 	Radiance3 L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const;
+	Radiance3 L_direct(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const;
 	Radiance3 L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const;
 	Radiance3 randomColorFromDirection(const Vector3& w) const;
 

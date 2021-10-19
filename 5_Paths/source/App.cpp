@@ -159,7 +159,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 			// Find the nearest intersection and store the radiance.
 			const shared_ptr<UniversalSurfel> mainSurfel = findIntersection(P, w, finf(), IntersectionMode::Nearest);
-			image->set(point.x, point.y, L_i(mainSurfel, w) + L_indirect(mainSurfel, -w));
+			image->set(point.x, point.y, L_i(mainSurfel, w));
 		},
 		!m_settings.multithreading);
 
@@ -224,12 +224,16 @@ Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi
 
 Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const
 {
+	return s->emittedRadiance(wo) + L_direct(s, wo) + L_indirect(s, wo);
+}
+
+Radiance3 RayTracer::L_direct(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const
+{
 	const Point3& surfelPos = s->position;
 	const Vector3& surfelNormal = s->shadingNormal;
 
-	const Radiance3 emitted = s->emittedRadiance(wo);
-
 	Radiance3 direct(0.0f, 0.0f, 0.0f);
+
 	for (const shared_ptr<Light>& light : m_scene->lightingEnvironment().lightArray) {
 		if (light->producesDirectIllumination()) {
 			const Point3& lightPos = light->position().xyz();
@@ -249,9 +253,7 @@ Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo
 		}
 	}
 
-	const Radiance3 ambient = s->reflectivity(Random::threadCommon()) * 0.05f;
-
-	return ambient + emitted + direct;
+	return direct;
 }
 
 Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const
@@ -263,15 +265,18 @@ Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vect
 	if (notNull(s)) {
 		Color3 scatterWeight;
 		Vector3 scatterDir;
-		s->scatter(PathDirection::EYE_TO_SOURCE, -wo, false, Random::threadCommon(), scatterWeight, scatterDir);
+		s->scatter(PathDirection::EYE_TO_SOURCE, -wo, true, Random::threadCommon(), scatterWeight, scatterDir);
 
-		const Point3 P = s->position + eps * s->geometricNormal * sign(s->geometricNormal.dot(scatterDir));
+		if (scatterWeight != Color3::zero()) {
+			const Point3 P = s->position + eps * s->geometricNormal * sign(s->geometricNormal.dot(scatterDir));
 
-		shared_ptr<UniversalSurfel> scatterSurfel = findIntersection(P, scatterDir, finf(), IntersectionMode::Nearest);
+			shared_ptr<UniversalSurfel> scatterSurfel = findIntersection(P, scatterDir, finf(), IntersectionMode::Nearest);
 
-		if (notNull(scatterSurfel)) {
-			const Radiance3 scatterRadiance = L_i(scatterSurfel, scatterDir);
+			if (notNull(scatterSurfel)) {
+				const Radiance3 scatterRadiance = L_i(scatterSurfel, scatterDir);
 
+				indirect += scatterRadiance * scatterWeight;
+			}
 		}
 	}
 
