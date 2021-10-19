@@ -264,21 +264,17 @@ Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vect
 
 	Radiance3 indirect(0.0f, 0.0f, 0.0f);
 	if (notNull(s)) {
-		for (int i = 0; i < m_settings.indirectRaysPerPixel; ++i) {
-			const Vector3 bounceDir = Vector3::hemiRandom(s->shadingNormal, Random::threadCommon());
-			const Point3 P = s->position + eps * s->geometricNormal * sign(s->geometricNormal.dot(bounceDir));
+		Color3 scatterWeight;
+		Vector3 scatterDir;
+		s->scatter(PathDirection::EYE_TO_SOURCE, -wo, false, Random::threadCommon(), scatterWeight, scatterDir);
 
-			shared_ptr<UniversalSurfel> bounceSurfel = findIntersection(P, bounceDir, finf(), IntersectionMode::Nearest);
+		const Point3 P = s->position + eps * s->geometricNormal * sign(s->geometricNormal.dot(scatterDir));
 
-			if (notNull(bounceSurfel)) {
-				const Radiance3 bounceRadiance = L_i(bounceSurfel, bounceDir);
+		shared_ptr<UniversalSurfel> scatterSurfel = findIntersection(P, scatterDir, finf(), IntersectionMode::Nearest);
 
-				const Color3& f = s->finiteScatteringDensity(bounceDir, wo);
+		if (notNull(scatterSurfel)) {
+			const Radiance3 scatterRadiance = L_i(scatterSurfel, scatterDir);
 
-				const float cosFactor = fabs(bounceDir.dot(surfelNormal));
-
-				indirect += bounceRadiance * f * (cosFactor / float(m_settings.indirectRaysPerPixel));
-			}
 		}
 	}
 
