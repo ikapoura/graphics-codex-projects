@@ -93,7 +93,7 @@ PinholeCamera::PinholeCamera(const CoordinateFrame& frame, const Projection& pro
 {
 }
 
-void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const
+Ray PinholeCamera::getPrimaryRay(float x, float y, int imageWidth, int imageHeight) const
 {
 	// Init the properties.
 	const FOVDirection fovDir = m_projection.fieldOfViewDirection();
@@ -105,22 +105,24 @@ void PinholeCamera::getPrimaryRay(float x, float y, int width, int height, Point
 	// Compute the origin of the ray.
 	const float side = -2.0f * tanf(fovAngle / 2.0f);
 
-	P = Point3(zNear * (x / width - 0.5f) * side,
-			   zNear * -(y / height - 0.5f) * side,
-			   zNear);
+	Point3 P(zNear * (x / imageWidth - 0.5f) * side,
+			 zNear * -(y / imageHeight - 0.5f) * side,
+			 zNear);
 
 	if (fovDir == FOVDirection::HORIZONTAL) {
-		P.y *= (height / (float)width);
+		P.y *= (imageHeight / (float)imageWidth);
 	} else if (fovDir == FOVDirection::VERTICAL) {
-		P.x *= (width / (float)height);
+		P.x *= (imageWidth / (float)imageHeight);
 	}
 
 	// The incoming direction is simply that from the origin to P.
-	w = P.direction();
+	Vector3 w = P.direction();
 
 	// Transform based on the orientation.
 	P = (m_frame.toMatrix4() * Vector4(P, 1.0f)).xyz();
 	w = m_frame.rotation * w;
+
+	return Ray(P, w);
 }
 
 
@@ -136,96 +138,102 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
 
 	m_sceneTriTree = TriTreeBase::create(false);
 	m_sceneTriTree->setContents(m_sceneSurfaces);
+	m_lastTreeBuildTime = max(m_scene->lastEditingTime(), m_scene->lastStructuralChangeTime(), m_scene->lastVisibleChangeTime());
 }
 
 chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamera, shared_ptr<Image>& image)
 {
-	chrono::milliseconds elapsedTime(0.0);
-
-	const PinholeCamera camera(activeCamera->frame(), activeCamera->projection());
+	rebuildTreeStructureBasedOnLastChange();
 
 	// Measure the time of the rendering and not the scene setup.
+	chrono::milliseconds elapsedTime(0.0);
 	Stopwatch stopwatch("Image trace");
 	stopwatch.tick();
 
-	// Main loop over the pixels.
+	// Initialize the image
 	runConcurrently(Point2int32(0, 0), Point2int32(image->width(), image->height()),
-		[this, camera, image](Point2int32 point) -> void {
-			Random& threadRandom = Random::threadCommon();
-
-			// Always cast a ray through the center of the pixel.
-			Radiance3 meanRadiance = getLightTransportPathRadiance(float(point.x) + 0.5f, float(point.y) + 0.5f, camera, image, threadRandom);
-
-			// The pixel numbering starts from (index, index) and spans 1 in each direction. We constrain the max to avoid
-			// sampling the same image point from different pixels, because 2 + 1 == 3 and 3 + 0 == 3.
-			const float offsetMin = 0.0f;
-			const float offsetMax = 1.0f - std::numeric_limits<float>::min();
-			// Process the rest of the transport paths.
-			for (int i = 1; i < m_settings.numLightTrasportPaths; ++i) {
-				float offsetX = threadRandom.uniform(offsetMin, offsetMax);
-				float offsetY = threadRandom.uniform(offsetMin, offsetMax);
-
-				meanRadiance += getLightTransportPathRadiance(float(point.x) + offsetX, float(point.y) + offsetY, camera, image, threadRandom);
-			}
-
-			meanRadiance /= float(m_settings.numLightTrasportPaths);
-
-			image->set(point.x, point.y, meanRadiance);
+		[image](Point2int32 point) -> void {
+			image->set(point.x, point.y, Color3::black());
 		},
 		!m_settings.multithreading);
 
+
+	const PinholeCamera camera(activeCamera->frame(), activeCamera->projection());
+
+	Array<Radiance3> radianceBuffer;
+	radianceBuffer.resize(image->width() * image->height());
+
+	Array<Ray> rayBuffer;
+	rayBuffer.resize(m_settings.numLightTrasportPaths);
+
+	Array<shared_ptr<Surfel>> surfelBuffer;
+	surfelBuffer.resize(m_settings.numLightTrasportPaths);
+
+	const float pixelOffsetMin = 0.0f;
+	const float pixelOffsetMax = 1.0f - std::numeric_limits<float>::min();
+
+	for (int x = 0; x < image->width(); x++) {
+		for (int y = 0; y < image->height(); y++) {
+			const int pixelIndex1D = x * image->height() + y;
+
+			// Generate the primary rays
+			// Always generate a ray through the center of the pixel
+			rayBuffer[0] = camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, image->width(), image->height());
+			// Generate the rest
+			for (int i = 1; i < m_settings.numLightTrasportPaths; ++i) {
+				float offsetX = uniformRandom(pixelOffsetMin, pixelOffsetMax);
+				float offsetY = uniformRandom(pixelOffsetMin, pixelOffsetMax);
+
+				rayBuffer[i] = camera.getPrimaryRay(float(x) + offsetX, float(y) + offsetY, image->width(), image->height());
+			}
+
+			// Cast the primary rays
+			m_sceneTriTree->intersectRays(rayBuffer, surfelBuffer, TriTree::COHERENT_RAY_HINT);
+
+			// Handle the intersections
+			runConcurrently(0, surfelBuffer.size(), [&](int i) -> void {
+				const shared_ptr<Surfel>& surfel = surfelBuffer[i];
+
+				if (notNull(surfel)) {
+					Random& random = Random::threadCommon();
+
+					radianceBuffer[pixelIndex1D] = L_i(surfel, rayBuffer[i].direction(), random, 0);
+				} else {
+					radianceBuffer[pixelIndex1D] = randomColorFromDirection(rayBuffer[i].direction());
+				}
+			},
+			!m_settings.multithreading);
+		}
+	}
+
 	stopwatch.tock();
+
+	// Copy the data to the image
+	for (int x = 0; x < image->width(); x++) {
+		for (int y = 0; y < image->height(); y++) {
+			const int pixelIndex1D = x * image->height() + y;
+
+			image->set(x, y, radianceBuffer[pixelIndex1D]);
+		}
+	}
 
 	elapsedTime = stopwatch.elapsedDuration<chrono::milliseconds>();
 
 	return elapsedTime;
 }
 
-Radiance3 RayTracer::getLightTransportPathRadiance(float imageX, float imageY, const PinholeCamera& camera, const shared_ptr<Image>& image, Random& random) const
+shared_ptr<Surfel> RayTracer::findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const
 {
-	Point3 P;
-	Vector3 w;
-
-	camera.getPrimaryRay(imageX, imageY, image->width(), image->height(), P, w);
-
-	const shared_ptr<UniversalSurfel> mainSurfel = findIntersection(P, w, finf(), IntersectionMode::Nearest);
-
-	return L_i(mainSurfel, w, random, m_settings.maxScatterEvents);
-}
-
-shared_ptr<UniversalSurfel> RayTracer::findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const
-{
-	shared_ptr<UniversalSurfel> result;
+	shared_ptr<Surfel> result;
+	/*
 	float t = maxDistance;
 
 	intersectTriangulatedSurfaces(X, wi, mode, result, t);
-
+	*/
 	return result;
 }
 
-void RayTracer::intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const
-{
-	TriTree::Hit hit;
-	if (m_sceneTriTree->intersectRay(Ray::fromOriginAndDirection(X, wi, 0.0f, t), hit)) {
-		// Sample the triangle.
-		shared_ptr<UniversalSurfel> universalSurfel = std::make_shared<UniversalSurfel>();
-		shared_ptr<Surfel> surfel = universalSurfel;
-		m_sceneTriTree->sample(hit, surfel);
-
-		// Alpha testing.
-		if (universalSurfel->coverage == 1.0f) {
-			result = universalSurfel;
-			t = hit.distance;
-
-			// Return immediately if we find an intersection.
-			if (mode == IntersectionMode::First) {
-				return;
-			}
-		}
-	}
-}
-
-bool RayTracer::visible(const shared_ptr<UniversalSurfel>& s, const Point3& from) const
+bool RayTracer::visible(const shared_ptr<Surfel>& s, const Point3& from) const
 {
 	const float eps = 1e-4f;
 
@@ -236,7 +244,7 @@ bool RayTracer::visible(const shared_ptr<UniversalSurfel>& s, const Point3& from
 	return isNull(findIntersection(from + eps * dir, dir, distance - eps, IntersectionMode::First));
 }
 
-Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi, Random& random, const int depth) const
+Radiance3 RayTracer::L_i(const shared_ptr<Surfel>& s, const Vector3& wi, Random& random, const int depth) const
 {
 	Radiance3 toReturn;
 
@@ -253,12 +261,12 @@ Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi
 	return toReturn;
 }
 
-Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, Random& random, const int depth) const
+Radiance3 RayTracer::L_o(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random, const int depth) const
 {
 	return s->emittedRadiance(wo) + L_direct(s, wo) + L_indirect(s, wo, random, depth);
 }
 
-Radiance3 RayTracer::L_direct(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const
+Radiance3 RayTracer::L_direct(const shared_ptr<Surfel>& s, const Vector3& wo) const
 {
 	const Point3& surfelPos = s->position;
 	const Vector3& surfelNormal = s->shadingNormal;
@@ -287,7 +295,7 @@ Radiance3 RayTracer::L_direct(const shared_ptr<UniversalSurfel>& s, const Vector
 	return direct;
 }
 
-Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, Random& random, const int depth) const
+Radiance3 RayTracer::L_indirect(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random, const int depth) const
 {
 	const float eps = 1e-5f;
 	const Vector3& surfelNormal = s->shadingNormal;
@@ -301,7 +309,7 @@ Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vect
 		if (scatterWeight != Color3::zero()) {
 			const Point3 P = s->position + eps * s->geometricNormal * sign(s->geometricNormal.dot(scatterDir));
 
-			shared_ptr<UniversalSurfel> scatterSurfel = findIntersection(P, scatterDir, finf(), IntersectionMode::Nearest);
+			shared_ptr<Surfel> scatterSurfel = findIntersection(P, scatterDir, finf(), IntersectionMode::Nearest);
 
 			if (notNull(scatterSurfel)) {
 				const Radiance3 scatterRadiance = L_i(scatterSurfel, scatterDir, random, depth - 1);
@@ -323,6 +331,17 @@ Biradiance3 RayTracer::randomColorFromDirection(const Vector3& w) const
 	return Radiance3::rainbowColorMap(someRandomHue);
 }
 
+void RayTracer::rebuildTreeStructureBasedOnLastChange()
+{
+	RealTime lastSceneChangeTime = max(m_scene->lastEditingTime(), m_scene->lastStructuralChangeTime(), m_scene->lastVisibleChangeTime());
+	if (lastSceneChangeTime > m_lastTreeBuildTime) {
+		m_lastTreeBuildTime = lastSceneChangeTime;
+
+		m_scene->onPose(m_sceneSurfaces);
+		m_sceneTriTree->clear();
+		m_sceneTriTree->setContents(m_sceneSurfaces);
+	}
+}
 
 App::App(const GApp::Settings& settings) :
 	GApp(settings)
@@ -610,7 +629,11 @@ void App::makeGUI()
 
 	GuiPane* raytracePane = debugPane->addPane("Offline Ray Trace", GuiTheme::ORNATE_PANE_STYLE);
 	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "20 x 20", "320 x 200", "640 x 400", "1920 x 1080" }));
+#ifndef G3D_DEBUG
+	m_rayTraceSettings.resolutionList->setSelectedIndex(4);
+#else
 	m_rayTraceSettings.resolutionList->setSelectedIndex(2);
+#endif // !G3D_DEBUG
 	raytracePane->addCheckBox("Multithreading", &m_rayTraceSettings.multithreading);
 	GuiNumberBox<int>* lightTransportPathsSlider = raytracePane->addNumberBox<int>("Light transport paths per pixel", &m_rayTraceSettings.numLightTrasportPaths, "", GuiTheme::LINEAR_SLIDER, 1, 4096);
 	lightTransportPathsSlider->setWidth(320.0F);

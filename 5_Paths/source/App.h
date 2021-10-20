@@ -19,7 +19,7 @@ public:
 	PinholeCamera(const CoordinateFrame& frame, const Projection& projection);
 
 	// x, y, width and height in pixels; P in meters
-	void getPrimaryRay(float x, float y, int width, int height, Point3& P, Vector3& w) const;
+	Ray getPrimaryRay(float x, float y, int width, int height) const;
 
 protected:
 	CoordinateFrame m_frame;
@@ -60,16 +60,18 @@ private:
 		First
 	};
 	Radiance3 getLightTransportPathRadiance(float imageX, float imageY, const PinholeCamera& camera, const shared_ptr<Image>& image, Random& random) const;
-	shared_ptr<UniversalSurfel> findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const;
-	void intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
+	shared_ptr<Surfel> findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const;
 
-	bool visible(const shared_ptr<UniversalSurfel>& s, const Point3& from) const;
+	bool visible(const shared_ptr<Surfel>& s, const Point3& from) const;
 
-	Radiance3 L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi, Random& random, const int depth) const;
-	Radiance3 L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, Random& random, const int depth) const;
-	Radiance3 L_direct(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const;
-	Radiance3 L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, Random& random, const int depth) const;
+	Radiance3 L_i(const shared_ptr<Surfel>& s, const Vector3& wi, Random& random, const int depth) const;
+	Radiance3 L_o(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random, const int depth) const;
+	Radiance3 L_direct(const shared_ptr<Surfel>& s, const Vector3& wo) const;
+	Radiance3 L_indirect(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random, const int depth) const;
+
 	Radiance3 randomColorFromDirection(const Vector3& w) const;
+
+	void rebuildTreeStructureBasedOnLastChange();
 
 private:
 	const Settings m_settings;
@@ -77,6 +79,7 @@ private:
 	const shared_ptr<Scene>& m_scene;
 	Array<shared_ptr<Surface>> m_sceneSurfaces;
 	shared_ptr<TriTree> m_sceneTriTree;
+	RealTime m_lastTreeBuildTime;
 };
 
 
