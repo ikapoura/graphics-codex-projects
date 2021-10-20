@@ -151,10 +151,10 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	// Main loop over the pixels.
 	runConcurrently(Point2int32(0, 0), Point2int32(image->width(), image->height()),
 		[this, camera, image](Point2int32 point) -> void {
-			Random& treadRandom = Random::threadCommon();
+			Random& threadRandom = Random::threadCommon();
 
 			// Always cast a ray through the center of the pixel.
-			Radiance3 meanRadiance = getLightTransportPathRadiance(float(point.x) + 0.5f, float(point.y) + 0.5f, camera, image);
+			Radiance3 meanRadiance = getLightTransportPathRadiance(float(point.x) + 0.5f, float(point.y) + 0.5f, camera, image, threadRandom);
 
 			// The pixel numbering starts from (index, index) and spans 1 in each direction. We constrain the max to avoid
 			// sampling the same image point from different pixels, because 2 + 1 == 3 and 3 + 0 == 3.
@@ -162,10 +162,10 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 			const float offsetMax = 1.0f - std::numeric_limits<float>::min();
 			// Process the rest of the transport paths.
 			for (int i = 1; i < m_settings.numLightTrasportPaths; ++i) {
-				float offsetX = treadRandom.uniform(offsetMin, offsetMax);
-				float offsetY = treadRandom.uniform(offsetMin, offsetMax);
+				float offsetX = threadRandom.uniform(offsetMin, offsetMax);
+				float offsetY = threadRandom.uniform(offsetMin, offsetMax);
 
-				meanRadiance += getLightTransportPathRadiance(float(point.x) + offsetX, float(point.y) + offsetY, camera, image);
+				meanRadiance += getLightTransportPathRadiance(float(point.x) + offsetX, float(point.y) + offsetY, camera, image, threadRandom);
 			}
 
 			meanRadiance /= float(m_settings.numLightTrasportPaths);
@@ -181,7 +181,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	return elapsedTime;
 }
 
-Radiance3 RayTracer::getLightTransportPathRadiance(float imageX, float imageY, const PinholeCamera& camera, const shared_ptr<Image>& image) const
+Radiance3 RayTracer::getLightTransportPathRadiance(float imageX, float imageY, const PinholeCamera& camera, const shared_ptr<Image>& image, Random& random) const
 {
 	Point3 P;
 	Vector3 w;
@@ -190,7 +190,7 @@ Radiance3 RayTracer::getLightTransportPathRadiance(float imageX, float imageY, c
 
 	const shared_ptr<UniversalSurfel> mainSurfel = findIntersection(P, w, finf(), IntersectionMode::Nearest);
 
-	return L_i(mainSurfel, w, m_settings.maxScatterEvents);
+	return L_i(mainSurfel, w, random, m_settings.maxScatterEvents);
 }
 
 shared_ptr<UniversalSurfel> RayTracer::findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const
@@ -236,13 +236,13 @@ bool RayTracer::visible(const shared_ptr<UniversalSurfel>& s, const Point3& from
 	return isNull(findIntersection(from + eps * dir, dir, distance - eps, IntersectionMode::First));
 }
 
-Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi, const int depth) const
+Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi, Random& random, const int depth) const
 {
 	Radiance3 toReturn;
 
 	if (depth >= 0) {
 		if (notNull(s)) {
-			toReturn = L_o(s, -wi, depth);
+			toReturn = L_o(s, -wi, random, depth);
 		} else {
 			toReturn = randomColorFromDirection(wi);
 		}
@@ -253,9 +253,9 @@ Radiance3 RayTracer::L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi
 	return toReturn;
 }
 
-Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, const int depth) const
+Radiance3 RayTracer::L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, Random& random, const int depth) const
 {
-	return s->emittedRadiance(wo) + L_direct(s, wo) + L_indirect(s, wo, depth);
+	return s->emittedRadiance(wo) + L_direct(s, wo) + L_indirect(s, wo, random, depth);
 }
 
 Radiance3 RayTracer::L_direct(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const
@@ -287,7 +287,7 @@ Radiance3 RayTracer::L_direct(const shared_ptr<UniversalSurfel>& s, const Vector
 	return direct;
 }
 
-Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, const int depth) const
+Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, Random& random, const int depth) const
 {
 	const float eps = 1e-5f;
 	const Vector3& surfelNormal = s->shadingNormal;
@@ -296,7 +296,7 @@ Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vect
 	if (notNull(s)) {
 		Color3 scatterWeight;
 		Vector3 scatterDir;
-		s->scatter(PathDirection::EYE_TO_SOURCE, -wo, true, Random::threadCommon(), scatterWeight, scatterDir);
+		s->scatter(PathDirection::EYE_TO_SOURCE, -wo, true, random, scatterWeight, scatterDir);
 
 		if (scatterWeight != Color3::zero()) {
 			const Point3 P = s->position + eps * s->geometricNormal * sign(s->geometricNormal.dot(scatterDir));
@@ -304,7 +304,7 @@ Radiance3 RayTracer::L_indirect(const shared_ptr<UniversalSurfel>& s, const Vect
 			shared_ptr<UniversalSurfel> scatterSurfel = findIntersection(P, scatterDir, finf(), IntersectionMode::Nearest);
 
 			if (notNull(scatterSurfel)) {
-				const Radiance3 scatterRadiance = L_i(scatterSurfel, scatterDir, depth - 1);
+				const Radiance3 scatterRadiance = L_i(scatterSurfel, scatterDir, random, depth - 1);
 
 				indirect += scatterRadiance * scatterWeight;
 			}

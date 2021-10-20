@@ -59,16 +59,16 @@ private:
 		Nearest,
 		First
 	};
-	Radiance3 getLightTransportPathRadiance(float imageX, float imageY, const PinholeCamera& camera, const shared_ptr<Image>& image) const;
+	Radiance3 getLightTransportPathRadiance(float imageX, float imageY, const PinholeCamera& camera, const shared_ptr<Image>& image, Random& random) const;
 	shared_ptr<UniversalSurfel> findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const;
 	void intersectTriangulatedSurfaces(const Point3& X, const Vector3& wi, const IntersectionMode mode, shared_ptr<UniversalSurfel>& result, float& t) const;
 
 	bool visible(const shared_ptr<UniversalSurfel>& s, const Point3& from) const;
 
-	Radiance3 L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi, const int depth) const;
-	Radiance3 L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, const int depth) const;
+	Radiance3 L_i(const shared_ptr<UniversalSurfel>& s, const Vector3& wi, Random& random, const int depth) const;
+	Radiance3 L_o(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, Random& random, const int depth) const;
 	Radiance3 L_direct(const shared_ptr<UniversalSurfel>& s, const Vector3& wo) const;
-	Radiance3 L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, const int depth) const;
+	Radiance3 L_indirect(const shared_ptr<UniversalSurfel>& s, const Vector3& wo, Random& random, const int depth) const;
 	Radiance3 randomColorFromDirection(const Vector3& w) const;
 
 private:
