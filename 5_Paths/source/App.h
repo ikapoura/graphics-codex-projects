@@ -64,10 +64,10 @@ private:
 
 	bool visible(const shared_ptr<Surfel>& s, const Point3& from) const;
 
-	Radiance3 L_i(const shared_ptr<Surfel>& s, const Vector3& wi, Random& random, const int depth) const;
-	Radiance3 L_o(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random, const int depth) const;
+	Radiance3 L_i(const shared_ptr<Surfel>& s, const Vector3& wi, Random& random) const;
+	Radiance3 L_o(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random) const;
 	Radiance3 L_direct(const shared_ptr<Surfel>& s, const Vector3& wo) const;
-	Radiance3 L_indirect(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random, const int depth) const;
+	Radiance3 L_indirect(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random) const;
 
 	Radiance3 randomColorFromDirection(const Vector3& w) const;
 

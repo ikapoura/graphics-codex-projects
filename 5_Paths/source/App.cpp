@@ -185,6 +185,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 				float offsetY = uniformRandom(pixelOffsetMin, pixelOffsetMax);
 
 				rayBuffer[i] = camera.getPrimaryRay(float(x) + offsetX, float(y) + offsetY, image->width(), image->height());
+							radianceBuffer[pixelIndex1D] = L_o(surfel, -rayBuffer[i].direction(), random);
 			}
 
 			// Cast the primary rays
@@ -197,7 +198,6 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 				if (notNull(surfel)) {
 					Random& random = Random::threadCommon();
 
-					radianceBuffer[pixelIndex1D] = L_i(surfel, rayBuffer[i].direction(), random, 0);
 				} else {
 					radianceBuffer[pixelIndex1D] = randomColorFromDirection(rayBuffer[i].direction());
 				}
@@ -244,26 +244,22 @@ bool RayTracer::visible(const shared_ptr<Surfel>& s, const Point3& from) const
 	return isNull(findIntersection(from + eps * dir, dir, distance - eps, IntersectionMode::First));
 }
 
-Radiance3 RayTracer::L_i(const shared_ptr<Surfel>& s, const Vector3& wi, Random& random, const int depth) const
+Radiance3 RayTracer::L_i(const shared_ptr<Surfel>& s, const Vector3& wi, Random& random) const
 {
 	Radiance3 toReturn;
 
-	if (depth >= 0) {
-		if (notNull(s)) {
-			toReturn = L_o(s, -wi, random, depth);
-		} else {
-			toReturn = randomColorFromDirection(wi);
-		}
+	if (notNull(s)) {
+		toReturn = L_o(s, -wi, random);
 	} else {
-		toReturn = Radiance3::black();
+		toReturn = randomColorFromDirection(wi);
 	}
 
 	return toReturn;
 }
 
-Radiance3 RayTracer::L_o(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random, const int depth) const
+Radiance3 RayTracer::L_o(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random) const
 {
-	return s->emittedRadiance(wo) + L_direct(s, wo) + L_indirect(s, wo, random, depth);
+	return s->emittedRadiance(wo) + L_direct(s, wo) + L_indirect(s, wo, random);
 }
 
 Radiance3 RayTracer::L_direct(const shared_ptr<Surfel>& s, const Vector3& wo) const
@@ -295,7 +291,7 @@ Radiance3 RayTracer::L_direct(const shared_ptr<Surfel>& s, const Vector3& wo) co
 	return direct;
 }
 
-Radiance3 RayTracer::L_indirect(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random, const int depth) const
+Radiance3 RayTracer::L_indirect(const shared_ptr<Surfel>& s, const Vector3& wo, Random& random) const
 {
 	const float eps = 1e-5f;
 	const Vector3& surfelNormal = s->shadingNormal;
@@ -312,7 +308,7 @@ Radiance3 RayTracer::L_indirect(const shared_ptr<Surfel>& s, const Vector3& wo, 
 			shared_ptr<Surfel> scatterSurfel = findIntersection(P, scatterDir, finf(), IntersectionMode::Nearest);
 
 			if (notNull(scatterSurfel)) {
-				const Radiance3 scatterRadiance = L_i(scatterSurfel, scatterDir, random, depth - 1);
+				const Radiance3 scatterRadiance = L_i(scatterSurfel, scatterDir, random);
 
 				indirect += scatterRadiance * scatterWeight;
 			}
