@@ -612,7 +612,7 @@ void App::makeGUI()
 	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "20 x 20", "320 x 200", "640 x 400", "1920 x 1080" }));
 	m_rayTraceSettings.resolutionList->setSelectedIndex(2);
 	raytracePane->addCheckBox("Multithreading", &m_rayTraceSettings.multithreading);
-	GuiNumberBox<int>* lightTransportPathsSlider = raytracePane->addNumberBox<int>("Light transport paths per pixel", &m_rayTraceSettings.numLightTrasportPaths, "", GuiTheme::LINEAR_SLIDER, 1, 256);
+	GuiNumberBox<int>* lightTransportPathsSlider = raytracePane->addNumberBox<int>("Light transport paths per pixel", &m_rayTraceSettings.numLightTrasportPaths, "", GuiTheme::LINEAR_SLIDER, 1, 4096);
 	lightTransportPathsSlider->setWidth(320.0F);
 	lightTransportPathsSlider->setCaptionWidth(180.0F);
 	GuiNumberBox<int>* scatterEventsSlider = raytracePane->addNumberBox<int>("Maximum scatter events per path", &m_rayTraceSettings.maxScatterEvents, "", GuiTheme::LINEAR_SLIDER, 0, 512);
