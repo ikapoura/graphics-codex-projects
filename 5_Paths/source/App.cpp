@@ -172,7 +172,13 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	rayBuffer.resize(m_settings.numLightTrasportPaths);
 
 	Array<Ray> shadowRayBuffer;
-	rayBuffer.resize(m_settings.numLightTrasportPaths);
+	shadowRayBuffer.resize(m_settings.numLightTrasportPaths);
+
+	Array<Biradiance3> biradianceBuffer;
+	biradianceBuffer.resize(m_settings.numLightTrasportPaths);
+
+	Array<bool> lightShadowedBuffer;
+	lightShadowedBuffer.resize(m_settings.numLightTrasportPaths);
 
 	Array<shared_ptr<Surfel>> surfelBuffer;
 	surfelBuffer.resize(m_settings.numLightTrasportPaths);
@@ -212,7 +218,13 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 				addEmittedRadiance(rayBuffer, surfelBuffer, modulationBuffer, radianceBuffer);
 
 				if (m_scene->lightingEnvironment().lightArray.size() > 0) {
-					addDirectIllumination(rayBuffer, surfelBuffer, modulationBuffer, radianceBuffer);
+					sampleDirectLights(surfelBuffer, shadowRayBuffer, biradianceBuffer);
+
+					// If a lightShadowedBuffer value is true, that means that the corresponding surfel is hidden from the light because
+					// there is an intersection in between.
+					m_sceneTriTree->intersectRays(shadowRayBuffer, lightShadowedBuffer, TriTree::COHERENT_RAY_HINT | TriTree::DO_NOT_CULL_BACKFACES | TriTree::OCCLUSION_TEST_ONLY);
+
+					addDirectIllumination(rayBuffer, surfelBuffer, biradianceBuffer, shadowRayBuffer, lightShadowedBuffer, modulationBuffer, radianceBuffer);
 				}
 
 				if (scatterIdx < m_settings.maxScatterEvents - 1) {
@@ -260,14 +272,13 @@ void RayTracer::addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shar
 // 	);
 }
 
-void RayTracer::addDirectIllumination(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const
+void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& shadowRayBuffer, Array<Biradiance3>& biradianceBuffer) const
 {
+	const float eps = 1e-4f;
 // 	runConcurrently(0, surfelBuffer.size(),
 // 		[&](int i) -> void {
 	int i = 0;
 			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
-	
-			const Vector3& wi = rayBuffer[i].direction();
 	
 			if (notNull(surfel)) {
 				Random& random = Random::threadCommon();
@@ -277,19 +288,49 @@ void RayTracer::addDirectIllumination(const Array<Ray>& rayBuffer, const Array<s
 
 				if (light->producesDirectIllumination()) {
 					const Point3& surfelPos = surfel->position;
-					const Vector3& surfelNormal = surfel->shadingNormal;
-
 					const Point3& lightPos = light->position().xyz();
 
-					const Biradiance3& biradiance = light->biradiance(surfelPos);
+					Vector3 lightToSurfelDir = (surfelPos + surfel->geometricNormal * eps) - lightPos;
+					const float lightToSurfelDist = lightToSurfelDir.length();
+					lightToSurfelDir /= lightToSurfelDist;
 
-					const Vector3& surfelToLightDir = (lightPos - surfelPos).direction();
-					const Color3& f = surfel->finiteScatteringDensity(surfelToLightDir, -rayBuffer[i].direction());
+					Point3 shadowRayPos = lightPos + eps * lightToSurfelDir;
+					shadowRayBuffer[i] = Ray(shadowRayPos, lightToSurfelDir, 0.0f, lightToSurfelDist - eps);
 
-					const float cosFactor = fabs(surfelToLightDir.dot(surfelNormal));
-
-					radianceBuffer[i] += biradiance * f * cosFactor * modulationBuffer[i];
+					biradianceBuffer[i] = light->biradiance(surfelPos);
 				}
+			} else {
+				shadowRayBuffer[i] = Ray(Point3(), Vector3(), 0.0f, 0.0f);
+				biradianceBuffer[i] = Biradiance3();
+			}
+// 		},
+// 		!m_settings.multithreading
+// 	);
+}
+
+void RayTracer::addDirectIllumination(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Biradiance3>& biradianceBuffer,
+	const Array<Ray>& shadowRayBuffer, const Array<bool>& lightShadowedBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const
+{
+// 	runConcurrently(0, surfelBuffer.size(),
+// 		[&](int i) -> void {
+	int i = 0;
+			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
+	
+			const bool isVisibleFromLight = !lightShadowedBuffer[i];
+
+			if (notNull(surfel) && isVisibleFromLight) {
+				// Random& random = Random::threadCommon();
+	
+				// const Point3& surfelPos = surfel->position;
+
+				// const Point3& lightPos = shadowRayBuffer[i].origin();
+
+				const Vector3 surfelToLightDir = -shadowRayBuffer[i].direction();
+				const Vector3& surfelNormal = surfel->shadingNormal;
+
+				const Color3 f = surfel->finiteScatteringDensity(surfelToLightDir, -rayBuffer[i].direction());
+				const Color3 cosFactor = Color3(fabs(surfelToLightDir.dot(surfelNormal)));
+				radianceBuffer[i] += biradianceBuffer[i] * f * cosFactor * modulationBuffer[i];
 			}
 // 		},
 // 		!m_settings.multithreading
