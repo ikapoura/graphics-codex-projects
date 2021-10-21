@@ -39,7 +39,7 @@ public:
 	class Settings {
 	public:
 		int  numLightTrasportPaths{ 1 };
-		int  maxScatterEvents{ 10 };
+		int  maxScatterEvents{ 2 };
 #ifndef G3D_DEBUG
 		bool multithreading{ true };
 #else
@@ -72,6 +72,10 @@ private:
 	Radiance3 randomColorFromDirection(const Vector3& w) const;
 
 	void rebuildTreeStructureBasedOnLastChange();
+
+	void addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const;
+	void addDirectIllumination(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const;
+	void scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& rayBuffer, Array<Radiance3>& modulationBuffer) const;
 
 private:
 	const Settings m_settings;

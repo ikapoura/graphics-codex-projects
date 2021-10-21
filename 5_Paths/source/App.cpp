@@ -1,6 +1,8 @@
 /** \file App.cpp */
 #include "App.h"
 
+#include <numeric>
+
 // Tells C++ to invoke command-line main() function even on OS X and Win32.
 G3D_START_AT_MAIN();
 
@@ -161,9 +163,15 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	const PinholeCamera camera(activeCamera->frame(), activeCamera->projection());
 
 	Array<Radiance3> radianceBuffer;
-	radianceBuffer.resize(image->width() * image->height());
+	radianceBuffer.resize(m_settings.numLightTrasportPaths);
+
+	Array<Radiance3> modulationBuffer;
+	modulationBuffer.resize(m_settings.numLightTrasportPaths);
 
 	Array<Ray> rayBuffer;
+	rayBuffer.resize(m_settings.numLightTrasportPaths);
+
+	Array<Ray> shadowRayBuffer;
 	rayBuffer.resize(m_settings.numLightTrasportPaths);
 
 	Array<shared_ptr<Surfel>> surfelBuffer;
@@ -176,50 +184,144 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 		for (int y = 0; y < image->height(); y++) {
 			const int pixelIndex1D = x * image->height() + y;
 
+			int activeLightTransportPaths = m_settings.numLightTrasportPaths;
 			// Generate the primary rays
 			// Always generate a ray through the center of the pixel
 			rayBuffer[0] = camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, image->width(), image->height());
 			// Generate the rest
-			for (int i = 1; i < m_settings.numLightTrasportPaths; ++i) {
-				float offsetX = uniformRandom(pixelOffsetMin, pixelOffsetMax);
-				float offsetY = uniformRandom(pixelOffsetMin, pixelOffsetMax);
+			runConcurrently(1, m_settings.numLightTrasportPaths,
+				[&](int i) -> void {
+					float offsetX = uniformRandom(pixelOffsetMin, pixelOffsetMax);
+					float offsetY = uniformRandom(pixelOffsetMin, pixelOffsetMax);
 
-				rayBuffer[i] = camera.getPrimaryRay(float(x) + offsetX, float(y) + offsetY, image->width(), image->height());
-							radianceBuffer[pixelIndex1D] = L_o(surfel, -rayBuffer[i].direction(), random);
+					rayBuffer[i] = camera.getPrimaryRay(float(x) + offsetX, float(y) + offsetY, image->width(), image->height());
+				},
+				!m_settings.multithreading
+			);
+
+			// Initialization
+			radianceBuffer.setAll(Radiance3());
+			modulationBuffer.setAll(Radiance3(1.0f / float(m_settings.numLightTrasportPaths)));
+
+			// We know that the primary rays are close together.
+			TriTree::IntersectRayOptions rayOptions = TriTree::COHERENT_RAY_HINT;
+
+			for (int scatterIdx = 0; scatterIdx < m_settings.maxScatterEvents; scatterIdx++) {
+				m_sceneTriTree->intersectRays(rayBuffer, surfelBuffer, rayOptions);
+
+				addEmittedRadiance(rayBuffer, surfelBuffer, modulationBuffer, radianceBuffer);
+
+				if (m_scene->lightingEnvironment().lightArray.size() > 0) {
+					addDirectIllumination(rayBuffer, surfelBuffer, modulationBuffer, radianceBuffer);
+				}
+
+				if (scatterIdx < m_settings.maxScatterEvents - 1) {
+					scatterRays(surfelBuffer, rayBuffer, modulationBuffer);
+				}
+
+				// Reset the ray options after the first event because the rays won't be coherent anymore.
+				rayOptions = 0;
 			}
 
-			// Cast the primary rays
-			m_sceneTriTree->intersectRays(rayBuffer, surfelBuffer, TriTree::COHERENT_RAY_HINT);
-
-			// Handle the intersections
-			runConcurrently(0, surfelBuffer.size(), [&](int i) -> void {
-				const shared_ptr<Surfel>& surfel = surfelBuffer[i];
-
-				if (notNull(surfel)) {
-					Random& random = Random::threadCommon();
-
-				} else {
-					radianceBuffer[pixelIndex1D] = randomColorFromDirection(rayBuffer[i].direction());
-				}
-			},
-			!m_settings.multithreading);
+			// No need for a division because we already have accounted for that in the initialization of the
+			// modulation buffer.
+			Radiance3 sum = std::accumulate(radianceBuffer.begin(), radianceBuffer.end(), Color3::black());
+			image->set(x, y, sum);
 		}
 	}
 
 	stopwatch.tock();
 
-	// Copy the data to the image
-	for (int x = 0; x < image->width(); x++) {
-		for (int y = 0; y < image->height(); y++) {
-			const int pixelIndex1D = x * image->height() + y;
-
-			image->set(x, y, radianceBuffer[pixelIndex1D]);
-		}
-	}
-
 	elapsedTime = stopwatch.elapsedDuration<chrono::milliseconds>();
 
 	return elapsedTime;
+}
+
+void RayTracer::addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const
+{
+// 	runConcurrently(0, surfelBuffer.size(),
+// 		[&](int i) -> void {
+	int i = 0;
+			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
+	
+			const Vector3& wi = rayBuffer[i].direction();
+	
+			if (notNull(surfel)) {
+				Random& random = Random::threadCommon();
+	
+				radianceBuffer[i] += surfel->emittedRadiance(-wi) * modulationBuffer[i];
+			} else {
+				// Rays that didn't intersect anything.
+				radianceBuffer[i] += Radiance3(0.5f) * modulationBuffer[i];
+				// radianceBuffer[i] += randomColorFromDirection(wi) * modulationBuffer[i];
+			}
+// 		},
+// 		!m_settings.multithreading
+// 	);
+}
+
+void RayTracer::addDirectIllumination(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const
+{
+// 	runConcurrently(0, surfelBuffer.size(),
+// 		[&](int i) -> void {
+	int i = 0;
+			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
+	
+			const Vector3& wi = rayBuffer[i].direction();
+	
+			if (notNull(surfel)) {
+				Random& random = Random::threadCommon();
+	
+				int lightIdx = (int)random.uniform(0.0f, float(m_scene->lightingEnvironment().lightArray.size()));
+				const shared_ptr<Light>& light = m_scene->lightingEnvironment().lightArray[lightIdx];
+
+				if (light->producesDirectIllumination()) {
+					const Point3& surfelPos = surfel->position;
+					const Vector3& surfelNormal = surfel->shadingNormal;
+
+					const Point3& lightPos = light->position().xyz();
+
+					const Biradiance3& biradiance = light->biradiance(surfelPos);
+
+					const Vector3& surfelToLightDir = (lightPos - surfelPos).direction();
+					const Color3& f = surfel->finiteScatteringDensity(surfelToLightDir, -rayBuffer[i].direction());
+
+					const float cosFactor = fabs(surfelToLightDir.dot(surfelNormal));
+
+					radianceBuffer[i] += biradiance * f * cosFactor * modulationBuffer[i];
+				}
+			}
+// 		},
+// 		!m_settings.multithreading
+// 	);
+}
+
+void RayTracer::scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& rayBuffer, Array<Radiance3>& modulationBuffer) const
+{
+	const float eps = 1e-4f;
+
+// 	runConcurrently(0, surfelBuffer.size(),
+// 		[&](int i) -> void {
+	int i = 0;
+			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
+
+			if (notNull(surfel)) {
+				Random& random = Random::threadCommon();
+
+				Color3 scatterWeight;
+				Vector3 scatterDir;
+				surfel->scatter(PathDirection::EYE_TO_SOURCE, rayBuffer[i].direction(), false, random, scatterWeight, scatterDir);
+
+				const Point3 P = surfel->position + eps * surfel->geometricNormal * sign(surfel->geometricNormal.dot(scatterDir));
+
+				rayBuffer[i] = Ray(P, scatterDir);
+				modulationBuffer[i] *= scatterWeight;
+			} else {
+				modulationBuffer[i] = Radiance3(0.0f);
+			}
+// 		},
+// 		!m_settings.multithreading
+// 	);
 }
 
 shared_ptr<Surfel> RayTracer::findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const
@@ -300,7 +402,7 @@ Radiance3 RayTracer::L_indirect(const shared_ptr<Surfel>& s, const Vector3& wo, 
 	if (notNull(s)) {
 		Color3 scatterWeight;
 		Vector3 scatterDir;
-		s->scatter(PathDirection::EYE_TO_SOURCE, -wo, true, random, scatterWeight, scatterDir);
+		s->scatter(PathDirection::EYE_TO_SOURCE, -wo, false, random, scatterWeight, scatterDir);
 
 		if (scatterWeight != Color3::zero()) {
 			const Point3 P = s->position + eps * s->geometricNormal * sign(s->geometricNormal.dot(scatterDir));
@@ -628,13 +730,13 @@ void App::makeGUI()
 #ifndef G3D_DEBUG
 	m_rayTraceSettings.resolutionList->setSelectedIndex(4);
 #else
-	m_rayTraceSettings.resolutionList->setSelectedIndex(2);
+	m_rayTraceSettings.resolutionList->setSelectedIndex(1);
 #endif // !G3D_DEBUG
 	raytracePane->addCheckBox("Multithreading", &m_rayTraceSettings.multithreading);
 	GuiNumberBox<int>* lightTransportPathsSlider = raytracePane->addNumberBox<int>("Light transport paths per pixel", &m_rayTraceSettings.numLightTrasportPaths, "", GuiTheme::LINEAR_SLIDER, 1, 4096);
 	lightTransportPathsSlider->setWidth(320.0F);
 	lightTransportPathsSlider->setCaptionWidth(180.0F);
-	GuiNumberBox<int>* scatterEventsSlider = raytracePane->addNumberBox<int>("Maximum scatter events per path", &m_rayTraceSettings.maxScatterEvents, "", GuiTheme::LINEAR_SLIDER, 0, 512);
+	GuiNumberBox<int>* scatterEventsSlider = raytracePane->addNumberBox<int>("Maximum scatter events per path", &m_rayTraceSettings.maxScatterEvents, "", GuiTheme::LINEAR_SLIDER, 1, 36);
 	scatterEventsSlider->setWidth(340.0F);
 	scatterEventsSlider->setCaptionWidth(200.0F);
 	raytracePane->addButton("Render", this, &App::render);
@@ -686,6 +788,8 @@ void App::render()
 	shared_ptr<Image> image = Image::create(res.x, res.y, ImageFormat::RGB32F());
 
 	RayTracer rayTracer(m_rayTraceSettings, scene());
+
+	activeCamera()->filmSettings().setBloomStrength(0.0f);
 
 	const chrono::milliseconds durationMs = rayTracer.traceImage(activeCamera(), image);
 
