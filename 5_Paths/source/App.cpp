@@ -283,7 +283,7 @@ void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer
 			if (notNull(surfel)) {
 				Random& random = Random::threadCommon();
 	
-				int lightIdx = (int)random.uniform(0.0f, float(m_scene->lightingEnvironment().lightArray.size()));
+				int lightIdx = random.integer(0, m_scene->lightingEnvironment().lightArray.size() - 1);
 				const shared_ptr<Light>& light = m_scene->lightingEnvironment().lightArray[lightIdx];
 
 				if (light->producesDirectIllumination()) {
