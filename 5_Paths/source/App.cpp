@@ -237,8 +237,11 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 			// No need for a division because we already have accounted for that in the initialization of the
 			// modulation buffer.
+			stopwatchTrace.tick();
 			Radiance3 sum = std::accumulate(radianceBuffer.begin(), radianceBuffer.end(), Color3::black());
 			image->set(x, y, sum);
+			stopwatchTrace.tock();
+			accumulationTime += stopwatchTrace.elapsedDuration<chrono::milliseconds>();
 		}
 	}
 
@@ -251,9 +254,8 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 void RayTracer::addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const
 {
-// 	runConcurrently(0, surfelBuffer.size(),
-// 		[&](int i) -> void {
-	int i = 0;
+	runConcurrently(0, surfelBuffer.size(),
+		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
 	
 			const Vector3& wi = rayBuffer[i].direction();
@@ -267,17 +269,17 @@ void RayTracer::addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shar
 				radianceBuffer[i] += Radiance3(m_settings.environmentBrightness) * modulationBuffer[i];
 				// radianceBuffer[i] += randomColorFromDirection(wi) * modulationBuffer[i];
 			}
-// 		},
-// 		!m_settings.multithreading
-// 	);
+ 		},
+ 		!m_settings.multithreading
+ 	);
 }
 
 void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& shadowRayBuffer, Array<Biradiance3>& biradianceBuffer) const
 {
 	const float eps = 1e-4f;
-// 	runConcurrently(0, surfelBuffer.size(),
-// 		[&](int i) -> void {
-	int i = 0;
+
+ 	runConcurrently(0, surfelBuffer.size(),
+ 		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
 	
 			if (notNull(surfel)) {
@@ -303,28 +305,21 @@ void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer
 				shadowRayBuffer[i] = Ray(Point3(), Vector3(), 0.0f, 0.0f);
 				biradianceBuffer[i] = Biradiance3();
 			}
-// 		},
-// 		!m_settings.multithreading
-// 	);
+ 		},
+ 		!m_settings.multithreading
+ 	);
 }
 
 void RayTracer::addDirectIllumination(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Biradiance3>& biradianceBuffer,
 	const Array<Ray>& shadowRayBuffer, const Array<bool>& lightShadowedBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const
 {
-// 	runConcurrently(0, surfelBuffer.size(),
-// 		[&](int i) -> void {
-	int i = 0;
+ 	runConcurrently(0, surfelBuffer.size(),
+ 		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
 	
 			const bool isVisibleFromLight = !lightShadowedBuffer[i];
 
 			if (notNull(surfel) && isVisibleFromLight) {
-				// Random& random = Random::threadCommon();
-	
-				// const Point3& surfelPos = surfel->position;
-
-				// const Point3& lightPos = shadowRayBuffer[i].origin();
-
 				const Vector3 surfelToLightDir = -shadowRayBuffer[i].direction();
 				const Vector3& surfelNormal = surfel->shadingNormal;
 
@@ -332,18 +327,17 @@ void RayTracer::addDirectIllumination(const Array<Ray>& rayBuffer, const Array<s
 				const Color3 cosFactor = Color3(fabs(surfelToLightDir.dot(surfelNormal)));
 				radianceBuffer[i] += biradianceBuffer[i] * f * cosFactor * modulationBuffer[i];
 			}
-// 		},
-// 		!m_settings.multithreading
-// 	);
+ 		},
+ 		!m_settings.multithreading
+ 	);
 }
 
 void RayTracer::scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& rayBuffer, Array<Radiance3>& modulationBuffer) const
 {
 	const float eps = 1e-4f;
 
-// 	runConcurrently(0, surfelBuffer.size(),
-// 		[&](int i) -> void {
-	int i = 0;
+ 	runConcurrently(0, surfelBuffer.size(),
+ 		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
 
 			if (notNull(surfel)) {
@@ -360,9 +354,9 @@ void RayTracer::scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array
 			} else {
 				modulationBuffer[i] = Radiance3(0.0f);
 			}
-// 		},
-// 		!m_settings.multithreading
-// 	);
+ 		},
+ 		!m_settings.multithreading
+ 	);
 }
 
 shared_ptr<Surfel> RayTracer::findIntersection(const Point3& X, const Vector3& wi, const float maxDistance, const IntersectionMode mode) const
