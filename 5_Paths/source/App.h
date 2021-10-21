@@ -45,6 +45,7 @@ public:
 #else
 		bool multithreading{ false };
 #endif
+		float environmentBrightness{ 0.0f };
 		GuiDropDownList* resolutionList{ nullptr };
 	};
 
