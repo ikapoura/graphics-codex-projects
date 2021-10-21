@@ -760,9 +760,9 @@ void App::makeGUI()
 	rendererPane->moveRightOf(infoPane, 10);
 
 	GuiPane* raytracePane = debugPane->addPane("Offline Ray Trace", GuiTheme::ORNATE_PANE_STYLE);
-	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "20 x 20", "320 x 200", "640 x 400", "1920 x 1080" }));
+	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "20 x 20", "320 x 200", "640 x 400", "1280 x 720", "1920 x 1080" }));
 #ifndef G3D_DEBUG
-	m_rayTraceSettings.resolutionList->setSelectedIndex(4);
+	m_rayTraceSettings.resolutionList->setSelectedIndex(3);
 #else
 	m_rayTraceSettings.resolutionList->setSelectedIndex(1);
 #endif // !G3D_DEBUG
