@@ -84,7 +84,6 @@ private:
 	const Settings m_settings;
 
 	const shared_ptr<Scene>& m_scene;
-	Array<shared_ptr<Surface>> m_sceneSurfaces;
 	shared_ptr<TriTree> m_sceneTriTree;
 	RealTime m_lastTreeBuildTime;
 };

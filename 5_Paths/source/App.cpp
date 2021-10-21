@@ -470,9 +470,10 @@ void RayTracer::rebuildTreeStructureBasedOnLastChange()
 	if (lastSceneChangeTime > m_lastTreeBuildTime) {
 		m_lastTreeBuildTime = lastSceneChangeTime;
 
-		m_scene->onPose(m_sceneSurfaces);
+		Array<shared_ptr<Surface>> sceneSurfaces;
+		m_scene->onPose(sceneSurfaces);
 		m_sceneTriTree->clear();
-		m_sceneTriTree->setContents(m_sceneSurfaces);
+		m_sceneTriTree->setContents(sceneSurfaces);
 	}
 }
 
