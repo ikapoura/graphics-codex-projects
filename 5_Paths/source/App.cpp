@@ -184,6 +184,14 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	Array<shared_ptr<Surfel>> surfelBuffer;
 	surfelBuffer.resize(m_settings.numLightTrasportPaths);
 
+	// Cache the direct illumination lights.
+	Array<shared_ptr<Light>> directLightsBuffer;
+	for (shared_ptr<Light> light : m_scene->lightingEnvironment().lightArray) {
+		if (light->producesDirectIllumination()) {
+			directLightsBuffer.push_back(light);
+		}
+	}
+
 	const float pixelOffsetMin = 0.0f;
 	const float pixelOffsetMax = 1.0f - std::numeric_limits<float>::min();
 
@@ -218,8 +226,8 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 				addEmittedRadiance(rayBuffer, surfelBuffer, modulationBuffer, radianceBuffer);
 
-				if (m_scene->lightingEnvironment().lightArray.size() > 0) {
-					sampleDirectLights(surfelBuffer, shadowRayBuffer, biradianceBuffer);
+				if (directLightsBuffer.size() > 0) {
+					sampleDirectLights(surfelBuffer, directLightsBuffer, shadowRayBuffer, biradianceBuffer);
 
 					// If a lightShadowedBuffer value is true, that means that the corresponding surfel is hidden from the light because
 					// there is an intersection in between.
@@ -272,7 +280,7 @@ void RayTracer::addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shar
 	);
 }
 
-void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& shadowRayBuffer, Array<Biradiance3>& biradianceBuffer) const
+void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<shared_ptr<Light>>& directLightsBuffer, Array<Ray>& shadowRayBuffer, Array<Biradiance3>& biradianceBuffer) const
 {
 	const float eps = 1e-4f;
 
@@ -282,23 +290,57 @@ void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer
 	
 			if (notNull(surfel)) {
 				Random& random = Random::threadCommon();
-	
-				int lightIdx = random.integer(0, m_scene->lightingEnvironment().lightArray.size() - 1);
-				const shared_ptr<Light>& light = m_scene->lightingEnvironment().lightArray[lightIdx];
 
-				if (light->producesDirectIllumination()) {
+				int selectedLightIdx = 0;
+				float selectedLightWeight = 1.0f;
+
+				const int numLights = directLightsBuffer.size();
+
+				if (numLights > 1) {
 					const Point3& surfelPos = surfel->position;
-					const Point3& lightPos = light->position().xyz();
+					// Sum the biradiance terms of each light to get an estimate of how much they contribute
+					// to the surfel's outgoing radiance.
+					thread_local Array<float> biradianceSums;
+					biradianceSums.resize(numLights);
 
-					Vector3 lightToSurfelDir = (surfelPos + surfel->geometricNormal * eps) - lightPos;
-					const float lightToSurfelDist = lightToSurfelDir.length();
-					lightToSurfelDir /= lightToSurfelDist;
+					for (int l = 0; l < numLights; l++) {
+						biradianceSums[l] = directLightsBuffer[l]->biradiance(surfelPos).sum();
+					}
 
-					Point3 shadowRayPos = lightPos + eps * lightToSurfelDir;
-					shadowRayBuffer[i] = Ray(shadowRayPos, lightToSurfelDir, 0.0f, lightToSurfelDist - eps);
+					float accumulatedBiradiance = std::accumulate(biradianceSums.begin(), biradianceSums.end(), 0.0f);
 
-					biradianceBuffer[i] = light->biradiance(surfelPos);
+					// Select a light with probability relative to the previous sums.
+					float randomBiradiance = random.uniform(0.0f, accumulatedBiradiance);
+
+					for (int l = 0; l < numLights; l++) {
+						randomBiradiance -= biradianceSums[l];
+
+						if (randomBiradiance < 0) {
+							selectedLightIdx = l;
+							// It's the inverse probability of selecting it. In more verbose form:
+							// 1.0f / (biradianceSum[i] / accumulatedBiradiance)
+							selectedLightWeight = accumulatedBiradiance / biradianceSums[i];
+							break;
+						}
+					}
 				}
+
+				// Sample the light and prepare a shadow ray.
+				const shared_ptr<Light>& selectedLight = directLightsBuffer[selectedLightIdx];
+
+				const Point3& surfelPos = surfel->position;
+				const Point3& lightPos = selectedLight->position().xyz();
+
+				Vector3 lightToSurfelDir = (surfelPos + surfel->geometricNormal * eps) - lightPos;
+				const float lightToSurfelDist = lightToSurfelDir.length();
+				lightToSurfelDir /= lightToSurfelDist;
+
+				Point3 shadowRayPos = lightPos + eps * lightToSurfelDir;
+				shadowRayBuffer[i] = Ray(shadowRayPos, lightToSurfelDir, 0.0f, lightToSurfelDist - eps);
+
+				// If we chose to save the biradiance to reuse it, it would become inefficient in terms of memory allocated when
+				// the number of lights increased. We would store 3 floats instead of the current 1.
+				biradianceBuffer[i] = selectedLight->biradiance(surfelPos) * selectedLightWeight;
 			} else {
 				shadowRayBuffer[i] = Ray(Point3(), Vector3(), 0.0f, 0.0f);
 				biradianceBuffer[i] = Biradiance3();

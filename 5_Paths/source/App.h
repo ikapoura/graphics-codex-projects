@@ -65,7 +65,7 @@ private:
 	void rebuildTreeStructureBasedOnLastChange();
 
 	void addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const;
-	void sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& shadowRayBuffer, Array<Biradiance3>& biradianceBuffer) const;
+	void sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<shared_ptr<Light>>& directLightsBuffer, Array<Ray>& shadowRayBuffer, Array<Biradiance3>& biradianceBuffer) const;
 	void addDirectIllumination(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Biradiance3>& biradianceBuffer, const Array<Ray>& shadowRayBuffer,
 							   const Array<bool>& lightShadowedBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const;
 	void scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& rayBuffer, Array<Radiance3>& modulationBuffer) const;
