@@ -136,10 +136,11 @@ RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
 	m_settings(settings),
 	m_scene(scene)
 {
-	m_scene->onPose(m_sceneSurfaces);
+	Array<shared_ptr<Surface>> sceneSurfaces;
+	m_scene->onPose(sceneSurfaces);
 
 	m_sceneTriTree = TriTreeBase::create(false);
-	m_sceneTriTree->setContents(m_sceneSurfaces);
+	m_sceneTriTree->setContents(sceneSurfaces);
 	m_lastTreeBuildTime = max(m_scene->lastEditingTime(), m_scene->lastStructuralChangeTime(), m_scene->lastVisibleChangeTime());
 }
 
@@ -237,11 +238,8 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 			// No need for a division because we already have accounted for that in the initialization of the
 			// modulation buffer.
-			stopwatchTrace.tick();
 			Radiance3 sum = std::accumulate(radianceBuffer.begin(), radianceBuffer.end(), Color3::black());
 			image->set(x, y, sum);
-			stopwatchTrace.tock();
-			accumulationTime += stopwatchTrace.elapsedDuration<chrono::milliseconds>();
 		}
 	}
 
