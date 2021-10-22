@@ -267,17 +267,17 @@ void RayTracer::addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shar
 				radianceBuffer[i] += Radiance3(m_settings.environmentBrightness) * modulationBuffer[i];
 				// radianceBuffer[i] += randomColorFromDirection(wi) * modulationBuffer[i];
 			}
- 		},
- 		!m_settings.multithreading
- 	);
+		},
+		!m_settings.multithreading
+	);
 }
 
 void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& shadowRayBuffer, Array<Biradiance3>& biradianceBuffer) const
 {
 	const float eps = 1e-4f;
 
- 	runConcurrently(0, surfelBuffer.size(),
- 		[&](int i) -> void {
+	runConcurrently(0, surfelBuffer.size(),
+		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
 	
 			if (notNull(surfel)) {
@@ -303,16 +303,16 @@ void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer
 				shadowRayBuffer[i] = Ray(Point3(), Vector3(), 0.0f, 0.0f);
 				biradianceBuffer[i] = Biradiance3();
 			}
- 		},
- 		!m_settings.multithreading
- 	);
+		},
+		!m_settings.multithreading
+	);
 }
 
 void RayTracer::addDirectIllumination(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Biradiance3>& biradianceBuffer,
 	const Array<Ray>& shadowRayBuffer, const Array<bool>& lightShadowedBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const
 {
- 	runConcurrently(0, surfelBuffer.size(),
- 		[&](int i) -> void {
+	runConcurrently(0, surfelBuffer.size(),
+		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
 	
 			const bool isVisibleFromLight = !lightShadowedBuffer[i];
@@ -325,17 +325,17 @@ void RayTracer::addDirectIllumination(const Array<Ray>& rayBuffer, const Array<s
 				const Color3 cosFactor = Color3(fabs(surfelToLightDir.dot(surfelNormal)));
 				radianceBuffer[i] += biradianceBuffer[i] * f * cosFactor * modulationBuffer[i];
 			}
- 		},
- 		!m_settings.multithreading
- 	);
+		},
+		!m_settings.multithreading
+	);
 }
 
 void RayTracer::scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& rayBuffer, Array<Radiance3>& modulationBuffer) const
 {
 	const float eps = 1e-4f;
 
- 	runConcurrently(0, surfelBuffer.size(),
- 		[&](int i) -> void {
+	runConcurrently(0, surfelBuffer.size(),
+		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
 
 			if (notNull(surfel)) {
@@ -352,9 +352,9 @@ void RayTracer::scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array
 			} else {
 				modulationBuffer[i] = Radiance3(0.0f);
 			}
- 		},
- 		!m_settings.multithreading
- 	);
+		},
+		!m_settings.multithreading
+	);
 }
 
 Biradiance3 RayTracer::randomColorFromDirection(const Vector3& w) const
@@ -736,13 +736,13 @@ void App::render()
 
 	// Convert to texture to post process.
 	shared_ptr<Texture> src = Texture::fromImage("Render result", image);
-    if (m_result) {
-        m_result->resize(res.x, res.y);
-    }
+	if (m_result) {
+		m_result->resize(res.x, res.y);
+	}
 
-    m_film->exposeAndRender(renderDevice, activeCamera()->filmSettings(), src,
-        settings().hdrFramebuffer.trimBandThickness().x,
-        settings().hdrFramebuffer.depthGuardBandThickness.x, m_result);
+	m_film->exposeAndRender(renderDevice, activeCamera()->filmSettings(), src,
+		settings().hdrFramebuffer.trimBandThickness().x,
+		settings().hdrFramebuffer.depthGuardBandThickness.x, m_result);
 
 	const String durationPrintOutput = String("Render duration: ") + durationToString(durationMs);
 
