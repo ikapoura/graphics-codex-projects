@@ -187,8 +187,8 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	const float pixelOffsetMin = 0.0f;
 	const float pixelOffsetMax = 1.0f - std::numeric_limits<float>::min();
 
-	for (int x = 0, const int width = image->width(); x < width; x++) {
-		for (int y = 0, const int height = image->height(); y < height; y++) {
+	for (int x = 0, width = image->width(); x < width; x++) {
+		for (int y = 0, height = image->height(); y < height; y++) {
 			const int pixelIndex1D = x * height + y;
 
 			int activeLightTransportPaths = m_settings.numLightTrasportPaths;
