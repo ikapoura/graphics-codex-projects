@@ -187,21 +187,21 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	const float pixelOffsetMin = 0.0f;
 	const float pixelOffsetMax = 1.0f - std::numeric_limits<float>::min();
 
-	for (int x = 0; x < image->width(); x++) {
-		for (int y = 0; y < image->height(); y++) {
-			const int pixelIndex1D = x * image->height() + y;
+	for (int x = 0, const int width = image->width(); x < width; x++) {
+		for (int y = 0, const int height = image->height(); y < height; y++) {
+			const int pixelIndex1D = x * height + y;
 
 			int activeLightTransportPaths = m_settings.numLightTrasportPaths;
 			// Generate the primary rays
 			// Always generate a ray through the center of the pixel
-			rayBuffer[0] = camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, image->width(), image->height());
+			rayBuffer[0] = camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, width, height);
 			// Generate the rest
 			runConcurrently(1, m_settings.numLightTrasportPaths,
 				[&](int i) -> void {
 					float offsetX = uniformRandom(pixelOffsetMin, pixelOffsetMax);
 					float offsetY = uniformRandom(pixelOffsetMin, pixelOffsetMax);
 
-					rayBuffer[i] = camera.getPrimaryRay(float(x) + offsetX, float(y) + offsetY, image->width(), image->height());
+					rayBuffer[i] = camera.getPrimaryRay(float(x) + offsetX, float(y) + offsetY, width, height);
 				},
 				!m_settings.multithreading
 			);
