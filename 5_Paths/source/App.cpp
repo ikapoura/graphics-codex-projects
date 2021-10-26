@@ -221,6 +221,8 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 			// Reset the ray options after the first event because the rays won't be coherent anymore.
 			rayOptions = 0;
 		}
+
+		debugPrintf("Raytracing scene. Current transport path: %d of %d total.", p+1, m_settings.numLightTrasportPaths);
 	}
 
 	stopwatch.tock();
@@ -728,7 +730,7 @@ void App::makeGUI()
 	rendererPane->pack();
 	rendererPane->moveRightOf(infoPane, 10);
 
-	GuiPane* raytracePane = debugPane->addPane("Offline Ray Trace", GuiTheme::ORNATE_PANE_STYLE);
+	GuiPane* raytracePane = debugPane->addPane("Offline Path Trace", GuiTheme::ORNATE_PANE_STYLE);
 	m_rayTraceSettings.resolutionList = raytracePane->addDropDownList("Resolution", Array<String>({ "1 x 1", "20 x 20", "320 x 200", "640 x 400", "1280 x 720", "1920 x 1080" }));
 #ifndef G3D_DEBUG
 	m_rayTraceSettings.resolutionList->setSelectedIndex(3);
