@@ -290,65 +290,23 @@ void RayTracer::addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shar
 
 void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<shared_ptr<Light>>& directLightsBuffer, Array<Ray>& shadowRayBuffer, Array<Biradiance3>& biradianceBuffer) const
 {
-	const float eps = 1e-4f;
-
 	runConcurrently(0, surfelBuffer.size(),
 		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
 	
 			if (notNull(surfel)) {
-				Random& random = Random::threadCommon();
-
 				int selectedLightIdx = 0;
 				float selectedLightWeight = 1.0f;
 
-				const int numLights = directLightsBuffer.size();
-
-				if (numLights > 1) {
-					const Point3& surfelPos = surfel->position;
-					// Sum the biradiance terms of each light to get an estimate of how much they contribute
-					// to the surfel's outgoing radiance.
-					thread_local Array<float> biradianceSums;
-					biradianceSums.resize(numLights);
-
-					for (int l = 0; l < numLights; l++) {
-						biradianceSums[l] = directLightsBuffer[l]->biradiance(surfelPos).sum();
-					}
-
-					float accumulatedBiradiance = std::accumulate(biradianceSums.begin(), biradianceSums.end(), 0.0f);
-
-					// Select a light with probability relative to the previous sums.
-					float randomBiradiance = random.uniform(0.0f, accumulatedBiradiance);
-
-					for (int l = 0; l < numLights; l++) {
-						randomBiradiance -= biradianceSums[l];
-
-						if (randomBiradiance < 0) {
-							selectedLightIdx = l;
-							// It's the inverse probability of selecting it. In more verbose form:
-							// 1.0f / (biradianceSum[i] / accumulatedBiradiance)
-							selectedLightWeight = accumulatedBiradiance / biradianceSums[i];
-							break;
-						}
-					}
+				if (directLightsBuffer.size() > 1) {
+					lightImportanceSampling(directLightsBuffer, surfel, Random::threadCommon(), selectedLightIdx, selectedLightWeight);
 				}
 
-				// Sample the light and prepare a shadow ray.
+				// Sample the light
 				const shared_ptr<Light>& selectedLight = directLightsBuffer[selectedLightIdx];
 
-				const Point3& surfelPos = surfel->position;
-				const Point3& lightPos = selectedLight->position().xyz();
-
-				Vector3 lightToSurfelDir = (surfelPos + surfel->geometricNormal * eps) - lightPos;
-				const float lightToSurfelDist = lightToSurfelDir.length();
-				lightToSurfelDir /= lightToSurfelDist;
-
-				Point3 shadowRayPos = lightPos + eps * lightToSurfelDir;
-				shadowRayBuffer[i] = Ray(shadowRayPos, lightToSurfelDir, 0.0f, lightToSurfelDist - eps);
-
-				// If we chose to save the biradiance to reuse it, it would become inefficient in terms of memory allocated when
-				// the number of lights increased. We would store 3 floats instead of the current 1.
-				biradianceBuffer[i] = selectedLight->biradiance(surfelPos) * selectedLightWeight;
+				shadowRayBuffer[i] = generateShadowRay(surfel, selectedLight);
+				biradianceBuffer[i] = selectedLight->biradiance(surfel->position) * selectedLightWeight;
 			} else {
 				shadowRayBuffer[i] = degenerateRay();
 				biradianceBuffer[i] = Biradiance3();
@@ -409,6 +367,54 @@ void RayTracer::scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array
 		},
 		!m_settings.multithreading
 	);
+}
+
+void RayTracer::lightImportanceSampling(const Array<shared_ptr<Light>>& directLightsBuffer, const shared_ptr<Surfel>& surfel, Random& random,
+	int& selectedLightIdx, float& selectedLightWeight) const
+{
+	const int numLights = directLightsBuffer.size();
+
+	const Point3& surfelPos = surfel->position;
+	// Sum the biradiance terms of each light to get an estimate of how much they contribute
+	// to the surfel's outgoing radiance.
+	thread_local Array<float> biradianceSums;
+	biradianceSums.resize(numLights);
+
+	for (int l = 0; l < numLights; l++) {
+		biradianceSums[l] = directLightsBuffer[l]->biradiance(surfelPos).sum();
+	}
+
+	float accumulatedBiradiance = std::accumulate(biradianceSums.begin(), biradianceSums.end(), 0.0f);
+
+	// Select a light with probability relative to the previous sums.
+	float randomBiradiance = random.uniform(0.0f, accumulatedBiradiance);
+
+	for (int l = 0; l < numLights; l++) {
+		randomBiradiance -= biradianceSums[l];
+
+		if (randomBiradiance < 0) {
+			selectedLightIdx = l;
+			// It's the inverse probability of selecting it. In more verbose form:
+			// 1.0f / (biradianceSum[i] / accumulatedBiradiance)
+			selectedLightWeight = accumulatedBiradiance / biradianceSums[l];
+			break;
+		}
+	}
+}
+
+Ray RayTracer::generateShadowRay(const shared_ptr<Surfel>& surfel, const shared_ptr<Light>& light) const
+{
+	const float eps = 1e-4f;
+
+	const Point3& surfelPos = surfel->position;
+	const Point3& lightPos = light->position().xyz();
+
+	Vector3 lightToSurfelDir = (surfelPos + surfel->geometricNormal *eps) - lightPos;
+	const float lightToSurfelDist = lightToSurfelDir.length();
+	lightToSurfelDir /= lightToSurfelDist;
+
+	Point3 shadowRayPos = lightPos + eps * lightToSurfelDir;
+	return Ray(shadowRayPos, lightToSurfelDir, 0.0f, lightToSurfelDist - eps);
 }
 
 Ray RayTracer::degenerateRay() const

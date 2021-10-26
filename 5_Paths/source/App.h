@@ -69,7 +69,11 @@ private:
 							   const Array<bool>& lightShadowedBuffer, const Array<Radiance3>& modulationBuffer, shared_ptr<Image>& image) const;
 	void scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& rayBuffer, Array<Radiance3>& modulationBuffer) const;
 
-	Ray degenerateRay() const;
+	void lightImportanceSampling(const Array<shared_ptr<Light>>& directLightsBuffer, const shared_ptr<Surfel>& surfel, Random& random,
+		int& selectedLightIdx, float& selectedLightWeight) const;
+
+	Ray generateShadowRay(const shared_ptr<Surfel>&surfel, const shared_ptr<Light>&light) const;
+
 	inline Ray degenerateRay() const;
 
 private:
