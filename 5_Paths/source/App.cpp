@@ -742,7 +742,7 @@ void App::makeGUI()
 	GuiNumberBox<int>* scatterEventsSlider = raytracePane->addNumberBox<int>("Maximum scatter events per path", &m_rayTraceSettings.maxScatterEvents, "", GuiTheme::LINEAR_SLIDER, 1, 36);
 	scatterEventsSlider->setWidth(340.0F);
 	scatterEventsSlider->setCaptionWidth(200.0F);
-	GuiNumberBox<float>* envBrightnessSlider = raytracePane->addNumberBox<float>("Environment brightness", &m_rayTraceSettings.environmentBrightness, "", GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f);
+	GuiNumberBox<float>* envBrightnessSlider = raytracePane->addNumberBox<float>("Environment brightness", &m_rayTraceSettings.environmentBrightness, "", GuiTheme::LINEAR_SLIDER, 0.0f, 1000.0f);
 	envBrightnessSlider->setWidth(340.0F);
 	envBrightnessSlider->setCaptionWidth(200.0F);
 	raytracePane->addButton("Render", this, &App::render);
