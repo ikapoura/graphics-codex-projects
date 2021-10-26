@@ -222,7 +222,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 			rayOptions = 0;
 		}
 
-		debugPrintf("Raytracing scene. Current transport path: %d of %d total.", p+1, m_settings.numLightTrasportPaths);
+		debugPrintf("Raytracing scene. Current transport path: %d of %d total.\n", p+1, m_settings.numLightTrasportPaths);
 	}
 
 	stopwatch.tock();
