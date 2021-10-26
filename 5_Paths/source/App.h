@@ -56,10 +56,6 @@ public:
 	chrono::milliseconds traceImage(const shared_ptr<Camera>& camera, shared_ptr<Image>& image);
 
 private:
-	enum class IntersectionMode {
-		Nearest,
-		First
-	};
 	Radiance3 randomColorFromDirection(const Vector3& w) const;
 
 	void rebuildTreeStructureBasedOnLastChange();
