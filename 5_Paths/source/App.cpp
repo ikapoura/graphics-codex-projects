@@ -350,7 +350,7 @@ void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer
 				// the number of lights increased. We would store 3 floats instead of the current 1.
 				biradianceBuffer[i] = selectedLight->biradiance(surfelPos) * selectedLightWeight;
 			} else {
-				shadowRayBuffer[i] = Ray(Point3(), Vector3::unitX(), 0.0f, std::numeric_limits<float>::min());
+				shadowRayBuffer[i] = degenerateRay();
 				biradianceBuffer[i] = Biradiance3();
 			}
 		},
@@ -409,6 +409,11 @@ void RayTracer::scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array
 		},
 		!m_settings.multithreading
 	);
+}
+
+Ray RayTracer::degenerateRay() const
+{
+	return Ray(Point3(), Vector3::unitX(), 0.0f, std::numeric_limits<float>::min());
 }
 
 Biradiance3 RayTracer::randomColorFromDirection(const Vector3& w) const

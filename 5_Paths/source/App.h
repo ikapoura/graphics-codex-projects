@@ -69,6 +69,9 @@ private:
 							   const Array<bool>& lightShadowedBuffer, const Array<Radiance3>& modulationBuffer, shared_ptr<Image>& image) const;
 	void scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& rayBuffer, Array<Radiance3>& modulationBuffer) const;
 
+	Ray degenerateRay() const;
+	inline Ray degenerateRay() const;
+
 private:
 	const Settings m_settings;
 
