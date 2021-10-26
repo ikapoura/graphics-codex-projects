@@ -158,31 +158,28 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 		[image](Point2int32 point) -> void {
 			image->set(point.x, point.y, Color3::black());
 		},
-		!m_settings.multithreading);
+		!m_settings.multithreading
+	);
 
-
-	const PinholeCamera camera(activeCamera->frame(), activeCamera->projection());
-
-	Array<Radiance3> radianceBuffer;
-	radianceBuffer.resize(m_settings.numLightTrasportPaths);
+	const int numPixels = image->width() * image->height();
 
 	Array<Radiance3> modulationBuffer;
-	modulationBuffer.resize(m_settings.numLightTrasportPaths);
+	modulationBuffer.resize(numPixels);
 
 	Array<Ray> rayBuffer;
-	rayBuffer.resize(m_settings.numLightTrasportPaths);
+	rayBuffer.resize(numPixels);
 
 	Array<Ray> shadowRayBuffer;
-	shadowRayBuffer.resize(m_settings.numLightTrasportPaths);
+	shadowRayBuffer.resize(numPixels);
 
 	Array<Biradiance3> biradianceBuffer;
-	biradianceBuffer.resize(m_settings.numLightTrasportPaths);
+	biradianceBuffer.resize(numPixels);
 
 	Array<bool> lightShadowedBuffer;
-	lightShadowedBuffer.resize(m_settings.numLightTrasportPaths);
+	lightShadowedBuffer.resize(numPixels);
 
 	Array<shared_ptr<Surfel>> surfelBuffer;
-	surfelBuffer.resize(m_settings.numLightTrasportPaths);
+	surfelBuffer.resize(numPixels);
 
 	// Cache the direct illumination lights.
 	Array<shared_ptr<Light>> directLightsBuffer;
@@ -192,62 +189,37 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 		}
 	}
 
-	const float pixelOffsetMin = 0.0f;
-	const float pixelOffsetMax = 1.0f - std::numeric_limits<float>::min();
+	const PinholeCamera camera(activeCamera->frame(), activeCamera->projection());
 
-	for (int x = 0, width = image->width(); x < width; x++) {
-		for (int y = 0, height = image->height(); y < height; y++) {
-			const int pixelIndex1D = x * height + y;
+	// We fully trace one path for all pixels and then move to the next.
+	for (int p = 0; p < m_settings.numLightTrasportPaths; p++) {
+		initializeTransportPaths(camera, image->width(), image->height(), p, rayBuffer, modulationBuffer);
 
-			int activeLightTransportPaths = m_settings.numLightTrasportPaths;
-			// Generate the primary rays
-			// Always generate a ray through the center of the pixel
-			rayBuffer[0] = camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, width, height);
-			// Generate the rest
-			runConcurrently(1, m_settings.numLightTrasportPaths,
-				[&](int i) -> void {
-					float offsetX = uniformRandom(pixelOffsetMin, pixelOffsetMax);
-					float offsetY = uniformRandom(pixelOffsetMin, pixelOffsetMax);
+		// The first rays we intersect are the primary rays and we know that they are close together.
+		TriTree::IntersectRayOptions rayOptions = TriTree::COHERENT_RAY_HINT;
 
-					rayBuffer[i] = camera.getPrimaryRay(float(x) + offsetX, float(y) + offsetY, width, height);
-				},
-				!m_settings.multithreading
-			);
+		for (int scatterIdx = 0; scatterIdx < m_settings.maxScatterEvents; scatterIdx++) {
+			m_sceneTriTree->intersectRays(rayBuffer, surfelBuffer, rayOptions);
 
-			// Initialization
-			radianceBuffer.setAll(Radiance3());
-			modulationBuffer.setAll(Radiance3(1.0f / float(m_settings.numLightTrasportPaths)));
+			addEmittedRadiance(rayBuffer, surfelBuffer, modulationBuffer, image);
 
-			// We know that the primary rays are close together.
-			TriTree::IntersectRayOptions rayOptions = TriTree::COHERENT_RAY_HINT;
+			if (directLightsBuffer.size() > 0) {
+				sampleDirectLights(surfelBuffer, directLightsBuffer, shadowRayBuffer, biradianceBuffer);
 
-			for (int scatterIdx = 0; scatterIdx < m_settings.maxScatterEvents; scatterIdx++) {
-				m_sceneTriTree->intersectRays(rayBuffer, surfelBuffer, rayOptions);
+				// If a lightShadowedBuffer value is true, that means that the corresponding surfel is hidden from the light because
+				// there is an intersection in between.
+				rayOptions = TriTree::COHERENT_RAY_HINT | TriTree::DO_NOT_CULL_BACKFACES | TriTree::OCCLUSION_TEST_ONLY;
+				m_sceneTriTree->intersectRays(shadowRayBuffer, lightShadowedBuffer, rayOptions);
 
-				addEmittedRadiance(rayBuffer, surfelBuffer, modulationBuffer, radianceBuffer);
-
-				if (directLightsBuffer.size() > 0) {
-					sampleDirectLights(surfelBuffer, directLightsBuffer, shadowRayBuffer, biradianceBuffer);
-
-					// If a lightShadowedBuffer value is true, that means that the corresponding surfel is hidden from the light because
-					// there is an intersection in between.
-					m_sceneTriTree->intersectRays(shadowRayBuffer, lightShadowedBuffer, TriTree::COHERENT_RAY_HINT | TriTree::DO_NOT_CULL_BACKFACES | TriTree::OCCLUSION_TEST_ONLY);
-
-					addDirectIllumination(rayBuffer, surfelBuffer, biradianceBuffer, shadowRayBuffer, lightShadowedBuffer, modulationBuffer, radianceBuffer);
-				}
-
-				if (scatterIdx < m_settings.maxScatterEvents - 1) {
-					scatterRays(surfelBuffer, rayBuffer, modulationBuffer);
-				}
-
-				// Reset the ray options after the first event because the rays won't be coherent anymore.
-				rayOptions = 0;
+				addDirectIllumination(rayBuffer, surfelBuffer, biradianceBuffer, shadowRayBuffer, lightShadowedBuffer, modulationBuffer, image);
 			}
 
-			// No need for a division because we already have accounted for that in the initialization of the
-			// modulation buffer.
-			Radiance3 sum = std::accumulate(radianceBuffer.begin(), radianceBuffer.end(), Color3::black());
-			image->set(x, y, sum);
+			if (scatterIdx < m_settings.maxScatterEvents - 1) {
+			 	scatterRays(surfelBuffer, rayBuffer, modulationBuffer);
+			}
+
+			// Reset the ray options after the first event because the rays won't be coherent anymore.
+			rayOptions = 0;
 		}
 	}
 
@@ -258,22 +230,58 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	return elapsedTime;
 }
 
-void RayTracer::addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const
+void RayTracer::initializeTransportPaths(const PinholeCamera& camera, int imageWidth, int imageHeight, int pathIdx,
+	Array<Ray>& rayBuffer, Array<Radiance3>& modulationBuffer) const
+{
+	const bool isFirstPath = (pathIdx == 0);
+
+	const float pixelOffsetMin = 0.0f;
+	const float pixelOffsetMax = 1.0f - std::numeric_limits<float>::min();
+
+	runConcurrently(0, rayBuffer.size(),
+		[&](int i) -> void {
+			Random& random = Random::threadCommon();
+
+			const int x = i / imageHeight;
+			const int y = i - x * imageHeight;
+
+			if (!isFirstPath) {
+				float offsetX = random.uniform(pixelOffsetMin, pixelOffsetMax);
+				float offsetY = random.uniform(pixelOffsetMin, pixelOffsetMax);
+
+				rayBuffer[i] = camera.getPrimaryRay(float(x) + offsetX, float(y) + offsetY, imageWidth, imageHeight);
+			} else {
+				// Always generate a ray through the center of the pixel.
+				rayBuffer[i] = camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, imageWidth, imageHeight);
+			}
+
+			// Initialization
+			modulationBuffer[i] = Radiance3(1.0f / float(m_settings.numLightTrasportPaths));
+		},
+		!m_settings.multithreading
+	);
+}
+
+void RayTracer::addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Radiance3>& modulationBuffer, shared_ptr<Image>& image) const
 {
 	runConcurrently(0, surfelBuffer.size(),
 		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
 	
-			const Vector3& wi = rayBuffer[i].direction();
+			const int x = i / (int)image->height();
+			const int y = i - x * image->height();
 	
 			if (notNull(surfel)) {
 				Random& random = Random::threadCommon();
+
+				const Vector3& wi = rayBuffer[i].direction();
 	
-				radianceBuffer[i] += surfel->emittedRadiance(-wi) * modulationBuffer[i];
+				image->increment(Point2int32(x, y), surfel->emittedRadiance(-wi) * modulationBuffer[i]);
 			} else {
 				// Rays that didn't intersect anything.
-				radianceBuffer[i] += Radiance3(m_settings.environmentBrightness) * modulationBuffer[i];
-				// radianceBuffer[i] += randomColorFromDirection(wi) * modulationBuffer[i];
+				image->increment(Point2int32(x, y), Radiance3(m_settings.environmentBrightness) * modulationBuffer[i]);
+				// const Vector3& wi = rayBuffer[i].direction();
+				// image->increment(Point2int32(x, y), randomColorFromDirection(wi) * modulationBuffer[i]);
 			}
 		},
 		!m_settings.multithreading
@@ -342,7 +350,7 @@ void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer
 				// the number of lights increased. We would store 3 floats instead of the current 1.
 				biradianceBuffer[i] = selectedLight->biradiance(surfelPos) * selectedLightWeight;
 			} else {
-				shadowRayBuffer[i] = Ray(Point3(), Vector3(), 0.0f, 0.0f);
+				shadowRayBuffer[i] = Ray(Point3(), Vector3::unitX(), 0.0f, std::numeric_limits<float>::min());
 				biradianceBuffer[i] = Biradiance3();
 			}
 		},
@@ -351,11 +359,14 @@ void RayTracer::sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer
 }
 
 void RayTracer::addDirectIllumination(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Biradiance3>& biradianceBuffer,
-	const Array<Ray>& shadowRayBuffer, const Array<bool>& lightShadowedBuffer, const Array<Radiance3>& modulationBuffer, Array<Radiance3>& radianceBuffer) const
+	const Array<Ray>& shadowRayBuffer, const Array<bool>& lightShadowedBuffer, const Array<Radiance3>& modulationBuffer, shared_ptr<Image>& image) const
 {
 	runConcurrently(0, surfelBuffer.size(),
 		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = surfelBuffer[i];
+
+			const int x = i / (int)image->height();
+			const int y = i - x * image->height();
 	
 			const bool isVisibleFromLight = !lightShadowedBuffer[i];
 
@@ -365,7 +376,8 @@ void RayTracer::addDirectIllumination(const Array<Ray>& rayBuffer, const Array<s
 
 				const Color3 f = surfel->finiteScatteringDensity(surfelToLightDir, -rayBuffer[i].direction());
 				const Color3 cosFactor = Color3(fabs(surfelToLightDir.dot(surfelNormal)));
-				radianceBuffer[i] += biradianceBuffer[i] * f * cosFactor * modulationBuffer[i];
+
+				image->increment(Point2int32(x, y), biradianceBuffer[i] * f * cosFactor * modulationBuffer[i]);
 			}
 		},
 		!m_settings.multithreading
