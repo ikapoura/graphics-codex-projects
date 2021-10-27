@@ -343,7 +343,7 @@ void RayTracer::scatterRays(PathBuffers& buffers) const
 
 				Color3 scatterWeight;
 				Vector3 scatterDir;
-				surfel->scatter(PathDirection::EYE_TO_SOURCE, buffers.rays[i].direction(), false, random, scatterWeight, scatterDir);
+				surfel->scatter(PathDirection::EYE_TO_SOURCE, -buffers.rays[i].direction(), false, random, scatterWeight, scatterDir);
 
 				const Point3 P = surfel->position + eps * surfel->geometricNormal * sign(surfel->geometricNormal.dot(scatterDir));
 
