@@ -33,6 +33,27 @@ public:
 	Color3 color;
 };
 
+class PathBuffers
+{
+public:
+	PathBuffers() = default;
+	~PathBuffers() = default;
+
+	void resize(size_t size);
+
+public:
+	Array<Biradiance3> biradiance;
+
+	Array<bool> lightShadowed;
+
+	Array<Radiance3> modulation;
+
+	Array<Ray> rays;
+	Array<Ray> shadowRays;
+
+	Array<shared_ptr<Surfel>> surfels;
+};
+
 class RayTracer
 {
 public:
@@ -61,13 +82,12 @@ private:
 	void rebuildTreeStructureBasedOnLastChange();
 
 	void initializeTransportPaths(const PinholeCamera& camera, int imageWidth, int imageHeight, int pathIdx,
-								  Array<Ray>& rayBuffer, Array<Radiance3>& modulationBuffer) const;
+								  PathBuffers& buffers) const;
 
-	void addEmittedRadiance(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Radiance3>& modulationBuffer, shared_ptr<Image>& image) const;
-	void sampleDirectLights(const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<shared_ptr<Light>>& directLightsBuffer, Array<Ray>& shadowRayBuffer, Array<Biradiance3>& biradianceBuffer) const;
-	void addDirectIllumination(const Array<Ray>& rayBuffer, const Array<shared_ptr<Surfel>>& surfelBuffer, const Array<Biradiance3>& biradianceBuffer, const Array<Ray>& shadowRayBuffer,
-							   const Array<bool>& lightShadowedBuffer, const Array<Radiance3>& modulationBuffer, shared_ptr<Image>& image) const;
-	void scatterRays(const Array<shared_ptr<Surfel>>& surfelBuffer, Array<Ray>& rayBuffer, Array<Radiance3>& modulationBuffer) const;
+	void addEmittedRadiance(PathBuffers& buffers, shared_ptr<Image>& image) const;
+	void sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<Light>>& directLightsBuffer) const;
+	void addDirectIllumination(PathBuffers& buffers, shared_ptr<Image>& image) const;
+	void scatterRays(PathBuffers& buffers) const;
 
 	void lightImportanceSampling(const Array<shared_ptr<Light>>& directLightsBuffer, const shared_ptr<Surfel>& surfel, Random& random,
 		int& selectedLightIdx, float& selectedLightWeight) const;
