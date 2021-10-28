@@ -782,6 +782,8 @@ void App::render()
 
 	activeCamera()->filmSettings().setBloomStrength(0.0f);
 
+	activeCamera()->filmSettings().setSensitivity(activeCamera()->filmSettings().sensitivity() * 0.5f);
+
 	const chrono::milliseconds durationMs = rayTracer.traceImage(activeCamera(), image);
 
 	// Convert to texture to post process.
