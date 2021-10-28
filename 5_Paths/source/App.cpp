@@ -294,7 +294,7 @@ void RayTracer::sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<
 				// Sample the light
 				const shared_ptr<Light>& selectedLight = directLightsBuffer[selectedLightIdx];
 
-				buffers.shadowRays[i] = generateShadowRay(surfel, selectedLight);
+				buffers.shadowRays[i] = generateShadowRay(surfel->position, surfel->geometricNormal, selectedLight->position().xyz());
 				buffers.biradiance[i] = selectedLight->biradiance(surfel->position) * selectedLightWeight;
 			} else {
 				buffers.shadowRays[i] = degenerateRay();
@@ -390,14 +390,11 @@ void RayTracer::lightImportanceSampling(const Array<shared_ptr<Light>>& directLi
 	}
 }
 
-Ray RayTracer::generateShadowRay(const shared_ptr<Surfel>& surfel, const shared_ptr<Light>& light) const
+Ray RayTracer::generateShadowRay(const Point3& surfelPos, const Vector3& surfelGNormal, const Point3& lightPos) const
 {
 	const float eps = 1e-4f;
 
-	const Point3& surfelPos = surfel->position;
-	const Point3& lightPos = light->position().xyz();
-
-	Vector3 lightToSurfelDir = (surfelPos + surfel->geometricNormal *eps) - lightPos;
+	Vector3 lightToSurfelDir = (surfelPos + surfelGNormal * eps) - lightPos;
 	const float lightToSurfelDist = lightToSurfelDir.length();
 	lightToSurfelDir /= lightToSurfelDist;
 

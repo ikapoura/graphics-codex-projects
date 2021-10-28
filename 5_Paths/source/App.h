@@ -92,7 +92,7 @@ private:
 	void lightImportanceSampling(const Array<shared_ptr<Light>>& directLightsBuffer, const shared_ptr<Surfel>& surfel, Random& random,
 		int& selectedLightIdx, float& selectedLightWeight) const;
 
-	Ray generateShadowRay(const shared_ptr<Surfel>&surfel, const shared_ptr<Light>&light) const;
+	Ray generateShadowRay(const Point3& surfelPos, const Vector3& surfelGNormal, const Point3& lightPos) const;
 
 	inline Ray degenerateRay() const;
 
