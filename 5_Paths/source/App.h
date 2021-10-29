@@ -7,12 +7,6 @@
 #pragma once
 #include <G3D/G3D.h>
 
-class PostProcess
-{
-public:
-	Color3 pixelValue(const Radiance3& L, const float k, const float gamma);
-};
-
 class PinholeCamera
 {
 public:

@@ -66,30 +66,6 @@ int main(int argc, const char* argv[])
 
 
 
-// Get a color from Radiance, saturation and gamma
-Color3 PostProcess::pixelValue(const Radiance3& L, const float k, const float gamma)
-{
-	Radiance3 outL = L;
-
-	// Adjust for constant sensitivity
-	outL *= 1.0f / k;
-
-	// Maximum radiance at any frequency
-	float m = fmaxf(fmaxf(outL.r, outL.g), fmaxf(outL.b, 1.0f));
-
-	// Normalize the input
-	outL *= 1.0f / m;
-
-	// Restore magnitude, but fade towards white when the maximum value approaches 1.0
-	m = clamp((m - 1.0f) * 0.2f, 0.0f, 1.0f);
-	outL = outL * (1.0f - m) + Radiance3(m, m, m);
-
-	// Gamma encode 
-	return Color3(pow(outL.r, 1.0f / gamma),
-				  pow(outL.g, 1.0f / gamma),
-				  pow(outL.b, 1.0f / gamma));
-}
-
 PinholeCamera::PinholeCamera(const CoordinateFrame& frame, const Projection& projection) :
 	m_frame(frame), m_projection(projection)
 {
