@@ -758,7 +758,8 @@ void App::render()
 
 	activeCamera()->filmSettings().setBloomStrength(0.0f);
 
-	activeCamera()->filmSettings().setSensitivity(activeCamera()->filmSettings().sensitivity() * 0.5f);
+	float prevSensitivity = activeCamera()->filmSettings().sensitivity();
+	activeCamera()->filmSettings().setSensitivity(prevSensitivity * 0.5f);
 
 	const chrono::milliseconds durationMs = rayTracer.traceImage(activeCamera(), image);
 
@@ -771,6 +772,8 @@ void App::render()
 	m_film->exposeAndRender(renderDevice, activeCamera()->filmSettings(), src,
 		settings().hdrFramebuffer.trimBandThickness().x,
 		settings().hdrFramebuffer.depthGuardBandThickness.x, m_result);
+
+	activeCamera()->filmSettings().setSensitivity(prevSensitivity);
 
 	const String durationPrintOutput = String("Render duration: ") + durationToString(durationMs);
 
