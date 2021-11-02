@@ -79,12 +79,12 @@ private:
 								  PathBuffers& buffers) const;
 
 	void addEmittedRadiance(PathBuffers& buffers, shared_ptr<Image>& image) const;
-	void sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<Light>>& directLightsBuffer) const;
+	void sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<Light>>& directLightsBuffer, int pathIdx, int scatterIdx) const;
 	void addDirectIllumination(PathBuffers& buffers, shared_ptr<Image>& image) const;
 	void scatterRays(PathBuffers& buffers) const;
 
-	void lightImportanceSampling(const Array<shared_ptr<Light>>& directLightsBuffer, const shared_ptr<Surfel>& surfel, Random& random,
-		int& selectedLightIdx, float& selectedLightWeight) const;
+	Point3 lightImportanceSampling(const Array<shared_ptr<Light>>& directLightsBuffer, const shared_ptr<Surfel>& surfel, int pixelIdx, int pathIdx, Random& random,
+		int& selectedLightIdx, float& selectedLightWeight, float& selectedLightAreaTimesPdfValue) const;
 
 	Ray generateShadowRay(const Point3& surfelPos, const Vector3& surfelGNormal, const Point3& lightPos) const;
 

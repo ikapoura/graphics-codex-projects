@@ -155,8 +155,8 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	const PinholeCamera camera(activeCamera->frame(), activeCamera->projection());
 
 	// We fully trace one path for all pixels and then move to the next.
-	for (int p = 0; p < m_settings.numLightTrasportPaths; p++) {
-		initializeTransportPaths(camera, image->width(), image->height(), p, buffers);
+	for (int pathIdx = 0; pathIdx < m_settings.numLightTrasportPaths; pathIdx++) {
+		initializeTransportPaths(camera, image->width(), image->height(), pathIdx, buffers);
 
 		// The first rays we intersect are the primary rays and we know that they are close together.
 		TriTree::IntersectRayOptions rayOptions = TriTree::COHERENT_RAY_HINT;
@@ -167,7 +167,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 			addEmittedRadiance(buffers, image);
 
 			if (directLightsBuffer.size() > 0) {
-				sampleDirectLights(buffers, directLightsBuffer);
+				sampleDirectLights(buffers, directLightsBuffer, pathIdx, scatterIdx);
 
 				// If a lightShadowedBuffer value is true, that means that the corresponding surfel is hidden from the light because
 				// there is an intersection in between.
@@ -185,7 +185,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 			rayOptions = 0;
 		}
 
-		debugPrintf("Raytracing scene. Current transport path: %d of %d total.\n", p+1, m_settings.numLightTrasportPaths);
+		debugPrintf("Raytracing scene. Current transport path: %d of %d total.\n", pathIdx+1, m_settings.numLightTrasportPaths);
 	}
 
 	stopwatch.tock();
@@ -253,25 +253,26 @@ void RayTracer::addEmittedRadiance(PathBuffers& buffers, shared_ptr<Image>& imag
 	);
 }
 
-void RayTracer::sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<Light>>& directLightsBuffer) const
+void RayTracer::sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<Light>>& directLightsBuffer, int pathIdx, int scatterIdx) const
 {
 	runConcurrently(0, buffers.surfels.size(),
 		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = buffers.surfels[i];
 	
 			if (notNull(surfel)) {
+				int pixelIdx = i * m_settings.maxScatterEvents + scatterIdx;
+
 				int lightIdx = 0;
 				float lightWeight = 1.0f;
+				float lightAreaTimesPdfValue = 1.0f;
 
-				if (directLightsBuffer.size() > 1) {
-					lightImportanceSampling(directLightsBuffer, surfel, Random::threadCommon(), lightIdx, lightWeight);
-				}
+				Point3 lightPos = lightImportanceSampling(directLightsBuffer, surfel, pixelIdx, pathIdx, Random::threadCommon(), lightIdx, lightWeight, lightAreaTimesPdfValue);
 
 				// Sample the light
 				const shared_ptr<Light>& selectedLight = directLightsBuffer[lightIdx];
 
 				buffers.shadowRays[i] = generateShadowRay(surfel->position, surfel->geometricNormal, selectedLight->position().xyz());
-				buffers.biradiance[i] = selectedLight->biradiance(surfel->position) * lightWeight;
+				buffers.biradiance[i] = selectedLight->biradiance(surfel->position, lightPos) * (lightWeight / lightAreaTimesPdfValue);
 			} else {
 				buffers.shadowRays[i] = degenerateRay();
 				buffers.biradiance[i] = Biradiance3();
@@ -333,37 +334,62 @@ void RayTracer::scatterRays(PathBuffers& buffers) const
 	);
 }
 
-void RayTracer::lightImportanceSampling(const Array<shared_ptr<Light>>& directLightsBuffer, const shared_ptr<Surfel>& surfel, Random& random,
-	int& selectedLightIdx, float& selectedLightWeight) const
+Point3 RayTracer::lightImportanceSampling(const Array<shared_ptr<Light>>& directLightsBuffer, const shared_ptr<Surfel>& surfel, int pixelIdx, int pathIdx, Random& random,
+	int& selectedLightIdx, float& selectedLightWeight, float& selectedLightAreaTimesPdfValue) const
 {
 	const int numLights = directLightsBuffer.size();
 
 	const Point3& surfelPos = surfel->position;
 	// Sum the biradiance terms of each light to get an estimate of how much they contribute
 	// to the surfel's outgoing radiance.
+	thread_local Array<Radiance3> biradianceTimesAreaTimesPdfValue;
+	biradianceTimesAreaTimesPdfValue.resize(numLights);
+
+	thread_local Array<float> areaTimesPdfValue;
+	areaTimesPdfValue.resize(numLights);
+
 	thread_local Array<float> biradianceSums;
 	biradianceSums.resize(numLights);
 
-	for (int l = 0; l < numLights; l++) {
-		biradianceSums[l] = directLightsBuffer[l]->biradiance(surfelPos).sum();
-	}
+	thread_local Array<Point3> newLightPositions;
+	newLightPositions.resize(numLights);
 
-	float accumulatedBiradiance = std::accumulate(biradianceSums.begin(), biradianceSums.end(), 0.0f);
+	Point3 resultPosition;
 
-	// Select a light with probability relative to the previous sums.
-	float randomBiradiance = random.uniform(0.0f, accumulatedBiradiance);
+	if (numLights > 1) {
+		for (int l = 0; l < numLights; l++) {
+			newLightPositions[l] = directLightsBuffer[l]->lowDiscrepancySolidAnglePosition(pixelIdx, l, pathIdx, m_settings.numLightTrasportPaths, surfel->position, areaTimesPdfValue[l]);
 
-	for (int l = 0; l < numLights; l++) {
-		randomBiradiance -= biradianceSums[l];
+			biradianceTimesAreaTimesPdfValue[l] = directLightsBuffer[l]->biradiance(surfelPos, newLightPositions[l]) / areaTimesPdfValue[l];
 
-		if (randomBiradiance < 0) {
-			selectedLightIdx = l;
-			// It's the inverse probability of selecting it. In more verbose form:
-			// 1.0f / (biradianceSum[i] / accumulatedBiradiance)
-			selectedLightWeight = accumulatedBiradiance / biradianceSums[l];
-			break;
+			biradianceSums[l] = biradianceTimesAreaTimesPdfValue[l].sum();
 		}
+
+		float accumulatedBiradiance = std::accumulate(biradianceSums.begin(), biradianceSums.end(), 0.0f);
+
+		// Select a light with probability relative to the previous sums.
+		float randomBiradiance = random.uniform(0.0f, accumulatedBiradiance);
+
+		for (int l = 0; l < numLights; l++) {
+			randomBiradiance -= biradianceSums[l];
+
+			if (randomBiradiance < 0) {
+				selectedLightIdx = l;
+				// It's the inverse probability of selecting it. In more verbose form:
+				// 1.0f / (biradianceSum[i] / accumulatedBiradiance)
+				selectedLightWeight = accumulatedBiradiance / max(biradianceSums[l], 0.0001f);
+				selectedLightAreaTimesPdfValue = areaTimesPdfValue[l];
+				resultPosition = newLightPositions[l];
+				break;
+			}
+		}
+	} else {
+		selectedLightIdx = 0;
+		selectedLightWeight = 1.0f;
+		resultPosition = directLightsBuffer[0]->lowDiscrepancySolidAnglePosition(pixelIdx, selectedLightIdx, pathIdx, m_settings.numLightTrasportPaths, surfel->position, selectedLightAreaTimesPdfValue);
 	}
+
+	return resultPosition;
 }
 
 Ray RayTracer::generateShadowRay(const Point3& surfelPos, const Vector3& surfelGNormal, const Point3& lightPos) const
@@ -428,9 +454,9 @@ void App::onInit()
 
 #       ifndef G3D_DEBUG
 		// "G3D Debug Teapot"
-		"G3D Simple Cornell Box (Area Light)" // Load something simple
+		"G3D Simple Cornell Box (One Light)" // Load something simple
 #       else
-		"G3D Simple Cornell Box (Area Light)" // Load something simple
+		"G3D Simple Cornell Box (One Light)" // Load something simple
 #       endif
 	);
 
