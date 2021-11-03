@@ -720,7 +720,7 @@ void App::makeGUI()
 #ifndef G3D_DEBUG
 	m_rayTraceSettings.resolutionList->setSelectedIndex(3);
 #else
-	m_rayTraceSettings.resolutionList->setSelectedIndex(1);
+	m_rayTraceSettings.resolutionList->setSelectedIndex(2);
 #endif // !G3D_DEBUG
 	raytracePane->addCheckBox("Multithreading", &m_rayTraceSettings.multithreading);
 	GuiNumberBox<int>* lightTransportPathsSlider = raytracePane->addNumberBox<int>("Light transport paths per pixel", &m_rayTraceSettings.numLightTrasportPaths, "", GuiTheme::LINEAR_SLIDER, 1, 4096);

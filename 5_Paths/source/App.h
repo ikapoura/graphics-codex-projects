@@ -54,7 +54,11 @@ public:
 	class Settings {
 	public:
 		int  numLightTrasportPaths{ 1 };
-		int  maxScatterEvents{ 2 };
+#ifndef G3D_DEBUG
+		int  maxScatterEvents{ 1 };
+#else
+		int  maxScatterEvents{ 4 };
+#endif
 #ifndef G3D_DEBUG
 		bool multithreading{ true };
 #else
