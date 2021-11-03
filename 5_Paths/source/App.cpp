@@ -147,7 +147,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 	// Cache the direct illumination lights.
 	Array<shared_ptr<Light>> directLightsBuffer;
 	for (shared_ptr<Light> light : m_scene->lightingEnvironment().lightArray) {
-		if (light->enabled() && light->visible() && light->producesDirectIllumination()) {
+		if (light->enabled() && light->visible() && light->type() != Light::Type::AREA) {
 			directLightsBuffer.push_back(light);
 		}
 	}
