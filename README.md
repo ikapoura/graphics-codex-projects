@@ -58,9 +58,14 @@ This is the project that pieces everything together to finally produce beautiful
 
 Below are some renderings that were produced from this project along the settings used and the time taken. A lot of optimizations can be done and will be done in the next project.
 
-<img width="1024" height="562" alt="Breakfast room" src="https://user-images.githubusercontent.com/40468844/141364100-03ec6a79-25e1-4cbe-a42a-0179aef2a66c.png"> <p>Breakfast room, 1920x1080, 1024 paths, 6 scatter events: 1h7m time</p>
-<img width="1024" height="562" alt="San Miguel" src="https://user-images.githubusercontent.com/40468844/141364105-2ed75710-305b-4990-9b63-e765d2b22196.png"> <p>San Miguel, 1920x1080, 1024 paths, 6 scatter events: 1h3m time</p>
-<img width="1024" height="562" alt="Sponza" src="https://user-images.githubusercontent.com/40468844/141364107-8d5d8d97-267a-45f8-be2e-28f27d833c19.png"> <p>Sponza 1920x1080, 4096 paths, 6 scatter events: 3h54m time</p>
+|<img width="1024" height="562" alt="Breakfast room" src="https://user-images.githubusercontent.com/40468844/141364100-03ec6a79-25e1-4cbe-a42a-0179aef2a66c.png"> <p>Breakfast room, 1920x1080, 1024 paths, 6 scatter events: 1h7m time</p>|
+|:-:|
+
+|<img width="1024" height="562" alt="San Miguel" src="https://user-images.githubusercontent.com/40468844/141364105-2ed75710-305b-4990-9b63-e765d2b22196.png"> <p>San Miguel, 1920x1080, 1024 paths, 6 scatter events: 1h3m time</p>|
+|:-:|
+
+|<img width="1024" height="562" alt="Sponza" src="https://user-images.githubusercontent.com/40468844/141364107-8d5d8d97-267a-45f8-be2e-28f27d833c19.png"> <p>Sponza 1920x1080, 4096 paths, 6 scatter events: 3h54m time</p>|
+|:-:|
 
 ## 6. Renderer design
 A lot of optimizations in the Paths project and probably fog.
