@@ -49,3 +49,18 @@ The indirect rays provide a more accurate representation because we can observe:
 The indirect rays are not improving the image too much except for the cavities which are brightened and more details can be observed. The image with the indirect rays has noise because the car's material is metallic and the finiteScatteringDensity of it's surfaces is very high. Blender has a [setting](https://docs.blender.org/manual/en/latest/render/cycles/optimizations/reducing_noise.html#caustics-and-filter-glossy) to reduce that source of noise.
 
 ## 5. Paths
+
+This is the project that pieces everything together to finally produce beautiful images without waiting days; but still, some hours were required. In this project, I:
+
+- refactored the code from the Rays project into a more scalable solution based on the ray count,
+- supported multiple transport paths per pixel to reduce noise (but have fixed variable maximum path scattering depth),
+- implemented light importance sampling for point lights and spotlights.
+
+Below are some renderings that were produced from this project along the settings used and the time taken. A lot of optimizations can be done and will be done in the next project.
+
+<img width="1024" height="562" alt="Breakfast room" src="https://user-images.githubusercontent.com/40468844/141364100-03ec6a79-25e1-4cbe-a42a-0179aef2a66c.png"> <p>Breakfast room, 1920x1080, 1024 paths, 6 scatter events: 1h7m time</p>
+<img width="1024" height="562" alt="San Miguel" src="https://user-images.githubusercontent.com/40468844/141364105-2ed75710-305b-4990-9b63-e765d2b22196.png"> <p>San Miguel, 1920x1080, 1024 paths, 6 scatter events: 1h3m time</p>
+<img width="1024" height="562" alt="Sponza" src="https://user-images.githubusercontent.com/40468844/141364107-8d5d8d97-267a-45f8-be2e-28f27d833c19.png"> <p>Sponza 1920x1080, 4096 paths, 6 scatter events: 3h54m time</p>
+
+## 6. Renderer design
+A lot of optimizations in the Paths project and probably fog.
