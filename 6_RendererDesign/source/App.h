@@ -7,6 +7,8 @@
 #pragma once
 #include <G3D/G3D.h>
 
+#include <mutex>
+
 class PinholeCamera
 {
 public:
@@ -33,9 +35,17 @@ public:
 	PathBuffers() = default;
 	~PathBuffers() = default;
 
+	int size() const;
+	bool empty() const;
+
 	void resize(size_t size);
 
+	void clearRedundantSurfels(float minModulationSum);
+
 public:
+	// x, y coordinates of the remaining surfels
+	Array<Point2int32> imageCoordinates;
+
 	Array<Biradiance3> biradiance;
 
 	Array<bool> lightShadowed;
@@ -46,6 +56,9 @@ public:
 	Array<Ray> shadowRays;
 
 	Array<shared_ptr<Surfel>> surfels;
+
+private:
+	void fastRemove(int index);
 };
 
 class RayTracer
@@ -79,11 +92,11 @@ private:
 
 	void rebuildTreeStructureBasedOnLastChange();
 
-	void initializeTransportPaths(const PinholeCamera& camera, int imageWidth, int imageHeight, int pathIdx,
+	void initializeTransportPaths(const PinholeCamera& camera, const Point2int32& imageSize, int pathIdx,
 								  PathBuffers& buffers) const;
 
 	void addEmittedRadiance(PathBuffers& buffers, shared_ptr<Image>& image) const;
-	void sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<Light>>& directLightsBuffer, int pathIdx, int scatterIdx) const;
+	void sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<Light>>& directLightsBuffer, const Point2int32& imageSize, int pathIdx, int scatterIdx) const;
 	void addDirectIllumination(PathBuffers& buffers, shared_ptr<Image>& image) const;
 	void scatterRays(PathBuffers& buffers) const;
 
