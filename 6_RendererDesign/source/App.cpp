@@ -118,12 +118,18 @@ bool PathBuffers::empty() const
 void PathBuffers::resize(size_t size)
 {
 	imageCoordinates.resize(size);
-	biradiance.resize(size);
-	lightShadowed.resize(size);
 	modulation.resize(size);
 	rays.resize(size);
-	shadowRays.resize(size);
 	surfels.resize(size);
+	surfelShadowed.resize(size);
+}
+
+void PathBuffers::resizeShadows(size_t size)
+{
+	shadowRays.resize(size);
+	shadowRayOriginalIndex.resize(size);
+	shadowRayResult.resize(size);
+	biradiance.resize(size);
 }
 
 void PathBuffers::clearRedundantSurfels(float minModulationSum)
@@ -136,15 +142,39 @@ void PathBuffers::clearRedundantSurfels(float minModulationSum)
 	}
 }
 
+void PathBuffers::clearRedundantShadows()
+{
+	for (int i = 0; i < shadowRays.size(); i++) {
+		if (shadowRayOriginalIndex[i] == -1) {
+			fastRemoveShadows(i);
+			i--;
+		}
+	}
+}
+
+void PathBuffers::postProcessShadowResults()
+{
+	for (int i = 0; i < shadowRays.size(); i++) {
+		const int originalIdx = shadowRayOriginalIndex[i];
+		surfelShadowed[originalIdx] = shadowRayResult[i];
+	}
+}
+
 void PathBuffers::fastRemove(int index)
 {
 	imageCoordinates.fastRemove(index);
-	biradiance.fastRemove(index);
-	lightShadowed.fastRemove(index);
 	modulation.fastRemove(index);
 	rays.fastRemove(index);
-	shadowRays.fastRemove(index);
 	surfels.fastRemove(index);
+	surfelShadowed.fastRemove(index);
+}
+
+void PathBuffers::fastRemoveShadows(int index)
+{
+	shadowRays.fastRemove(index);
+	shadowRayOriginalIndex.fastRemove(index);
+	shadowRayResult.fastRemove(index);
+	biradiance.fastRemove(index);
 }
 
 RayTracer::RayTracer(const Settings& settings, const shared_ptr<Scene>& scene) :
@@ -203,12 +233,18 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 			buffers.clearRedundantSurfels(0.03f);
 
 			if (directLightsBuffer.size() > 0) {
+				buffers.resizeShadows(buffers.surfels.size());
+
 				sampleDirectLights(buffers, directLightsBuffer, imageSize, pathIdx, scatterIdx);
+
+				buffers.clearRedundantShadows();
 
 				// If a lightShadowedBuffer value is true, that means that the corresponding surfel is hidden from the light because
 				// there is an intersection in between.
 				rayOptions = TriTree::COHERENT_RAY_HINT | TriTree::DO_NOT_CULL_BACKFACES | TriTree::OCCLUSION_TEST_ONLY;
-				m_sceneTriTree->intersectRays(buffers.shadowRays, buffers.lightShadowed, rayOptions);
+				m_sceneTriTree->intersectRays(buffers.shadowRays, buffers.shadowRayResult, rayOptions);
+
+				buffers.postProcessShadowResults();
 
 				addDirectIllumination(buffers, radianceImage);
 			}
@@ -226,7 +262,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 	// The final weighting of the radiance.
 	runConcurrently(Point2int32(0, 0), imageSize, [&](Point2int32 pixel) {
-		radianceImage->set(pixel, radianceImage->get<Color3>(pixel) / m_settings.numLightTrasportPaths);
+		radianceImage->set(pixel, radianceImage->get<Color3>(pixel) / float(m_settings.numLightTrasportPaths));
 	});
 
 	stopwatch.tock();
@@ -263,7 +299,6 @@ void RayTracer::initializeTransportPaths(const PinholeCamera& camera, const Poin
 
 			// Initialization
 			buffers.modulation[i] = Radiance3(1.0f);
-			// buffers.modulation[i] = Radiance3(1.0f / float(m_settings.numLightTrasportPaths));
 
 			buffers.imageCoordinates[i] = Point2int32(x, y);
 		},
@@ -312,8 +347,17 @@ void RayTracer::sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<
 			// Sample the light
 			const shared_ptr<Light>& selectedLight = directLightsBuffer[lightIdx];
 
-			buffers.shadowRays[i] = generateShadowRay(surfel->position, surfel->geometricNormal, lightPos);
-			buffers.biradiance[i] = selectedLight->biradiance(surfel->position, lightPos) * (lightWeight / lightAreaTimesPdfValue);
+			Biradiance3 biradiance = selectedLight->biradiance(surfel->position, lightPos) * (lightWeight / lightAreaTimesPdfValue);
+
+			if (biradiance.sum() > 0.0f) {
+				buffers.biradiance[i] = biradiance;
+				buffers.shadowRays[i] = generateShadowRay(surfel->position, surfel->geometricNormal, lightPos);
+				buffers.shadowRayOriginalIndex[i] = i;
+				buffers.surfelShadowed[i] = false; // Simple initialization.
+			} else {
+				buffers.shadowRayOriginalIndex[i] = -1;
+				buffers.surfelShadowed[i] = true; // Mark as shadowed to avoid redundant computations.
+			}
 		},
 		!m_settings.multithreading
 	);
@@ -325,7 +369,7 @@ void RayTracer::addDirectIllumination(PathBuffers& buffers, shared_ptr<Image>& i
 		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = buffers.surfels[i];
 	
-			const bool isVisibleFromLight = !buffers.lightShadowed[i];
+			const bool isVisibleFromLight = !buffers.surfelShadowed[i];
 
 			if (isVisibleFromLight) {
 				const Vector3 surfelToLightDir = -buffers.shadowRays[i].direction();

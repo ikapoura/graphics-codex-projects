@@ -7,8 +7,6 @@
 #pragma once
 #include <G3D/G3D.h>
 
-#include <mutex>
-
 class PinholeCamera
 {
 public:
@@ -40,25 +38,31 @@ public:
 
 	void resize(size_t size);
 
+	void resizeShadows(size_t size);
+
 	void clearRedundantSurfels(float minModulationSum);
+	void clearRedundantShadows();
+
+	void postProcessShadowResults();
 
 public:
 	// x, y coordinates of the remaining surfels
 	Array<Point2int32> imageCoordinates;
-
-	Array<Biradiance3> biradiance;
-
-	Array<bool> lightShadowed;
-
 	Array<Radiance3> modulation;
-
 	Array<Ray> rays;
-	Array<Ray> shadowRays;
-
 	Array<shared_ptr<Surfel>> surfels;
+
+	// Whether a surfel is in shadow from the sampled light.
+	Array<bool> surfelShadowed;
+
+	Array<Ray> shadowRays;
+	Array<int> shadowRayOriginalIndex; // The index for each shadow ray before culling.
+	Array<bool> shadowRayResult;
+	Array<Biradiance3> biradiance;
 
 private:
 	void fastRemove(int index);
+	void fastRemoveShadows(int index);
 };
 
 class RayTracer
