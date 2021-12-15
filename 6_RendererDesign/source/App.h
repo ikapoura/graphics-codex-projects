@@ -38,10 +38,10 @@ public:
 
 	void resize(size_t size);
 
-	void resizeShadows(size_t size);
+	void resizeShadowRays(size_t size);
 
 	void clearRedundantSurfels(float minModulationSum);
-	void clearRedundantShadows();
+	void clearRedundantShadowRays();
 
 	void postProcessShadowResults();
 
@@ -108,8 +108,6 @@ private:
 		int& selectedLightIdx, float& selectedLightWeight, float& selectedLightAreaTimesPdfValue) const;
 
 	Ray generateShadowRay(const Point3& surfelPos, const Vector3& surfelGNormal, const Point3& lightPos) const;
-
-	inline Ray degenerateRay() const;
 
 private:
 	const Settings m_settings;

@@ -124,7 +124,7 @@ void PathBuffers::resize(size_t size)
 	surfelShadowed.resize(size);
 }
 
-void PathBuffers::resizeShadows(size_t size)
+void PathBuffers::resizeShadowRays(size_t size)
 {
 	shadowRays.resize(size);
 	shadowRayOriginalIndex.resize(size);
@@ -142,7 +142,7 @@ void PathBuffers::clearRedundantSurfels(float minModulationSum)
 	}
 }
 
-void PathBuffers::clearRedundantShadows()
+void PathBuffers::clearRedundantShadowRays()
 {
 	for (int i = 0; i < shadowRays.size(); i++) {
 		if (shadowRayOriginalIndex[i] == -1) {
@@ -233,11 +233,11 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 			buffers.clearRedundantSurfels(0.03f);
 
 			if (directLightsBuffer.size() > 0) {
-				buffers.resizeShadows(buffers.surfels.size());
+				buffers.resizeShadowRays(buffers.surfels.size());
 
 				sampleDirectLights(buffers, directLightsBuffer, imageSize, pathIdx, scatterIdx);
 
-				buffers.clearRedundantShadows();
+				buffers.clearRedundantShadowRays();
 
 				// If a lightShadowedBuffer value is true, that means that the corresponding surfel is hidden from the light because
 				// there is an intersection in between.
@@ -477,11 +477,6 @@ Ray RayTracer::generateShadowRay(const Point3& surfelPos, const Vector3& surfelG
 
 	Point3 shadowRayPos = lightPos + eps * lightToSurfelDir;
 	return Ray(shadowRayPos, lightToSurfelDir, 0.0f, lightToSurfelDist - eps);
-}
-
-Ray RayTracer::degenerateRay() const
-{
-	return Ray(Point3(), Vector3::unitX(), 0.0f, std::numeric_limits<float>::min());
 }
 
 Biradiance3 RayTracer::randomColorFromDirection(const Vector3& w) const
