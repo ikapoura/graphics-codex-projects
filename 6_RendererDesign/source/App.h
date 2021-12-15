@@ -47,7 +47,7 @@ public:
 
 public:
 	// x, y coordinates of the remaining surfels
-	Array<Point2int32> imageCoordinates;
+	Array<Point2> imageCoordinates;
 	Array<Radiance3> modulation;
 	Array<Ray> rays;
 	Array<shared_ptr<Surfel>> surfels;
@@ -97,7 +97,7 @@ private:
 	void rebuildTreeStructureBasedOnLastChange();
 
 	void initializeTransportPaths(const PinholeCamera& camera, const Point2int32& imageSize, int pathIdx,
-								  PathBuffers& buffers) const;
+								  PathBuffers& buffers, shared_ptr<Image>& pathWeightImage) const;
 
 	void addEmittedRadiance(PathBuffers& buffers, shared_ptr<Image>& image) const;
 	void sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<Light>>& directLightsBuffer, const Point2int32& imageSize, int pathIdx, int scatterIdx) const;

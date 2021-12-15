@@ -1,6 +1,7 @@
 /** \file App.cpp */
 #include "App.h"
 
+#include <cmath>
 #include <numeric>
 
 // Tells C++ to invoke command-line main() function even on OS X and Win32.
@@ -102,7 +103,6 @@ Ray PinholeCamera::getPrimaryRay(float x, float y, int imageWidth, int imageHeig
 
 	return Ray(P, w);
 }
-
 
 
 int PathBuffers::size() const
@@ -213,13 +213,15 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 	const Point2int32 imageSize(radianceImage->width(), radianceImage->height());
 
+	shared_ptr<Image> pathWeightImage = Image::create(imageSize.x, imageSize.y, ImageFormat::R32F());
+
 	PathBuffers buffers;
 
 	// We fully trace one path for all pixels and then move to the next.
 	for (int pathIdx = 0; pathIdx < m_settings.numLightTrasportPaths; pathIdx++) {
 		buffers.resize(imageSize.x * imageSize.y);
 
-		initializeTransportPaths(camera, imageSize, pathIdx, buffers);
+		initializeTransportPaths(camera, imageSize, pathIdx, buffers, pathWeightImage);
 
 		// The first rays we intersect are the primary rays and we know that they are close together.
 		TriTree::IntersectRayOptions rayOptions = TriTree::COHERENT_RAY_HINT;
@@ -262,7 +264,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 
 	// The final weighting of the radiance.
 	runConcurrently(Point2int32(0, 0), imageSize, [&](Point2int32 pixel) {
-		radianceImage->set(pixel, radianceImage->get<Color3>(pixel) / float(m_settings.numLightTrasportPaths));
+		radianceImage->set(pixel, radianceImage->get<Color3>(pixel) / max(0.0001f, pathWeightImage->get<Color1>(pixel).value));
 	});
 
 	stopwatch.tock();
@@ -273,7 +275,7 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 }
 
 void RayTracer::initializeTransportPaths(const PinholeCamera& camera, const Point2int32& imageSize, int pathIdx,
-	PathBuffers& buffers) const
+	PathBuffers& buffers, shared_ptr<Image>& pathWeightImage) const
 {
 	const bool isFirstPath = (pathIdx == 0);
 
@@ -287,23 +289,32 @@ void RayTracer::initializeTransportPaths(const PinholeCamera& camera, const Poin
 			const int x = i / imageSize.y;
 			const int y = i - x * imageSize.y;
 
+			float offsetX = 0.5f;
+			float offsetY = 0.5f;
+
+			// If it is the first path, we send a ray through the center of the pixel.
 			if (!isFirstPath) {
 				float offsetX = random.uniform(pixelOffsetMin, pixelOffsetMax);
 				float offsetY = random.uniform(pixelOffsetMin, pixelOffsetMax);
-
-				buffers.rays[i] = camera.getPrimaryRay(float(x) + offsetX, float(y) + offsetY, imageSize.x, imageSize.y);
-			} else {
-				// Always generate a ray through the center of the pixel.
-				buffers.rays[i] = camera.getPrimaryRay(float(x) + 0.5f, float(y) + 0.5f, imageSize.x, imageSize.y);
 			}
+
+			Point2 imgCoords(float(x) + offsetX, float(y) + offsetY);
+
+			buffers.rays[i] = camera.getPrimaryRay(imgCoords.x, imgCoords.y, imageSize.x, imageSize.y);
 
 			// Initialization
 			buffers.modulation[i] = Radiance3(1.0f);
 
-			buffers.imageCoordinates[i] = Point2int32(x, y);
+			buffers.imageCoordinates[i] = imgCoords;
 		},
 		!m_settings.multithreading
 	);
+
+	// We need the total weights that have been applied to all pixels to normalize the final value.
+	const Color1 one(1.0f);
+	for (const Point2& imgCoords : buffers.imageCoordinates) {
+		pathWeightImage->bilinearIncrement(imgCoords, one);
+	}
 }
 
 void RayTracer::addEmittedRadiance(PathBuffers& buffers, shared_ptr<Image>& image) const
@@ -317,12 +328,12 @@ void RayTracer::addEmittedRadiance(PathBuffers& buffers, shared_ptr<Image>& imag
 
 				const Vector3& wi = buffers.rays[i].direction();
 	
-				image->increment(buffers.imageCoordinates[i], surfel->emittedRadiance(-wi) * buffers.modulation[i]);
+				image->bilinearIncrement(buffers.imageCoordinates[i], surfel->emittedRadiance(-wi) * buffers.modulation[i]);
 			} else {
 				// Rays that didn't intersect anything.
-				image->increment(buffers.imageCoordinates[i], Radiance3(m_settings.environmentBrightness) * buffers.modulation[i]);
+				image->bilinearIncrement(buffers.imageCoordinates[i], Radiance3(m_settings.environmentBrightness) * buffers.modulation[i]);
 				// const Vector3& wi = buffers.rays[i].direction();
-				// image->increment(buffers.imageCoordinates[i], randomColorFromDirection(wi) * buffers.modulation[i]);
+				// image->bilinearIncrement(buffers.imageCoordinates[i], randomColorFromDirection(wi) * buffers.modulation[i]);
 			}
 		},
 		!m_settings.multithreading
@@ -335,7 +346,7 @@ void RayTracer::sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<
 		[&](int i) -> void {
 			const shared_ptr<Surfel>& surfel = buffers.surfels[i];
 
-			const int serializedPixelId = buffers.imageCoordinates[i].x * imageSize.x + buffers.imageCoordinates[i].y;
+			const int serializedPixelId = int(floor(buffers.imageCoordinates[i].x)) * imageSize.x + int(floor(buffers.imageCoordinates[i].y));
 			int pixelIdx = serializedPixelId * m_settings.maxScatterEvents + scatterIdx;
 
 			int lightIdx = 0;
@@ -378,7 +389,7 @@ void RayTracer::addDirectIllumination(PathBuffers& buffers, shared_ptr<Image>& i
 				const Color3 f = surfel->finiteScatteringDensity(surfelToLightDir, -buffers.rays[i].direction());
 				const Color3 cosFactor = Color3(fabs(surfelToLightDir.dot(surfelNormal)));
 
-				image->increment(buffers.imageCoordinates[i], buffers.biradiance[i] * f * cosFactor * buffers.modulation[i]);
+				image->bilinearIncrement(buffers.imageCoordinates[i], buffers.biradiance[i] * f * cosFactor * buffers.modulation[i]);
 			}
 		},
 		!m_settings.multithreading
@@ -524,9 +535,9 @@ void App::onInit()
 
 #       ifndef G3D_DEBUG
 		// "G3D Debug Teapot"
-		"G3D Simple Cornell Box (One Light)" // Load something simple
+		"G3D Simple Cornell Box (Spheres)" // Load something simple
 #       else
-		"G3D Simple Cornell Box (One Light)" // Load something simple
+		"G3D Simple Cornell Box (Spheres)" // Load something simple
 #       endif
 	);
 
