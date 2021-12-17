@@ -68,4 +68,17 @@ Below are some renderings that were produced from this project along the setting
 |:-:|
 
 ## 6. Renderer design
-A lot of optimizations in the Paths project and probably fog.
+This project is split in two parts: one is the optimizations and the second is the fog.
+
+For the optimizations, we can see almost a 2x speedup but with some visual artifacts in certain cases. The optimizations were focused on removing unecessary work in the ray tracing department such as:
+- stopping any transport paths with a very small modulation value,
+- culling lights with zero contribution and degenerate shadow rays,
+- use of bilinearIncrement so that a path contributes to a quad of pixels instead of only one.
+
+The use of bilinearIncrement is the one that introduces the artifacts which you can see below. I provide a before and after the optimizations images and another one highlighting the differences.
+
+|<img width="1280" height="300" alt="Breakfast room before" src="https://user-images.githubusercontent.com/40468844/146609424-9779488b-c093-4ebd-8ce9-cbf60bfab23b.png"> Before the optimization | <img width="1280" height="300" alt="Breakfast room after" src="https://user-images.githubusercontent.com/40468844/146609422-9195e9c9-b1a9-46d3-90da-ddc5ce7529d6.png"> After the optimization |
+|:-:|:-:|
+
+|<img width="1024" height="562" alt="Breakfast room diff" src="https://user-images.githubusercontent.com/40468844/146609608-eeac3389-76d0-4fc8-bdf2-9752738a9d41.png"> <p>The differences between the above images</p>|
+|:-:|
