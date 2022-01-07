@@ -81,7 +81,7 @@ public:
 #else
 		bool multithreading{ false };
 #endif
-		float participatingMediumDensity{ 0.1f };
+		float participatingMediumDensity{ 0.01f };
 		float environmentBrightness{ 0.0f };
 		GuiDropDownList* resolutionList{ nullptr };
 	};
