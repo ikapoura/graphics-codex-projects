@@ -1,6 +1,8 @@
 /** \file App.cpp */
 #include "App.h"
 
+#include "FogSurfel.h"
+
 #include <cmath>
 #include <numeric>
 
@@ -229,6 +231,8 @@ chrono::milliseconds RayTracer::traceImage(const shared_ptr<Camera>& activeCamer
 		for (int scatterIdx = 0; scatterIdx < m_settings.maxScatterEvents && !buffers.empty(); scatterIdx++) {
 			m_sceneTriTree->intersectRays(buffers.rays, buffers.surfels, rayOptions);
 
+			processParticipatingMedium(buffers.rays, buffers.surfels, m_settings.participatingMediumDensity);
+
 			addEmittedRadiance(buffers, radianceImage);
 
 			// We cull after the emitted radiance to have some default contribution from the rays that didn't hit anything.
@@ -315,6 +319,35 @@ void RayTracer::initializeTransportPaths(const PinholeCamera& camera, const Poin
 	for (const Point2& imgCoords : buffers.imageCoordinates) {
 		pathWeightImage->bilinearIncrement(imgCoords, one);
 	}
+}
+
+// The general idea is articulated in:
+// https://computergraphics.stackexchange.com/questions/227/how-are-volumetric-effects-handled-in-raytracing
+// We only provide a coefficient for scattering and ignore absorbing of rays, i.e. the particles always scatter an incoming ray.
+void RayTracer::processParticipatingMedium(Array<Ray>& rays, Array<shared_ptr<Surfel>>& surfels, float participatingMediumDensity) const
+{
+	const float e = 2.718281828;
+
+	runConcurrently(0, surfels.size(),
+		[&](int i) -> void {
+			Random& rng = Random::threadCommon();
+
+			if (surfels[i]) {
+				float t = (rays[i].origin() - surfels[i]->position).length();
+				float hitProbability = 1.0f - std::powf(e, -t * participatingMediumDensity);
+
+				float tmpProbability = rng.uniform(0.0, 1.0);
+				if (tmpProbability <= hitProbability) {
+					shared_ptr<FogSurfel> newSurfel = std::make_shared<FogSurfel>();
+					newSurfel->position = rays[i].origin() + rays[i].direction() * (t * tmpProbability);
+					rng.sphere(newSurfel->geometricNormal.x, newSurfel->geometricNormal.y, newSurfel->geometricNormal.z);
+					newSurfel->shadingNormal = newSurfel->geometricNormal;
+
+					surfels[i] = newSurfel;
+				}
+			}
+		}
+	);
 }
 
 void RayTracer::addEmittedRadiance(PathBuffers& buffers, shared_ptr<Image>& image) const
@@ -813,6 +846,9 @@ void App::makeGUI()
 	GuiNumberBox<float>* envBrightnessSlider = raytracePane->addNumberBox<float>("Environment brightness", &m_rayTraceSettings.environmentBrightness, "", GuiTheme::LINEAR_SLIDER, 0.0f, 1000.0f);
 	envBrightnessSlider->setWidth(340.0F);
 	envBrightnessSlider->setCaptionWidth(200.0F);
+	GuiNumberBox<float>* participatingMediumDensitySlider = raytracePane->addNumberBox<float>("Participating medium density", &m_rayTraceSettings.participatingMediumDensity, "", GuiTheme::LINEAR_SLIDER, 0.0f, 1.0f);
+	participatingMediumDensitySlider->setWidth(340.0F);
+	participatingMediumDensitySlider->setCaptionWidth(200.0F);
 	raytracePane->addButton("Render", this, &App::render);
 	raytracePane->pack();
 	raytracePane->moveRightOf(rendererPane, 10);

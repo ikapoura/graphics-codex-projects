@@ -81,6 +81,7 @@ public:
 #else
 		bool multithreading{ false };
 #endif
+		float participatingMediumDensity{ 0.1f };
 		float environmentBrightness{ 0.0f };
 		GuiDropDownList* resolutionList{ nullptr };
 	};
@@ -98,6 +99,8 @@ private:
 
 	void initializeTransportPaths(const PinholeCamera& camera, const Point2int32& imageSize, int pathIdx,
 								  PathBuffers& buffers, shared_ptr<Image>& pathWeightImage) const;
+
+	void processParticipatingMedium(Array<Ray>& rays, Array<shared_ptr<Surfel>>& surfels, float participatingMediumDensity) const;
 
 	void addEmittedRadiance(PathBuffers& buffers, shared_ptr<Image>& image) const;
 	void sampleDirectLights(PathBuffers& buffers, const Array<shared_ptr<Light>>& directLightsBuffer, const Point2int32& imageSize, int pathIdx, int scatterIdx) const;
