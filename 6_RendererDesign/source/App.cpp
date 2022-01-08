@@ -336,10 +336,9 @@ void RayTracer::processParticipatingMedium(Array<Ray>& rays, Array<shared_ptr<Su
 				float t = (rays[i].origin() - surfels[i]->position).length();
 				float hitProbability = 1.0f - std::powf(e, -t * participatingMediumDensity);
 
-				float tmpProbability = rng.uniform(0.0, 1.0);
-				if (tmpProbability <= hitProbability) {
+				if (rng.uniform(0.0, 1.0) <= hitProbability) {
 					shared_ptr<FogSurfel> newSurfel = std::make_shared<FogSurfel>();
-					newSurfel->position = rays[i].origin() + rays[i].direction() * (t * tmpProbability);
+					newSurfel->position = rays[i].origin() + rays[i].direction() * (t * rng.uniform(0.001, 1.0));
 					rng.sphere(newSurfel->geometricNormal.x, newSurfel->geometricNormal.y, newSurfel->geometricNormal.z);
 					newSurfel->shadingNormal = newSurfel->geometricNormal;
 
@@ -447,7 +446,6 @@ void RayTracer::scatterRays(PathBuffers& buffers) const
 
 			buffers.rays[i] = Ray(P, scatterDir);
 			buffers.modulation[i] *= scatterWeight;
-
 		},
 		!m_settings.multithreading
 	);
