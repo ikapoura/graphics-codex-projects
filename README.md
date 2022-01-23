@@ -82,3 +82,26 @@ The use of bilinearIncrement is the one that introduces the artifacts which you 
 
 |<img width="1024" height="562" alt="Breakfast room diff" src="https://user-images.githubusercontent.com/40468844/146609608-eeac3389-76d0-4fc8-bdf2-9752738a9d41.png"> <p>The differences between the above images</p>|
 |:-:|
+
+For the fog part, I proceeded with a naive implementation where for each transport path's rays:
+- we intersect it with the scene as we normally would,
+- we produce a probability to hit a particle based on the distance that it will travel,
+- we generate a random number and see if there is indeed an intersection with a particle,
+    - if there is no intersection with a particle, we continue normally,
+    - if there is intersection:
+        - we generate another random number (0, ray_length) to determine the position of the particle along the ray’s direction,
+        - we replace the previous ray with a new random ray on the unit sphere around the particle,
+        - we replace the previous surfel with the particle,
+- we continue with the shading as normal.
+
+Below you can see some generated images with the uniform medium implemented. The noisy images stem from the fact that we use a lot of uniform random numbers and we don’t perform any importance sampling for the scatter directions. As the number of scatter events and transport paths increases, so does the noise is reduced. Still, the rendering times are high because everything is running on the CPU.
+
+|<img width="1280" height="300" alt="San miguel 'wintery'" src="https://user-images.githubusercontent.com/40468844/150672112-3c0193a3-0101-4911-ad2e-fb42d2771794.png"> 512 paths, 12 scatter events, 41m time | <img width="1280" height="300" alt="San miguel cold noon" src="https://user-images.githubusercontent.com/40468844/150672165-51636098-c638-4e06-b1c9-d10a1b4ac060.png"> 2048 paths, 16 scatter events, 2h23m time |
+|:-:|:-:|
+
+|<img width="1024" height="562" alt="Breakfast room diff" src="https://user-images.githubusercontent.com/40468844/150672187-dd3bdbff-4c91-45a7-8b2f-04fad3df2c13.png"> 4096 paths, 32 scatter events, 8h15m time |
+|:-:|
+
+
+
+
