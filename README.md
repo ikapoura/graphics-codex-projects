@@ -90,9 +90,9 @@ For the fog part, I proceeded with a naive implementation where for each transpo
     - if there is no intersection with a particle, we continue normally,
     - if there is intersection:
         - we generate another random number (0, ray_length) to determine the position of the particle along the ray’s direction,
-        - we replace the previous ray with a new random ray on the unit sphere around the particle,
         - we replace the previous surfel with the particle,
-- we continue with the shading as normal.
+- we continue with the shading as normal,
+- when the scattering is calculated, we generate a new random ray on the unit sphere around the intersected particles.
 
 Below you can see some generated images with the uniform medium implemented. The noisy images stem from the fact that we use a lot of uniform random numbers and we don’t perform any importance sampling for the scatter directions. As the number of scatter events and transport paths increases, so does the noise is reduced. Still, the rendering times are high because everything is running on the CPU.
 
@@ -101,7 +101,3 @@ Below you can see some generated images with the uniform medium implemented. The
 
 |<img width="1024" height="562" alt="Breakfast room diff" src="https://user-images.githubusercontent.com/40468844/150672187-dd3bdbff-4c91-45a7-8b2f-04fad3df2c13.png"> 4096 paths, 32 scatter events, 8h15m time |
 |:-:|
-
-
-
-
