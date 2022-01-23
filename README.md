@@ -101,3 +101,5 @@ Below you can see some generated images with the uniform medium implemented. The
 
 |<img width="1024" height="562" alt="Breakfast room diff" src="https://user-images.githubusercontent.com/40468844/150672187-dd3bdbff-4c91-45a7-8b2f-04fad3df2c13.png"> 4096 paths, 32 scatter events, 8h15m time |
 |:-:|
+
+## 7. Ray marching on the GPU
