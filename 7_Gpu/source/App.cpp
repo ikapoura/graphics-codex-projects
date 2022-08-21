@@ -21,6 +21,7 @@ void App::onInit()
 	GApp::onInit();
 
 	setFrameDuration(1.0f / 60.0f);
+	setLowerFrameRateInBackground(false);
 	showRenderingStats = false;
 
 	developerWindow->sceneEditorWindow->setVisible(false);
@@ -87,7 +88,11 @@ void App::onGraphics3D(RenderDevice* rd, Array<shared_ptr<Surface> >& allSurface
 				"trace-venice.pix"
 			);
 
-		LAUNCH_SHADER(shaderFile, args);
+		// TODO: This reloads the shader in EVERY FRAME to enable automatic shader reloading.
+		// Replace LAUNCH_SHADER_PTR with LAUNCH_SHADER to measure performance and actually ship.
+		const shared_ptr<G3D::Shader> shader = G3D::Shader::getShaderFromPattern(shaderFile);
+		LAUNCH_SHADER_PTR_WITH_HINT(shader, args, "");
+		// LAUNCH_SHADER(shaderFile, args);
 
 		// Post-process special effects
 		m_depthOfField->apply(rd, m_framebuffer->texture(0),
