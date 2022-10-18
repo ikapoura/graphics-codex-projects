@@ -41,6 +41,11 @@ void App::onInit()
 	}
 
 	debugCamera()->setFieldOfViewAngle(40 * units::degrees());
+
+	// Disable needless post-processing.
+	debugCamera()->filmSettings().setAntialiasingEnabled(false);
+	debugCamera()->filmSettings().setVignetteSizeFraction(0.0f);
+	debugCamera()->filmSettings().setBloomStrength(0.0f);
 }
 
 
