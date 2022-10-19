@@ -1,77 +1,131 @@
 #version 410 // -*- c++ -*-
 #include <g3dmath.glsl>
 #include <Texture/Texture.glsl>
+#include "Surfel.glsl"
 
 // Input arguments from the C++ program
-uniform mat4x3         cameraToWorldMatrix;
+uniform mat4x3 cameraToWorldMatrix;
 
-uniform TextureCube    environmentMap;
+uniform TextureCube	environmentMap;
 
-uniform float          tanHalfFieldOfViewY;
-uniform float          projectionMatrix22, projectionMatrix23;
+uniform float tanHalfFieldOfViewY;
+uniform float projectionMatrix22, projectionMatrix23;
 
 // Output to the App::m_framebuffer
 out Color3 pixelColor;
 
 
-float sceneDistance(Point3 X) {
-    const Point3  C = Point3(0,0,0);
-    const float   r = 1.0;
 
-    // Replace this with a union of the objects in the scene.  You
-    // don't necessarily need an explicit list of separate surfaces in
-    // the way that the analytic tracer does.
-    //
-    // Think about how to change the API so that the closest surface
-    // in a union sets the material. For that, some For intersection,
-    // blending, and subtraction, whichever surface dominates the
-    // distance computation should set the material.
+float sceneDistance(Point3 X)
+{
+	const Point3  C = Point3(0,0,0);
+	const float   r = 1.0;
 
-    return length(X - C) - r;
+	return length(X - C) - r;
 }
+
+
+
+float sceneDistance(Point3 X, inout Material closestMaterial)
+{
+	const Point3  C = Point3(0,0,0);
+	const float   r = 1.0;
+
+	// Replace this with a union of the objects in the scene.  You
+	// don't necessarily need an explicit list of separate surfaces in
+	// the way that the analytic tracer does.
+	//
+	// Think about how to change the API so that the closest surface
+	// in a union sets the material. For that, some For intersection,
+	// blending, and subtraction, whichever surface dominates the
+	// distance computation should set the material.
+
+	closestMaterial.color = Color3(0.7f, 0.0f, 0.0f);
+
+	return length(X - C) - r;
+}
+
+
+
+Vector3 fastNormal(Point3 X)
+{
+	const float e = 1e-4f;
+	float d = sceneDistance(X);
+
+	return normalize(Vector3(
+			sceneDistance(X + Vector3(e, 0, 0)),
+			sceneDistance(X + Vector3(0, e, 0)),
+			sceneDistance(X + Vector3(0, 0, e))) - Vector3(d, d, d));
+}
+
+
+
+Radiance3 lambertianBrdf(Material material)
+{
+	return Radiance3(material.color / 3.14f);
+}
+
+
+
+Radiance3 shadeSurfel(Surfel surfel)
+{
+	vec3 sunRadiance = vec3(1.0f, 0.0f, 0.5f);
+	vec3 sunDirection = normalize(vec3(1.0f, 1.0f, 1.0f));
+
+	return lambertianBrdf(surfel.material) * dot(sunDirection, surfel.normal);
+}
+
 
 
 Radiance3 traceRay(Point3 P, Vector3 w) {
-    const float maxDistance   = 1e10;
-    const int   maxIterations = 100;
-    const float closeEnough   = 1e-2;
-    float t = 0;
-    for (int i = 0; i < maxIterations; ++i) {
-        float dt = sceneDistance(P + w * t);
-        t += dt;
-        if (dt < closeEnough) {
-            return Radiance3(1, 1, 0);
-        }
-    }
-    return sampleTexture(environmentMap, w).rgb;
+	const float maxDistance   = 1e10;
+	const int   maxIterations = 100;
+	const float closeEnough   = 1e-2;
+
+	float t = 0;
+	Surfel closestSurfel;
+
+	for (int i = 0; i < maxIterations; ++i) {
+		float dt = sceneDistance(P + w * t, closestSurfel.material);
+		t += dt;
+
+		if (dt < closeEnough) {
+			closestSurfel.position = P + w * t;
+			closestSurfel.normal = fastNormal(closestSurfel.position);
+
+			return shadeSurfel(closestSurfel);
+		}
+	}
+	return sampleTexture(environmentMap, w).rgb;
 }
 
 
+
 void main() {
-    // Generate an eye ray in camera space, and then transform to world space
+	// Generate an eye ray in camera space, and then transform to world space
 
-    // Primary ray origin    
-    Point3 P  = cameraToWorldMatrix[3];
+	// Primary ray origin	
+	Point3 P  = cameraToWorldMatrix[3];
 
-    // Primary ray direction
-    Vector3 w = Matrix3(cameraToWorldMatrix) * 
-        normalize(Vector3((gl_FragCoord.xy - g3d_FragCoordExtent / 2.0) * Vector2(1, -1),
-                          g3d_FragCoordExtent.y / ( -2.0 * tanHalfFieldOfViewY)));
+	// Primary ray direction
+	Vector3 w = Matrix3(cameraToWorldMatrix) * 
+		normalize(Vector3((gl_FragCoord.xy - g3d_FragCoordExtent / 2.0) * Vector2(1, -1),
+						  g3d_FragCoordExtent.y / ( -2.0 * tanHalfFieldOfViewY)));
 
-    float maxDist = inf;       
+	float maxDist = inf;	   
 
-    //////////////////////////////////////
+	//////////////////////////////////////
 
-    // Render the scene here
+	// Render the scene here
 
-    pixelColor = traceRay(P, w);
+	pixelColor = traceRay(P, w);
 
-    //////////////////////////////////////
-     
-    // Camera space z value
-    float csZ = maxDist / w.z;
-    
-    // Pack into standard OpenGL depth buffer format to make the result compatible
-    // with rasterization and post-processing.
-    gl_FragDepth = (maxDist == inf) ? 1.0 : ((projectionMatrix22 * csZ + projectionMatrix23) / -csZ);
+	//////////////////////////////////////
+	 
+	// Camera space z value
+	float csZ = maxDist / w.z;
+	
+	// Pack into standard OpenGL depth buffer format to make the result compatible
+	// with rasterization and post-processing.
+	gl_FragDepth = (maxDist == inf) ? 1.0 : ((projectionMatrix22 * csZ + projectionMatrix23) / -csZ);
 }
