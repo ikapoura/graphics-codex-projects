@@ -18,6 +18,12 @@ struct CappedCylinder {
 	float  radius;
 };
 
+struct RotatedCappedCylinder {
+	Point3 center;
+	float  height;
+	float  radius;
+};
+
 struct VerticalCapsule {
 	Point3 center;
 	float  height;
@@ -54,7 +60,21 @@ float opDist(Point3 X, Box box)
 float opDist(Point3 X, CappedCylinder cylinder)
 {
 	// https://iquilezles.org/articles/distfunctions/
-	vec3 normalizedX = X - cylinder.center;
+	Point3 normalizedX = X - cylinder.center;
+
+	vec2 d = abs(vec2(length(normalizedX.xz), normalizedX.y)) - vec2(cylinder.height, cylinder.radius);
+	return min(max(d.x, d.y), 0.0f) + length(max(d, 0.0f));
+}
+
+float opDist(Point3 X, RotatedCappedCylinder cylinder)
+{
+	// https://iquilezles.org/articles/distfunctions/
+	Point3 normalizedX = X - cylinder.center;
+
+	float tmpY = normalizedX.y;
+
+	normalizedX.y = -normalizedX.z;
+	normalizedX.z = tmpY;
 
 	vec2 d = abs(vec2(length(normalizedX.xz), normalizedX.y)) - vec2(cylinder.height, cylinder.radius);
 	return min(max(d.x, d.y), 0.0f) + length(max(d, 0.0f));
