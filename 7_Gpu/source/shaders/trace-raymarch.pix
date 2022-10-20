@@ -113,25 +113,21 @@ float opIntersectionSmooth(float dist1, Material material1, float dist2, Materia
 
 float opSubtraction(float dist1, Material material1, float dist2, Material material2, inout Material selectedMaterial)
 {
-	if (dist1 > -dist2) {
-		selectedMaterial = material1;
-		return dist1;
-	}
+	selectedMaterial = material1;
 
-	selectedMaterial = material2;
-	return dist2;
+	if (dist1 > -dist2) {
+		return dist1;
+	} else {
+		return -dist2;
+	}
 }
 
 float opSubtractionSmooth(float dist1, Material material1, float dist2, Material material2, float blendRadius, inout Material selectedMaterial)
 {
-	if (dist1 > -dist2) {
-		selectedMaterial = material1;
-	} else {
-		selectedMaterial = material2;
-	}
+	selectedMaterial = material1;
 
-	float c = clamp(0.5f - 0.5f * (dist2 + dist1) / blendRadius, 0.0f, 1.0f);
-	return mix(dist2, -dist1, c ) + blendRadius * c * (1.0f - c);
+	float c = clamp(0.5f - 0.5f * (dist1 + dist2) / blendRadius, 0.0f, 1.0f);
+	return mix(dist1, -dist2, c ) + blendRadius * c * (1.0f - c);
 }
 
 
@@ -144,7 +140,7 @@ float randomObject(Point3 X, inout Material material)
 	// return opIntersection(
 	// return opSubtraction(
 	return opUnion(
-		opIntersectionSmooth(
+		opSubtractionSmooth(
 			opDist(X, Sphere(Point3(0.2f, 1.0f, -1.0f), 0.4f)),
 			Material(Color3(0.5f, 0.0f, 0.5f), 0.0f, 0.0f, 0.0f),
 
