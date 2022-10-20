@@ -72,6 +72,7 @@ float opUnion(float dist1, Material material1, float dist2, Material material2, 
 
 float opUnionSmooth(float dist1, Material material1, float dist2, Material material2, float blendRadius, inout Material selectedMaterial)
 {
+	// https://iquilezles.org/articles/distfunctions/
 	if (dist1 < dist2) {
 		selectedMaterial = material1;
 	} else {
@@ -93,6 +94,19 @@ float opIntersection(float dist1, Material material1, float dist2, Material mate
 
 	selectedMaterial = material2;
 	return dist2;
+}
+
+float opIntersectionSmooth(float dist1, Material material1, float dist2, Material material2, float blendRadius, inout Material selectedMaterial)
+{
+	// https://iquilezles.org/articles/distfunctions/
+	if (dist1 > dist2) {
+		selectedMaterial = material1;
+	} else {
+		selectedMaterial = material2;
+	}
+
+	float c = clamp(0.5f - 0.5f * (dist2 - dist1) / blendRadius, 0.0f, 1.0f);
+	return mix(dist2, dist1, c) + blendRadius * c * (1.0f - c);
 }
 
 
@@ -118,7 +132,7 @@ float randomObject(Point3 X, inout Material material)
 	// return opIntersection(
 	// return opSubtraction(
 	return opUnion(
-		opUnionSmooth(
+		opIntersectionSmooth(
 			opDist(X, Sphere(Point3(0.2f, 1.0f, -1.0f), 0.4f)),
 			Material(Color3(0.5f, 0.0f, 0.5f), 0.0f, 0.0f, 0.0f),
 
