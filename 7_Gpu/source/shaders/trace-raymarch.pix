@@ -36,6 +36,11 @@ struct VerticalCapsule {
 	float  radius;
 };
 
+struct Ellipsoid {
+	Point3 center;
+	vec3 radius;
+};
+
 // Input arguments from the C++ program
 uniform mat4x3 cameraToWorldMatrix;
 
@@ -95,10 +100,22 @@ float opDist(Point3 X, RotatedCappedCylinder cylinder)
 
 float opDist(Point3 X, VerticalCapsule capsule)
 {
+	// https://iquilezles.org/articles/distfunctions/
 	Point3 normalizedX = X - capsule.center;
 
 	normalizedX.y -= clamp(normalizedX.y, 0.0f, capsule.height);
 	return length(normalizedX) - capsule.radius;
+}
+
+float opDist(Point3 X, Ellipsoid ellipsoid)
+{
+	// https://iquilezles.org/articles/distfunctions/
+	Point3 normalizedX = X - ellipsoid.center;
+
+	float k0 = length(normalizedX / ellipsoid.radius);
+	float k1 = length(normalizedX / (ellipsoid.radius * ellipsoid.radius));
+
+	return k0 * (k0 - 1.0f) / k1;
 }
 
 
