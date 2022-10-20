@@ -8,6 +8,12 @@ struct Sphere {
 	float  radius;
 };
 
+struct CappedCylinder {
+	Point3 center; // Could add a mat4x3 here but ignore rotations for now
+	float  height;
+	float  radius;
+};
+
 // Input arguments from the C++ program
 uniform mat4x3 cameraToWorldMatrix;
 
@@ -26,6 +32,13 @@ float opDist(Point3 X, Sphere sphere)
 	return length(X - sphere.center) - sphere.radius;
 }
 
+float opDist(Point3 X, CappedCylinder cylinder)
+{
+	// https://iquilezles.org/articles/distfunctions/
+	vec3 normalizedX = X - cylinder.center;
+
+	vec2 d = abs(vec2(length(normalizedX.xz), normalizedX.y)) - vec2(cylinder.height, cylinder.radius);
+	return min(max(d.x, d.y), 0.0f) + length(max(d, 0.0f));
 }
 
 
@@ -74,10 +87,17 @@ float randomObject(Point3 X, inout Material material)
 	// return opIntersection(
 	// return opSubtraction(
 	return opUnion(
-		opDist(X, Sphere(Point3(0.2f, 1.0f, -1.0f), 0.4f)),
-		Material(Color3(0.5f, 0.0f, 0.5f), 0.0f, 0.0f, 0.0f),
+		opUnion(
+			opDist(X, Sphere(Point3(0.2f, 1.0f, -1.0f), 0.4f)),
+			Material(Color3(0.5f, 0.0f, 0.5f), 0.0f, 0.0f, 0.0f),
 
-		opDist(X, Sphere(Point3(-0.2f, 1.0f, -1.0f), 0.4f)),
+			opDist(X, Sphere(Point3(-0.2f, 1.0f, -1.0f), 0.4f)),
+			Material(Color3(0.0f, 0.5f, 0.5f), 0.0f, 0.0f, 0.0f),
+
+			material),
+		material,
+
+		opDist(X, CappedCylinder(Point3(0.0f, 1.0f, 0.0f), 1.0f, 0.3f)),
 		Material(Color3(0.0f, 0.5f, 0.5f), 0.0f, 0.0f, 0.0f),
 
 		material);
