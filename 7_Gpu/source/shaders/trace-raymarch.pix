@@ -251,6 +251,28 @@ Vector3 fastNormal(Point3 X)
 
 
 
+bool hasIntersection(Point3 P, Vector3 w)
+{
+	const float maxDistance   = 1e10f;
+	const int   maxIterations = 100;
+	const float closeEnough   = 1e-2f;
+
+	float t = 0.0f;
+	Surfel closestSurfel;
+
+	for (int i = 0; i < maxIterations; ++i) {
+		float dt = sceneDistance(P + w * t, closestSurfel.material);
+		t += dt;
+
+		if (dt < closeEnough) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
 Radiance3 lambertianBrdf(Material material)
 {
 	return Radiance3(material.color / 3.14f);
@@ -261,21 +283,28 @@ Radiance3 lambertianBrdf(Material material)
 Radiance3 shadeSurfel(Surfel surfel)
 {
 	vec3 sunRadiance = vec3(1.0f);
-	vec3 sunDirection = normalize(vec3(-1.0f, -1.0f, -1.0f));
+	vec3 sunDirection = normalize(vec3(1.0f, -1.0f, -1.0f));
 
-	vec3 direct = lambertianBrdf(surfel.material) * sunRadiance * max(dot(-sunDirection, surfel.normal), 0.0f);
+	vec3 direct = vec3(0.0f);
+	
+	if (!hasIntersection(surfel.position + surfel.normal * 0.1f, -sunDirection)) {
+		direct += lambertianBrdf(surfel.material) * sunRadiance * max(dot(-sunDirection, surfel.normal), 0.0f);
+	}
+
 	vec3 ambient = 0.3f * surfel.material.color;
+
 	return direct + ambient;
 }
 
 
 
-Radiance3 traceRay(Point3 P, Vector3 w) {
-	const float maxDistance   = 1e10;
+Radiance3 traceRay(Point3 P, Vector3 w)
+{
+	const float maxDistance   = 1e10f;
 	const int   maxIterations = 100;
-	const float closeEnough   = 1e-2;
+	const float closeEnough   = 1e-2f;
 
-	float t = 0;
+	float t = 0.0f;
 	Surfel closestSurfel;
 
 	for (int i = 0; i < maxIterations; ++i) {
