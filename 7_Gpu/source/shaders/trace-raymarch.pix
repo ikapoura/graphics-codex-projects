@@ -88,10 +88,10 @@ float randomObject(Point3 X, inout Material material)
 	return opUnion(X,
 				   Sphere(Point3(0.2f, 1.0f, -1.0f),
 						  0.4f,
-						  Material(Color3(0.5f, 0.0f, 5.0f), 0.0f, 0.0f, 0.0f)),
+						  Material(Color3(0.5f, 0.0f, 0.5f), 0.0f, 0.0f, 0.0f)),
 				   Sphere(Point3(-0.2f, 1.0f, -1.0f),
 						  0.4f,
-						  Material(Color3(0.0f, 0.5f, 5.0f), 0.0f, 0.0f, 0.0f)),
+						  Material(Color3(0.0f, 0.5f, 0.5f), 0.0f, 0.0f, 0.0f)),
 				   material);
 }
 
