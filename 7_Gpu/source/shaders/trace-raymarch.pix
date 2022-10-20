@@ -8,6 +8,10 @@ struct Sphere {
 	float  radius;
 };
 
+struct Box {
+	Point3 center;
+	vec3   size;
+};
 struct CappedCylinder {
 	Point3 center;
 	float  height;
@@ -36,6 +40,15 @@ out Color3 pixelColor;
 float opDist(Point3 X, Sphere sphere)
 {
 	return length(X - sphere.center) - sphere.radius;
+}
+
+float opDist(Point3 X, Box box)
+{
+	// https://iquilezles.org/articles/distfunctions/
+	Point3 normalizedX = X - box.center;
+	
+	vec3 q = abs(normalizedX) - box.size;
+	return length(max(q, 0.0f)) + min(max(q.x, max(q.y, q.z)), 0.0f);
 }
 
 float opDist(Point3 X, CappedCylinder cylinder)
