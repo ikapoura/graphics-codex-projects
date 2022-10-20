@@ -22,11 +22,11 @@ void fillScene()
 {
 	spheres[0].center = Point3(1.0f, 0.0f, -1.0f);
 	spheres[0].radius = 0.8f;
-	spheres[0].material.color = Color3(0.7f, 0.0f, 0.0f);
+	spheres[0].material.color = Color3(0.5f, 0.0f, 0.0f);
 
 	spheres[1].center = Point3(-1.0f, 0.0f, -1.0f);
 	spheres[1].radius = 0.6f;
-	spheres[1].material.color = Color3(0.0f, 0.7f, 0.0f);
+	spheres[1].material.color = Color3(0.0f, 0.5f, 0.0f);
 }
 
 float sceneDistance(Point3 X)
@@ -86,10 +86,12 @@ Radiance3 lambertianBrdf(Material material)
 
 Radiance3 shadeSurfel(Surfel surfel)
 {
-	vec3 sunRadiance = vec3(1.0f, 0.0f, 0.5f);
-	vec3 sunDirection = normalize(vec3(0.1f, 1.0f, 1.0f));
+	vec3 sunRadiance = vec3(1.0f);
+	vec3 sunDirection = normalize(vec3(-1.0f, -1.0f, -1.0f));
 
-	return lambertianBrdf(surfel.material) * dot(sunDirection, surfel.normal);
+	vec3 direct = lambertianBrdf(surfel.material) * sunRadiance * dot(-sunDirection, surfel.normal);
+	vec3 ambient = 0.3f * surfel.material.color;
+	return direct + ambient;
 }
 
 
