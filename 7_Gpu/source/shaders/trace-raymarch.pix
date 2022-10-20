@@ -119,6 +119,14 @@ float opDist(Point3 X, Ellipsoid ellipsoid)
 }
 
 
+float opUnion(float dist1, float dist2)
+{
+	if (dist1 < dist2) {
+		return dist1;
+	}
+
+	return dist2;
+}
 
 float opUnion(float dist1, Material material1, float dist2, Material material2, inout Material selectedMaterial)
 {
@@ -132,6 +140,12 @@ float opUnion(float dist1, Material material1, float dist2, Material material2, 
 }
 
 
+float opUnionSmooth(float dist1,float dist2,float blendRadius)
+{
+	// https://iquilezles.org/articles/distfunctions/
+	float c = saturate(0.5f + (dist2 - dist1) * (0.5f / blendRadius));
+	return mix(dist2, dist1, c) - blendRadius * c * (1.0f - c);
+}
 
 float opUnionSmooth(float dist1, Material material1, float dist2, Material material2, float blendRadius, inout Material selectedMaterial)
 {
@@ -147,6 +161,14 @@ float opUnionSmooth(float dist1, Material material1, float dist2, Material mater
 }
 
 
+float opIntersection(float dist1, float dist2)
+{
+	if (dist1 > dist2) {
+		return dist1;
+	}
+
+	return dist2;
+}
 
 float opIntersection(float dist1, Material material1, float dist2, Material material2, inout Material selectedMaterial)
 {
@@ -157,6 +179,13 @@ float opIntersection(float dist1, Material material1, float dist2, Material mate
 
 	selectedMaterial = material2;
 	return dist2;
+}
+
+float opIntersectionSmooth(float dist1, float dist2, float blendRadius)
+{
+	// https://iquilezles.org/articles/distfunctions/
+	float c = clamp(0.5f - 0.5f * (dist2 - dist1) / blendRadius, 0.0f, 1.0f);
+	return mix(dist2, dist1, c) + blendRadius * c * (1.0f - c);
 }
 
 float opIntersectionSmooth(float dist1, Material material1, float dist2, Material material2, float blendRadius, inout Material selectedMaterial)
@@ -174,10 +203,8 @@ float opIntersectionSmooth(float dist1, Material material1, float dist2, Materia
 
 
 
-float opSubtraction(float dist1, Material material1, float dist2, Material material2, inout Material selectedMaterial)
+float opSubtraction(float dist1, float dist2)
 {
-	selectedMaterial = material1;
-
 	if (dist1 > -dist2) {
 		return dist1;
 	} else {
@@ -185,10 +212,8 @@ float opSubtraction(float dist1, Material material1, float dist2, Material mater
 	}
 }
 
-float opSubtractionSmooth(float dist1, Material material1, float dist2, Material material2, float blendRadius, inout Material selectedMaterial)
+float opSubtractionSmooth(float dist1, float dist2, float blendRadius)
 {
-	selectedMaterial = material1;
-
 	float c = clamp(0.5f - 0.5f * (dist1 + dist2) / blendRadius, 0.0f, 1.0f);
 	return mix(dist1, -dist2, c ) + blendRadius * c * (1.0f - c);
 }
@@ -205,15 +230,10 @@ float randomObject(Point3 X, inout Material material)
 	return opUnion(
 		opSubtractionSmooth(
 			opDist(X, Sphere(Point3(0.2f, 1.0f, -1.0f), 0.4f)),
-			Material(Color3(0.5f, 0.0f, 0.5f), 0.0f, 0.0f, 0.0f),
-
 			opDist(X, Sphere(Point3(-0.2f, 1.0f, -1.0f), 0.4f)),
-			Material(Color3(0.0f, 0.5f, 0.5f), 0.0f, 0.0f, 0.0f),
-
-			0.2f,
-
-			material),
-		material,
+			0.2f
+		),
+		Material(Color3(0.5f, 0.0f, 0.5f), 0.0f, 0.0f, 0.0f),
 
 		opDist(X, VerticalCapsule(Point3(1.0f, 0.0f, 0.0f), 1.0f, 0.3f)),
 		Material(Color3(0.0f, 0.5f, 0.5f), 0.0f, 0.0f, 0.0f),
@@ -228,7 +248,7 @@ float sceneDistance(Point3 X, inout Material closestMaterial)
 	float sceneDist = 10000000.0f;
 
 	Material objectMaterial;
-	float objectDist = randomObject(X, objectMaterial);
+	float objectDist = greekHelmet(X, objectMaterial);
 
 	sceneDist = opUnion(sceneDist, closestMaterial, objectDist, objectMaterial, closestMaterial);
 
@@ -261,7 +281,7 @@ bool hasIntersection(Point3 P, Vector3 w)
 	Surfel closestSurfel;
 
 	for (int i = 0; i < maxIterations; ++i) {
-		float dt = sceneDistance(P + w * t, closestSurfel.material);
+		float dt = sceneDistance(P + w * t);
 		t += dt;
 
 		if (dt < closeEnough) {
