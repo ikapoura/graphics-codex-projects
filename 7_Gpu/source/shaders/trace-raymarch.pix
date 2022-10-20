@@ -122,6 +122,18 @@ float opSubtraction(float dist1, Material material1, float dist2, Material mater
 	return dist2;
 }
 
+float opSubtractionSmooth(float dist1, Material material1, float dist2, Material material2, float blendRadius, inout Material selectedMaterial)
+{
+	if (dist1 > -dist2) {
+		selectedMaterial = material1;
+	} else {
+		selectedMaterial = material2;
+	}
+
+	float c = clamp(0.5f - 0.5f * (dist2 + dist1) / blendRadius, 0.0f, 1.0f);
+	return mix(dist2, -dist1, c ) + blendRadius * c * (1.0f - c);
+}
+
 
 
 
