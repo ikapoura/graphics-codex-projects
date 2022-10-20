@@ -143,7 +143,7 @@ Radiance3 shadeSurfel(Surfel surfel)
 	vec3 sunRadiance = vec3(1.0f);
 	vec3 sunDirection = normalize(vec3(-1.0f, -1.0f, -1.0f));
 
-	vec3 direct = lambertianBrdf(surfel.material) * sunRadiance * dot(-sunDirection, surfel.normal);
+	vec3 direct = lambertianBrdf(surfel.material) * sunRadiance * max(dot(-sunDirection, surfel.normal), 0.0f);
 	vec3 ambient = 0.3f * surfel.material.color;
 	return direct + ambient;
 }
