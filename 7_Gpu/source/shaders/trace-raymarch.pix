@@ -243,6 +243,74 @@ float randomObject(Point3 X, inout Material material)
 
 
 
+float greekHelmet(Point3 X, inout Material material)
+{
+	Material nullMaterial;
+	Material mainHelmetMaterial = Material(Color3(0.4f, 0.4f, 0.537f), 0.0f, 0.0f, 0.0f);
+	Material hairMaterial = Material(Color3(0.0f, 0.147f, 0.637f), 0.0f, 0.0f, 0.0f);
+
+	return opUnion(
+		// main helmet
+		opSubtractionSmooth(
+			opSubtractionSmooth(
+				opSubtractionSmooth(
+					// base
+					opSubtractionSmooth(
+						opDist(X, VerticalCapsule(Point3(0.0f, 0.0f, 0.0f), 10.0f, 3.5f)),
+						opDist(X, VerticalCapsule(Point3(0.0f, 0.0f, 0.0f), 10.0f, 3.3f)),
+						0.1f
+					),
+					// eyes
+					opUnion(
+						opDist(X, Ellipsoid(Point3(-3.1f, 8.0f, -1.0f), vec3(2.0f, 0.5f, 1.5f))),
+						opDist(X, Ellipsoid(Point3(-3.1f, 8.0f, 1.0f), vec3(2.0f, 0.5f, 1.5f)))
+					),
+					// blend
+					0.01f
+				),
+				// nose
+				opDist(X, Box(Point3(-3.0f, 1.0f, 0.0f), vec3(0.5, 7.0f, 0.8f))),
+				// blend
+				0.08f
+			),
+			opDist(X, Plane(normalize(vec3(-0.9f, 1.0f, 0.0f)), 1.5f)),
+			// blend
+			0.01f
+		),
+		mainHelmetMaterial,
+
+		// top hair
+		opSubtractionSmooth(
+			opSubtractionSmooth(
+				opDist(X, RotatedCappedCylinder(Point3(0.0f, 10.0f, 0.0f), 7.0f, 1.0f)),
+				opDist(X, Plane(normalize(vec3(1.0f, 1.0f, 0.0f)), 6.0f)),
+
+				0.02f
+			),
+
+			opDist(X, VerticalCapsule(Point3(0.0f, 0.0f, 0.0f), 10.0f, 3.31f)),
+
+			0.1f
+		),
+		hairMaterial,
+		
+		material);
+}
+
+
+
+float sceneDistance(Point3 X)
+{
+	float sceneDist = 10000000.0f;
+
+	Material unusedMaterial;
+	float objectDist = greekHelmet(X, unusedMaterial);
+
+	sceneDist = opUnion(sceneDist, objectDist);
+
+	return sceneDist;
+}
+
 float sceneDistance(Point3 X, inout Material closestMaterial)
 {
 	float sceneDist = 10000000.0f;

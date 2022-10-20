@@ -89,8 +89,8 @@ void App::onGraphics3D(RenderDevice* rd, Array<shared_ptr<Surface> >& allSurface
 			m_dirShaders + String(
 				// "trace-minimal.pix"
 				// "trace-analytic.pix"
-				// "trace-raymarch.pix"
-				"trace-venice.pix"
+				"trace-raymarch.pix"
+				// "trace-venice.pix"
 			);
 
 		// TODO: This reloads the shader in EVERY FRAME to enable automatic shader reloading.
