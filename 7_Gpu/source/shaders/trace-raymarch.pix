@@ -9,7 +9,13 @@ struct Sphere {
 };
 
 struct CappedCylinder {
-	Point3 center; // Could add a mat4x3 here but ignore rotations for now
+	Point3 center;
+	float  height;
+	float  radius;
+};
+
+struct VerticalCapsule {
+	Point3 center;
 	float  height;
 	float  radius;
 };
@@ -41,6 +47,13 @@ float opDist(Point3 X, CappedCylinder cylinder)
 	return min(max(d.x, d.y), 0.0f) + length(max(d, 0.0f));
 }
 
+float opDist(Point3 X, VerticalCapsule capsule)
+{
+	Point3 normalizedX = X - capsule.center;
+
+	normalizedX.y -= clamp(normalizedX.y, 0.0f, capsule.height);
+	return length(normalizedX) - capsule.radius;
+}
 
 
 float opUnion(float dist1, Material material1, float dist2, Material material2, inout Material selectedMaterial)
@@ -97,7 +110,7 @@ float randomObject(Point3 X, inout Material material)
 			material),
 		material,
 
-		opDist(X, CappedCylinder(Point3(0.0f, 1.0f, 0.0f), 1.0f, 0.3f)),
+		opDist(X, VerticalCapsule(Point3(1.0f, 0.0f, 0.0f), 1.0f, 0.3f)),
 		Material(Color3(0.0f, 0.5f, 0.5f), 0.0f, 0.0f, 0.0f),
 
 		material);
