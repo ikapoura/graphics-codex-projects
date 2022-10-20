@@ -20,46 +20,73 @@ Sphere spheres[NUM_SPHERES];
 
 void fillScene()
 {
-	spheres[0].center = Point3(1.0f, 0.0f, -1.0f);
-	spheres[0].radius = 0.8f;
-	spheres[0].material.color = Color3(0.5f, 0.0f, 0.0f);
+	spheres[0] = Sphere(Point3(1.0f, 0.0f, -1.0f),
+						0.8f,
+						Material(Color3(0.5f, 0.0f, 0.0f), 0.0f, 0.0f, 0.0f));
 
-	spheres[1].center = Point3(-1.0f, 0.0f, -1.0f);
-	spheres[1].radius = 0.6f;
-	spheres[1].material.color = Color3(0.0f, 0.5f, 0.0f);
+	spheres[1] = Sphere(Point3(-1.0f, 0.0f, -1.0f),
+						0.6f,
+						Material(Color3(0.0f, 0.5f, 0.0f), 0.0f, 0.0f, 0.0f));
 }
 
-float sceneDistance(Point3 X)
-{
-	float minDistance = 10000000.0f;
 
-	for (int i = 0; i < NUM_SPHERES; i++) {
-		float currDistance = length(X - spheres[i].center) - spheres[i].radius;
-		
-		if (currDistance < minDistance) {
-			minDistance = currDistance;
-		}
+
+float opUnion(float dist1, float dist2)
+{
+	return min(dist1, dist2);
+}
+
+float opUnion(float dist1, Material material1, float dist2, Material material2, inout Material selectedMaterial)
+{
+	if (dist1 < dist2) {
+		selectedMaterial = material1;
+		return dist1;
 	}
 
-	return minDistance;
+	selectedMaterial = material2;
+	return dist2;
+}
+
+float opUnion(Point3 X, Sphere sphere1, Sphere sphere2, inout Material selectedMaterial)
+{
+	float dist1 = length(X - sphere1.center) - sphere1.radius;
+	float dist2 = length(X - sphere2.center) - sphere2.radius;
+	
+	return opUnion(dist1, sphere1.material, dist2, sphere2.material, selectedMaterial);
+}
+
+
+
+float randomObject(Point3 X, inout Material material)
+{
+	return opUnion(X,
+				   Sphere(Point3(0.2f, 1.0f, -1.0f),
+						  0.4f,
+						  Material(Color3(0.5f, 0.0f, 5.0f), 0.0f, 0.0f, 0.0f)),
+				   Sphere(Point3(-0.2f, 1.0f, -1.0f),
+						  0.4f,
+						  Material(Color3(0.0f, 0.5f, 5.0f), 0.0f, 0.0f, 0.0f)),
+				   material);
 }
 
 
 
 float sceneDistance(Point3 X, inout Material closestMaterial)
 {
-	float minDistance = 10000000.0f;
+	float sceneDist = 10000000.0f;
 
 	for (int i = 0; i < NUM_SPHERES; i++) {
-		float currDistance = length(X - spheres[i].center) - spheres[i].radius;
+		float currDist = length(X - spheres[i].center) - spheres[i].radius;
 		
-		if (currDistance < minDistance) {
-			minDistance = currDistance;
-			closestMaterial = spheres[i].material;
-		}
+		sceneDist = opUnion(sceneDist, closestMaterial, currDist, spheres[i].material, closestMaterial);
 	}
 
-	return minDistance;
+	Material objectMaterial;
+	float objectDist = randomObject(X, objectMaterial);
+
+	sceneDist = opUnion(sceneDist, closestMaterial, objectDist, objectMaterial, closestMaterial);
+
+	return sceneDist;
 }
 
 
@@ -67,12 +94,13 @@ float sceneDistance(Point3 X, inout Material closestMaterial)
 Vector3 fastNormal(Point3 X)
 {
 	const float e = 1e-4f;
-	float d = sceneDistance(X);
+	Material unusedMaterial;
+	float d = sceneDistance(X, unusedMaterial);
 
 	return normalize(Vector3(
-			sceneDistance(X + Vector3(e, 0, 0)),
-			sceneDistance(X + Vector3(0, e, 0)),
-			sceneDistance(X + Vector3(0, 0, e))) - Vector3(d, d, d));
+			sceneDistance(X + Vector3(e, 0, 0), unusedMaterial),
+			sceneDistance(X + Vector3(0, e, 0), unusedMaterial),
+			sceneDistance(X + Vector3(0, 0, e), unusedMaterial)) - Vector3(d, d, d));
 }
 
 
