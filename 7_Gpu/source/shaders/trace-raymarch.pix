@@ -2,7 +2,11 @@
 #include <g3dmath.glsl>
 #include <Texture/Texture.glsl>
 #include "Surfel.glsl"
-#include "Sphere.glsl"
+
+struct Sphere {
+	Point3 center;
+	float  radius;
+};
 
 // Input arguments from the C++ program
 uniform mat4x3 cameraToWorldMatrix;
@@ -15,19 +19,16 @@ uniform float projectionMatrix22, projectionMatrix23;
 // Output to the App::m_framebuffer
 out Color3 pixelColor;
 
-const int NUM_SPHERES = 2;
-Sphere spheres[NUM_SPHERES];
 
-void fillScene()
+
+float opDist(Point3 X, Sphere sphere)
 {
-	spheres[0] = Sphere(Point3(1.0f, 0.0f, -1.0f),
-						0.8f,
-						Material(Color3(0.5f, 0.0f, 0.0f), 0.0f, 0.0f, 0.0f));
-
-	spheres[1] = Sphere(Point3(-1.0f, 0.0f, -1.0f),
-						0.6f,
-						Material(Color3(0.0f, 0.5f, 0.0f), 0.0f, 0.0f, 0.0f));
+	return length(X - sphere.center) - sphere.radius;
 }
+
+}
+
+
 
 float opUnion(float dist1, Material material1, float dist2, Material material2, inout Material selectedMaterial)
 {
@@ -38,14 +39,6 @@ float opUnion(float dist1, Material material1, float dist2, Material material2, 
 
 	selectedMaterial = material2;
 	return dist2;
-}
-
-float opUnion(Point3 X, Sphere sphere1, Sphere sphere2, inout Material selectedMaterial)
-{
-	float dist1 = length(X - sphere1.center) - sphere1.radius;
-	float dist2 = length(X - sphere2.center) - sphere2.radius;
-	
-	return opUnion(dist1, sphere1.material, dist2, sphere2.material, selectedMaterial);
 }
 
 
@@ -61,14 +54,6 @@ float opIntersection(float dist1, Material material1, float dist2, Material mate
 	return dist2;
 }
 
-float opIntersection(Point3 X, Sphere sphere1, Sphere sphere2, inout Material selectedMaterial)
-{
-	float dist1 = length(X - sphere1.center) - sphere1.radius;
-	float dist2 = length(X - sphere2.center) - sphere2.radius;
-	
-	return opIntersection(dist1, sphere1.material, dist2, sphere2.material, selectedMaterial);
-}
-
 
 
 float opSubtraction(float dist1, Material material1, float dist2, Material material2, inout Material selectedMaterial)
@@ -82,28 +67,20 @@ float opSubtraction(float dist1, Material material1, float dist2, Material mater
 	return dist2;
 }
 
-float opSubtraction(Point3 X, Sphere sphere1, Sphere sphere2, inout Material selectedMaterial)
-{
-	float dist1 = length(X - sphere1.center) - sphere1.radius;
-	float dist2 = length(X - sphere2.center) - sphere2.radius;
-	
-	return opSubtraction(dist1, sphere1.material, dist2, sphere2.material, selectedMaterial);
-}
-
 
 
 float randomObject(Point3 X, inout Material material)
 {
-	return opUnion(X,
-	// return opIntersection(X,
-	// return opSubtraction(X,
-				   Sphere(Point3(0.2f, 1.0f, -1.0f),
-						  0.4f,
-						  Material(Color3(0.5f, 0.0f, 0.5f), 0.0f, 0.0f, 0.0f)),
-				   Sphere(Point3(-0.2f, 1.0f, -1.0f),
-						  0.4f,
-						  Material(Color3(0.0f, 0.5f, 0.5f), 0.0f, 0.0f, 0.0f)),
-				   material);
+	// return opIntersection(
+	// return opSubtraction(
+	return opUnion(
+		opDist(X, Sphere(Point3(0.2f, 1.0f, -1.0f), 0.4f)),
+		Material(Color3(0.5f, 0.0f, 0.5f), 0.0f, 0.0f, 0.0f),
+
+		opDist(X, Sphere(Point3(-0.2f, 1.0f, -1.0f), 0.4f)),
+		Material(Color3(0.0f, 0.5f, 0.5f), 0.0f, 0.0f, 0.0f),
+
+		material);
 }
 
 
@@ -111,12 +88,6 @@ float randomObject(Point3 X, inout Material material)
 float sceneDistance(Point3 X, inout Material closestMaterial)
 {
 	float sceneDist = 10000000.0f;
-
-	for (int i = 0; i < NUM_SPHERES; i++) {
-		float currDist = length(X - spheres[i].center) - spheres[i].radius;
-		
-		sceneDist = opUnion(sceneDist, closestMaterial, currDist, spheres[i].material, closestMaterial);
-	}
 
 	Material objectMaterial;
 	float objectDist = randomObject(X, objectMaterial);
@@ -187,8 +158,6 @@ Radiance3 traceRay(Point3 P, Vector3 w) {
 
 void main()
 {
-	fillScene();
-
 	// Generate an eye ray in camera space, and then transform to world space
 
 	// Primary ray origin	
