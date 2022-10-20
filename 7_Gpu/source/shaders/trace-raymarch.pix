@@ -12,6 +12,12 @@ struct Box {
 	Point3 center;
 	vec3   size;
 };
+
+struct Plane {
+	vec3  normal;
+	float distOnNormal;
+};
+
 struct CappedCylinder {
 	Point3 center;
 	float  height;
@@ -55,6 +61,13 @@ float opDist(Point3 X, Box box)
 	
 	vec3 q = abs(normalizedX) - box.size;
 	return length(max(q, 0.0f)) + min(max(q.x, max(q.y, q.z)), 0.0f);
+}
+
+float opDist(Point3 X, Plane plane)
+{
+	// https://iquilezles.org/articles/distfunctions/
+	// the plane normal must be normalized
+	return dot(X, plane.normal) - plane.distOnNormal;
 }
 
 float opDist(Point3 X, CappedCylinder cylinder)
