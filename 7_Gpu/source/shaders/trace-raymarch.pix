@@ -57,6 +57,32 @@ float opUnion(Point3 X, Sphere sphere1, Sphere sphere2, inout Material selectedM
 
 
 
+float opIntersection(float dist1, float dist2)
+{
+	return max(dist1, dist2);
+}
+
+float opIntersection(float dist1, Material material1, float dist2, Material material2, inout Material selectedMaterial)
+{
+	if (dist1 > dist2) {
+		selectedMaterial = material1;
+		return dist1;
+	}
+
+	selectedMaterial = material2;
+	return dist2;
+}
+
+float opIntersection(Point3 X, Sphere sphere1, Sphere sphere2, inout Material selectedMaterial)
+{
+	float dist1 = length(X - sphere1.center) - sphere1.radius;
+	float dist2 = length(X - sphere2.center) - sphere2.radius;
+	
+	return opIntersection(dist1, sphere1.material, dist2, sphere2.material, selectedMaterial);
+}
+
+
+
 float randomObject(Point3 X, inout Material material)
 {
 	return opUnion(X,
