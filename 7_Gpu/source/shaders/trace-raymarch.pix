@@ -2,6 +2,7 @@
 #include <g3dmath.glsl>
 #include <Texture/Texture.glsl>
 #include "Surfel.glsl"
+#include "Sphere.glsl"
 
 // Input arguments from the C++ program
 uniform mat4x3 cameraToWorldMatrix;
@@ -14,35 +15,51 @@ uniform float projectionMatrix22, projectionMatrix23;
 // Output to the App::m_framebuffer
 out Color3 pixelColor;
 
+const int NUM_SPHERES = 2;
+Sphere spheres[NUM_SPHERES];
 
+void fillScene()
+{
+	spheres[0].center = Point3(1.0f, 0.0f, -1.0f);
+	spheres[0].radius = 0.8f;
+	spheres[0].material.color = Color3(0.7f, 0.0f, 0.0f);
+
+	spheres[1].center = Point3(-1.0f, 0.0f, -1.0f);
+	spheres[1].radius = 0.6f;
+	spheres[1].material.color = Color3(0.0f, 0.7f, 0.0f);
+}
 
 float sceneDistance(Point3 X)
 {
-	const Point3  C = Point3(0,0,0);
-	const float   r = 1.0;
+	float minDistance = 10000000.0f;
 
-	return length(X - C) - r;
+	for (int i = 0; i < NUM_SPHERES; i++) {
+		float currDistance = length(X - spheres[i].center) - spheres[i].radius;
+		
+		if (currDistance < minDistance) {
+			minDistance = currDistance;
+		}
+	}
+
+	return minDistance;
 }
 
 
 
 float sceneDistance(Point3 X, inout Material closestMaterial)
 {
-	const Point3  C = Point3(0,0,0);
-	const float   r = 1.0;
+	float minDistance = 10000000.0f;
 
-	// Replace this with a union of the objects in the scene.  You
-	// don't necessarily need an explicit list of separate surfaces in
-	// the way that the analytic tracer does.
-	//
-	// Think about how to change the API so that the closest surface
-	// in a union sets the material. For that, some For intersection,
-	// blending, and subtraction, whichever surface dominates the
-	// distance computation should set the material.
+	for (int i = 0; i < NUM_SPHERES; i++) {
+		float currDistance = length(X - spheres[i].center) - spheres[i].radius;
+		
+		if (currDistance < minDistance) {
+			minDistance = currDistance;
+			closestMaterial = spheres[i].material;
+		}
+	}
 
-	closestMaterial.color = Color3(0.7f, 0.0f, 0.0f);
-
-	return length(X - C) - r;
+	return minDistance;
 }
 
 
@@ -70,7 +87,7 @@ Radiance3 lambertianBrdf(Material material)
 Radiance3 shadeSurfel(Surfel surfel)
 {
 	vec3 sunRadiance = vec3(1.0f, 0.0f, 0.5f);
-	vec3 sunDirection = normalize(vec3(1.0f, 1.0f, 1.0f));
+	vec3 sunDirection = normalize(vec3(0.1f, 1.0f, 1.0f));
 
 	return lambertianBrdf(surfel.material) * dot(sunDirection, surfel.normal);
 }
@@ -101,7 +118,10 @@ Radiance3 traceRay(Point3 P, Vector3 w) {
 
 
 
-void main() {
+void main()
+{
+	fillScene();
+
 	// Generate an eye ray in camera space, and then transform to world space
 
 	// Primary ray origin	
