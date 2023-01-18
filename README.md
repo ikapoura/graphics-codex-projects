@@ -107,7 +107,7 @@ And that brings us to the last project which involves Ray Marching on the GPU an
 
 Developing the ray marching code from scratch can be a pain at the start because we start with very simple shapes but the code can break down and not be extendable when it is time to build very complex scenes. This was my experience as it was the first time doing something like this and supporting the first 3 primitives and combining them to have something meaningful took many iterations of rewriting my GLSL API to finally be at a state where it is usable.
 
-For this project I created an ancient Greek helmet which you see below. The shading is simple because I devoted more time in making the API consistent with as less bloat as possible.
+For this project I created an ancient Greek helmet which you see below. The shading is simple because I devoted more time in making the API consistent with as less bloat as possible. To see the individual steps to create the helmet please look at the end of [my post](https://iliaskapouranis.com/2021/04/24/studying-with-the-graphics-codex/).
 
 |<img width="1024" height="700" alt="Breakfast room diff" src="https://user-images.githubusercontent.com/40468844/209312847-d0dceeed-6798-4f76-bd6f-af8792b67b0d.png"> The final shape after a lot of unions and subtractions of primitives |
 |:-:|
